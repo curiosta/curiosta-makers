@@ -5,30 +5,12 @@ import google_logo from "@assets/google_logo.png";
 import Input from "@components/Input";
 import FormControl from "@components/FormControl";
 import { useSignal } from "@preact/signals";
-import { route } from "preact-router";
 
-const Login = () => {
+const Signup = () => {
   const errorMessage = useSignal<string>("");
   const isLoading = useSignal<boolean>(false);
 
-  const handleLoginUser = (data: any) => {
-    isLoading.value = true;
-    if (errorMessage.value) {
-      errorMessage.value = "";
-    }
-    try {
-      route("/home");
-    } catch (error) {
-      const errorResponse = (error as any)?.toJSON?.();
-      if (errorResponse) {
-        errorMessage.value =
-          "Failed to login, Please check email and password!.";
-      }
-    } finally {
-      isLoading.value = false;
-    }
-  };
-
+  const handleCreateUser = () => {};
   return (
     <div className="flex justify-center p-4">
       <div className="flex flex-col justify-center items-center  w-full sm:w-1/4 ">
@@ -42,14 +24,42 @@ const Login = () => {
           <FormControl
             noValidate
             mode="onSubmit"
-            onSubmit={handleLoginUser}
             className="flex flex-col gap-2"
+            onSubmit={handleCreateUser}
           >
+            <div class="flex justify-between items-center gap-2">
+              <Input
+                name="first_name"
+                type="text"
+                label="First Name"
+                autocomplete="given-name"
+                required={{ message: "First name is required!", value: true }}
+                minLength={{
+                  message: "Minimum 3 characters are required!",
+                  value: 3,
+                }}
+                maxLength={20}
+                placeholder="John"
+              />
+
+              <Input
+                name="last_name"
+                type="text"
+                label="Last Name"
+                required={{ message: "Last name is required!", value: true }}
+                autocomplete="family-name"
+                minLength={3}
+                maxLength={20}
+                placeholder={"Doe"}
+              />
+            </div>
+
             <Input
               name="email"
               type="email"
               label="Email address"
               autocomplete="email"
+              required={{ message: "Email is required!", value: true }}
               placeholder={"example@gmail.com"}
               validator={(value) =>
                 !/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(value)
@@ -62,33 +72,21 @@ const Login = () => {
               name="password"
               type="password"
               label="Password"
+              required={{ message: "Password is required!", value: true }}
               autocomplete="current-password"
-              required={{ value: true, message: "Password is required!" }}
-              minLength={{
-                value: 6,
-                message: "Minimum 6 characters are required!",
-              }}
-              placeholder="Your Curiosta password"
+              minLength={6}
+              placeholder="Enter password"
             />
-            <div class="flex items-center justify-end">
-              <div class="text-sm leading-6">
-                <a
-                  href="#"
-                  class="font-semibold text-app-primary-600 hover:text-app-primary-500"
-                >
-                  Forgot password?
-                </a>
-              </div>
-            </div>
 
             <Button
               type="submit"
-              variant={"primary"}
+              variant="primary"
               className="mt-4"
               disabled={isLoading.value}
             >
-              {isLoading.value ? "Loading..." : "Login"}
+              {isLoading.value ? "Loading..." : "Sign Up"}
             </Button>
+
             <Typography variant="error">{errorMessage}</Typography>
           </FormControl>
           <div className="text-center my-4">
@@ -104,12 +102,12 @@ const Login = () => {
               variant={"secondary"}
               className="text-center"
             >
-              Don't have an account?{" "}
+              Have an account?{" "}
               <a
-                href="/signup"
+                href="/login"
                 class="font-semibold leading-6 text-app-primary-600 hover:text-app-primary-500"
               >
-                Sign up
+                Login
               </a>
             </Typography>
           </div>
@@ -119,4 +117,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
