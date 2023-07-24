@@ -6,6 +6,7 @@ import Input from "@components/Input";
 import FormControl from "@components/FormControl";
 import { useSignal } from "@preact/signals";
 import { route } from "preact-router";
+import { Link } from "preact-router/match";
 
 const Login = () => {
   const errorMessage = useSignal<string>("");
@@ -65,19 +66,19 @@ const Login = () => {
               autocomplete="current-password"
               required={{ value: true, message: "Password is required!" }}
               minLength={{
-                value: 6,
-                message: "Minimum 6 characters are required!",
+                value: 8,
+                message: "Minimum 8 characters are required!",
               }}
               placeholder="Your Curiosta password"
             />
             <div class="flex items-center justify-end">
               <div class="text-sm leading-6">
-                <a
+                <Link
                   href="#"
                   class="font-semibold text-app-primary-600 hover:text-app-primary-500"
                 >
                   Forgot password?
-                </a>
+                </Link>
               </div>
             </div>
 

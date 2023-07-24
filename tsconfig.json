@@ -21,6 +21,12 @@
       ],
       "@components/*": [
         "src/components/*"
+      ],
+      "@ActivityCard/*": [
+        "src/components/ActivityCard/*"
+      ],
+      "@IssuedItems/*": [
+        "src/components/IssuedItems/*"
       ]
     }
   },

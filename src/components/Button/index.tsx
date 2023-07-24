@@ -3,27 +3,40 @@ import type { VariantProps } from "class-variance-authority";
 import button from "@components/Button/button.cva";
 import { cx } from "class-variance-authority";
 import { twMerge } from "tailwind-merge";
+import { Link } from "preact-router/match";
 interface Props
   extends Omit<HTMLAttributes<HTMLButtonElement>, "class">,
-  VariantProps<typeof button> {
+    VariantProps<typeof button> {
   link?: string;
 }
 
-const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(({ type, className, children, disabled, link, ...rest }, ref) => {
-  const classes = twMerge(cx(button(rest), className));
-  return (
-    <>
-      {link && !disabled ? (
-        <a href={link} ref={ref as ForwardedRef<HTMLAnchorElement>} className={cx(classes, 'p-0')}>
-          {children}
-        </a>
-      ) : (
-        <button type={type} ref={ref as ForwardedRef<HTMLButtonElement>} class={classes} disabled={disabled} {...rest}>
-          {children}
-        </button>
-      )}
-    </>
-  );
-});
+const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
+  ({ type, className, children, disabled, link, ...rest }, ref) => {
+    const classes = twMerge(cx(button(rest), className));
+    return (
+      <>
+        {link && !disabled ? (
+          <Link
+            href={link}
+            ref={ref as ForwardedRef<HTMLAnchorElement>}
+            className={cx(classes, "p-0")}
+          >
+            {children}
+          </Link>
+        ) : (
+          <button
+            type={type}
+            ref={ref as ForwardedRef<HTMLButtonElement>}
+            class={classes}
+            disabled={disabled}
+            {...rest}
+          >
+            {children}
+          </button>
+        )}
+      </>
+    );
+  }
+);
 
 export default Button;

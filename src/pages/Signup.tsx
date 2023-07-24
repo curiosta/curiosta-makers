@@ -5,12 +5,35 @@ import google_logo from "@assets/google_logo.png";
 import Input from "@components/Input";
 import FormControl from "@components/FormControl";
 import { useSignal } from "@preact/signals";
+import { route } from "preact-router";
+import Checkbox from "@components/Checkbox";
 
 const Signup = () => {
   const errorMessage = useSignal<string>("");
   const isLoading = useSignal<boolean>(false);
 
-  const handleCreateUser = () => {};
+  const handleCreateUser = (data: any) => {
+    isLoading.value = true;
+    if (errorMessage.value) {
+      errorMessage.value = "";
+    }
+    const { first_name, last_name, email, password, cpassword } = data;
+
+    try {
+      if (password === cpassword) {
+        route("/home");
+      } else {
+        errorMessage.value = "Password and confirmation password do not match.";
+      }
+    } catch (error) {
+      const errorResponse = (error as any)?.toJSON?.();
+      if (errorResponse) {
+        errorMessage.value = "Failed to create account.";
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  };
   return (
     <div className="flex justify-center p-4">
       <div className="flex flex-col justify-center items-center  w-full sm:w-1/4 ">
@@ -71,12 +94,40 @@ const Signup = () => {
             <Input
               name="password"
               type="password"
-              label="Password"
-              required={{ message: "Password is required!", value: true }}
-              autocomplete="current-password"
-              minLength={6}
-              placeholder="Enter password"
+              label="New Password"
+              autocomplete="new-password"
+              required={{ value: true, message: "Password is required!" }}
+              minLength={{
+                value: 8,
+                message: "Minimum 8 characters are required!",
+              }}
+              placeholder="New password"
+              validator={(value) =>
+                !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#_*])[A-Za-z\d@#_*]{8,}$/.test(
+                  value
+                )
+                  ? "Your password should be of minimum 8 characters including at least one alphabet, number and one special character such as @, #, _, *"
+                  : true
+              }
             />
+            <Input
+              name="cpassword"
+              type="password"
+              label="Confirm Password"
+              autocomplete="new-password"
+              required={{ value: true, message: "Password is required!" }}
+              minLength={{
+                value: 8,
+                message: "Minimum 8 characters are required!",
+              }}
+              placeholder="Confirm new password"
+            />
+            <div class="flex items-center gap-2">
+              <Checkbox />
+              <Typography size="body2/normal" variant="secondary">
+                I agree to the Terms and Conditions and Privacy Policy
+              </Typography>
+            </div>
 
             <Button
               type="submit"
@@ -94,7 +145,7 @@ const Signup = () => {
             <div className="p-1.5 rounded-lg border flex justify-center items-center my-2 ">
               <div className="justify-start items-center gap-1 inline-flex">
                 <img className="w-9 h-8" src={google_logo} alt="google-logo" />
-                <Typography size="body2/normal">Sign in with google</Typography>
+                <Typography size="body2/normal">Sign up with google</Typography>
               </div>
             </div>
             <Typography
