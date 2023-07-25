@@ -3,6 +3,7 @@ import TopNavbar from "@components/Navbar/TopNavbar";
 import SearchInput from "@components/SearchInput";
 import ActivityCard from "@components/ActivityCard";
 import IssuedItems from "@components/IssuedItems";
+import BottomNavbar from "@components/Navbar/BottomNavbar";
 
 const Home = () => {
   return (
@@ -17,6 +18,7 @@ const Home = () => {
       <SearchInput />
       <ActivityCard />
       <IssuedItems />
+      <BottomNavbar />
     </div>
   );
 };

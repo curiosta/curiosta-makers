@@ -27,6 +27,9 @@
       ],
       "@IssuedItems/*": [
         "src/components/IssuedItems/*"
+      ],
+      "@Menubar/*": [
+        "src/components/Menubar/*"
       ]
     }
   },

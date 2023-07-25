@@ -20,7 +20,7 @@ const ActivityCard = () => {
   return (
     <div className="w-full flex flex-col items-center bg-primary-700 p-4 rounded-md">
       <Typography className="text-white">Choose Activity</Typography>
-      <div className="flex flex-wrap justify-center items-center gap-4 mt-3 ">
+      <div className="flex flex-wrap justify-center items-center gap-4 my-3 ">
         {activities?.map((activity, index) => (
           <Link
             key={index}

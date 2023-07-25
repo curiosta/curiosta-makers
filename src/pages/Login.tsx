@@ -94,7 +94,7 @@ const Login = () => {
           </FormControl>
           <div className="text-center my-4">
             <Typography>or</Typography>
-            <div className="p-1.5 rounded-lg border flex justify-center items-center my-2 ">
+            <div className="p-1.5 rounded-lg border flex justify-center items-center my-2 shadow-sm">
               <div className="justify-start items-center gap-1 inline-flex">
                 <img className="w-9 h-8" src={google_logo} alt="google-logo" />
                 <Typography size="body2/normal">Sign in with google</Typography>

@@ -1,10 +1,18 @@
 import Button from "@components/Button";
 import avatar from "@assets/Avatar_2.svg";
+import Menubar from "@components/Menubar";
+import { useSignal } from "@preact/signals";
 
 const TopNavbar = () => {
+  const isMenuOpen = useSignal<boolean>(false);
   return (
     <div className="flex justify-between items-center w-full">
-      <Button type="button" variant="icon" className="border !rounded-full">
+      <Button
+        type="button"
+        variant="icon"
+        className="border !rounded-full"
+        onClick={() => (isMenuOpen.value = true)}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -52,6 +60,7 @@ const TopNavbar = () => {
           <img src={avatar} className="rounded-full" alt="profile-logo" />
         </div>
       </div>
+      <Menubar isMenuOpen={isMenuOpen} />
     </div>
   );
 };
