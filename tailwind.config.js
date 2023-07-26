@@ -5,14 +5,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: colors.indigo,
+        primary: colors.teal,
         danger: colors.red,
         secondray: colors.white,
         success: colors.green,
       },
       textColor: {
         primary: colors.gray,
-        "app-primary": colors.indigo,
+        "app-primary": colors.teal,
         disabled: colors.gray[400],
         success: colors.green,
       },
