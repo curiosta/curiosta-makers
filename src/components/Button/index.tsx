@@ -3,7 +3,7 @@ import type { VariantProps } from "class-variance-authority";
 import button from "@components/Button/button.cva";
 import { cx } from "class-variance-authority";
 import { twMerge } from "tailwind-merge";
-import { Link } from "preact-router/match";
+import { Link } from "preact-router";
 interface Props
   extends Omit<HTMLAttributes<HTMLButtonElement>, "class">,
     VariantProps<typeof button> {

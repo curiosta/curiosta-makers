@@ -8,7 +8,7 @@ const ActivityCard = () => {
     {
       title: "Create Requests",
       icon: request_return_icon,
-      link: "#",
+      link: "/create-requests",
     },
     {
       title: "Return",

@@ -1,6 +1,6 @@
 import Button from "@components/Button";
 import Typography from "@components/Typography";
-import logo from "@assets/curiosta_logo.png";
+import logo from "@assets/curiosta_logo.svg";
 import google_logo from "@assets/google_logo.png";
 import Input from "@components/Input";
 import FormControl from "@components/FormControl";
@@ -39,8 +39,8 @@ const Signup = () => {
       <div className="flex flex-col justify-center items-center  w-full sm:w-1/4 ">
         <div className="flex flex-col  items-center gap-2.5 ">
           <img src={logo} alt="curiosta-logo" />
-          <Typography size="h6/bold" className="text-center">
-            IMS
+          <Typography size="h6/bold" className="text-center uppercase">
+            MMS
           </Typography>
         </div>
         <div className="w-full p-4">

@@ -25,7 +25,7 @@ const Menubar = ({ isMenuOpen }: Props) => {
           />
         </svg>
       ),
-      link: "#",
+      link: "/create-requests",
     },
     {
       title: "Return Request",

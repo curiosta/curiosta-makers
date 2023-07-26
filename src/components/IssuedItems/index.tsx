@@ -97,7 +97,7 @@ const IssuedItems = () => {
             type="button"
             variant="icon"
             onClick={() => (activeIndex.value = index)}
-            className={`!rounded-3xl  ${
+            className={`!rounded-3xl items-center ${
               activeIndex.value === index ? "!bg-primary-700 text-white" : ""
             }`}
           >
