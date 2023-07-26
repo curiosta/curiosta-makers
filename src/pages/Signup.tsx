@@ -122,12 +122,8 @@ const Signup = () => {
               }}
               placeholder="Confirm new password"
             />
-            <div class="flex items-center gap-2">
-              <Checkbox />
-              <Typography size="body2/normal" variant="secondary">
-                I agree to the Terms and Conditions and Privacy Policy
-              </Typography>
-            </div>
+
+            <Checkbox label="I agree to the Terms and Conditions and Privacy Policy" />
 
             <Button
               type="submit"

@@ -6,7 +6,9 @@ const SearchInput = () => {
   return (
     <div className="flex my-4 w-full bg-white">
       <FormControl
-        className={"flex items-center w-full border shadow-lg rounded-md px-3"}
+        className={
+          "flex items-center w-full border shadow-lg rounded-2xl p-2 px-4"
+        }
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

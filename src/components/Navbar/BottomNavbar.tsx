@@ -18,6 +18,7 @@ const BottomNavbar = () => {
           <path d="M14.5 3.95588L21.75 10.5735V22.0588H18.85V13.2353H10.15V22.0588H7.25V10.5735L14.5 3.95588ZM14.5 0L0 13.2353H4.35V25H13.05V16.1765H15.95V25H24.65V13.2353H29L14.5 0Z" />
         </svg>
       ),
+      link: "/home",
     },
     {
       title: "Help center",
@@ -66,6 +67,7 @@ const BottomNavbar = () => {
         <Button
           key={index}
           type="button"
+          link={item?.link}
           variant="icon"
           className={`flex-col items-center ${
             activeIndex.value === index ? "text-white" : "text-primary-400"
