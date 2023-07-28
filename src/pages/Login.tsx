@@ -1,7 +1,5 @@
 import Button from "@components/Button";
 import Typography from "@components/Typography";
-import logo from "@assets/curiosta_logo.svg";
-import google_logo from "@assets/google_logo.png";
 import Input from "@components/Input";
 import FormControl from "@components/FormControl";
 import { useSignal } from "@preact/signals";
@@ -34,7 +32,7 @@ const Login = () => {
     <div className="flex justify-center p-4">
       <div className="flex flex-col justify-center items-center  w-full sm:w-1/4 ">
         <div className="flex flex-col  items-center gap-2.5 ">
-          <img src={logo} alt="curiosta-logo" />
+          <img src="/images/curiosta_logo.svg" alt="curiosta-logo" />
           <Typography size="h6/bold" className="text-center uppercase">
             MMS
           </Typography>
@@ -124,7 +122,11 @@ const Login = () => {
             <Typography>or</Typography>
             <div className="p-1.5 rounded-lg border flex justify-center items-center my-2 shadow-sm">
               <div className="justify-start items-center gap-1 inline-flex">
-                <img className="w-9 h-8" src={google_logo} alt="google-logo" />
+                <img
+                  className="w-9 h-8"
+                  src="/images/google_logo.svg"
+                  alt="google-logo"
+                />
                 <Typography size="body2/normal">Sign in with google</Typography>
               </div>
             </div>

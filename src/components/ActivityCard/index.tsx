@@ -1,13 +1,13 @@
 import Typography from "@components/Typography";
-import request_return_icon from "@assets/return_request.png";
-import return_icon from "@assets/return.png";
+import request_icon from "@assets/request.svg";
+import return_icon from "@assets/return.svg";
 import { Link } from "preact-router/match";
 
 const ActivityCard = () => {
   const activities = [
     {
       title: "Create Requests",
-      icon: request_return_icon,
+      icon: request_icon,
       link: "/create-requests",
     },
     {
