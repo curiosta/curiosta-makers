@@ -6,7 +6,7 @@ import RequestItems from "@pages/RequestItems";
 import Signup from "@pages/Signup";
 import Welcome from "@pages/Welcome";
 import Router, { Route } from "preact-router";
-
+import Return from "@pages/return";
 const App = () => {
   return (
     <Router>
@@ -17,6 +17,7 @@ const App = () => {
       <Route path="/home" component={Home} />
       <Route path="/account" component={Account} />
       <Route path="/create-requests" component={RequestItems} />
+      <Route path="return" component={Return}/>
     </Router>
   );
 };

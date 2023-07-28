@@ -22,14 +22,11 @@
       "@components/*": [
         "src/components/*"
       ],
-      "@ActivityCard/*": [
-        "src/components/ActivityCard/*"
+      "@Create_Request/*": [
+        "src/assets/Create_Request/*"
       ],
-      "@IssuedItems/*": [
-        "src/components/IssuedItems/*"
-      ],
-      "@Menubar/*": [
-        "src/components/Menubar/*"
+      "@Create_Request_images/*": [
+        "src/assets/Create_Request_images/*"
       ]
     }
   },
