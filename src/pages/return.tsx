@@ -20,8 +20,8 @@ function Return()
         
         {/* cards */}
         <div className="grid grid-cols-1 justify-items-center gap-10">
-
-            <div className="shadow-lg bg-white h-56 rounded-xl" style={{"width":"21rem"}}>
+  {/* card 1 */}
+            <div className="shadow-lg bg-white h-56 rounded-xl p-2" style={{"width":"21rem"}}>
             <h6 className="text-sm pl-4 text-slate-600">Approved at 21th  May 2023 12:18 PM</h6>
 
           <div className={"mt-5"}></div>
@@ -38,8 +38,8 @@ function Return()
               <button className="p-2 m-6  w-24  rounded-xl text-white" style={{"background":"#1D747E"}}>Return</button>
 
             </div>
-         
-            <div className="shadow-lg bg-white h-56 rounded-xl" style={{"width":"21rem"}}>
+         {/* card 2 */}
+         <div className="shadow-lg bg-white h-56 rounded-xl p-2" style={{"width":"21rem"}}>
             <h6 className="text-sm pl-4 text-slate-600">Approved at 21th  May 2023 12:18 PM</h6>
 
           <div className={"mt-5"}></div>
@@ -56,8 +56,8 @@ function Return()
               <button className="p-2 m-6  w-24  rounded-xl text-white" style={{"background":"#1D747E"}}>Return</button>
 
             </div>
-          
-            <div className="shadow-lg bg-white h-56 rounded-xl" style={{"width":"21rem"}}>
+          {/* card 3 */}
+          <div className="shadow-lg bg-white h-56 rounded-xl p-2" style={{"width":"21rem"}}>
             <h6 className="text-sm pl-4 text-slate-600">Approved at 21th  May 2023 12:18 PM</h6>
 
           <div className={"mt-5"}></div>
@@ -77,6 +77,7 @@ function Return()
           
         </div>
       </div>
+   
   <BottomNavbar></BottomNavbar>
         </div>
    
