@@ -1,10 +1,16 @@
 import Button from "@components/Button";
-import avatar from "@assets/Avatar_2.svg";
 import Menubar from "@components/Menubar";
 import { useSignal } from "@preact/signals";
+import Chip from "@components/Chip";
+import { isUser } from "@/store/userState";
+import user from "@/api/user";
+import admin from "@/api/admin";
 
 const TopNavbar = () => {
   const isMenuOpen = useSignal<boolean>(false);
+  const currentUser = isUser.value
+    ? user.customer.value
+    : admin.adminData.value;
   return (
     <div className="flex justify-between items-center w-full">
       <Button
@@ -57,7 +63,11 @@ const TopNavbar = () => {
           </svg>
         </Button>
         <div className="w-9 h-9 flex">
-          <img src={avatar} className="rounded-full" alt="profile-logo" />
+          <Chip className="!bg-primary-700 uppercase text-white">
+            {currentUser.first_name
+              ? currentUser.first_name.charAt(0)
+              : currentUser.email.charAt(0)}
+          </Chip>
         </div>
       </div>
       <Menubar isMenuOpen={isMenuOpen} />

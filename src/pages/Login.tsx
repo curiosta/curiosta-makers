@@ -5,17 +5,26 @@ import FormControl from "@components/FormControl";
 import { useSignal } from "@preact/signals";
 import { route } from "preact-router";
 import { Link } from "preact-router/match";
+import user from "@api/user";
+import { isUser } from "@store/userState";
+import admin from "@api/admin";
 
 const Login = () => {
   const errorMessage = useSignal<string>("");
   const isLoading = useSignal<boolean>(false);
 
-  const handleLoginUser = (data: any) => {
+  const handleLoginUser = async (data: any) => {
     isLoading.value = true;
     if (errorMessage.value) {
       errorMessage.value = "";
     }
     try {
+      if (isUser.value) {
+        await user.login(data);
+      } else {
+        await admin.login(data);
+      }
+
       route("/home");
     } catch (error) {
       const errorResponse = (error as any)?.toJSON?.();
@@ -27,10 +36,20 @@ const Login = () => {
       isLoading.value = false;
     }
   };
-
+  localStorage.setItem("userRole", JSON.stringify({ isUser: isUser.value }));
   return (
     <div className="flex justify-center p-4">
       <div className="flex flex-col justify-center items-center  w-full sm:w-1/4 ">
+        <div className=" w-full flex justify-end">
+          <Button
+            type="button"
+            variant="icon"
+            className="!bg-gray-100 !rounded-2xl"
+            onClick={() => (isUser.value = !isUser.value)}
+          >
+            {isUser.value ? "User" : "Admin"}
+          </Button>
+        </div>
         <div className="flex flex-col  items-center gap-2.5 ">
           <img src="/images/curiosta_logo.svg" alt="curiosta-logo" />
           <Typography size="h6/bold" className="text-center uppercase">
@@ -92,8 +111,8 @@ const Login = () => {
               autocomplete="current-password"
               required={{ value: true, message: "Password is required!" }}
               minLength={{
-                value: 8,
-                message: "Minimum 8 characters are required!",
+                value: 6,
+                message: "Minimum 6 characters are required!",
               }}
               placeholder="Your Curiosta password"
             />

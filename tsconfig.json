@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
@@ -30,6 +30,24 @@
       ],
       "@Menubar/*": [
         "src/components/Menubar/*"
+      ],
+      "@api/*": [
+        "src/api/*"
+      ],
+      "@medusa/*": [
+        "src/api/medusa/*"
+      ],
+      "@Loading/*": [
+        "src/components/Loading/*"
+      ],
+      "@admin/*": [
+        "src/api/admin/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@MiddleContent/*": [
+        "src/components/MiddleContent/*"
       ]
     }
   },
