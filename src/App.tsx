@@ -16,6 +16,7 @@ import user from "@api/user";
 import Loading from "@/components/Loading";
 import admin from "@api/admin";
 import { isUser } from "./store/userState";
+import IssuedItemsDetails from "@components/IssuedItemsDetails";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
@@ -24,7 +25,11 @@ const App = () => {
   const userState = isUser.value ? user.state.value : admin.state.value;
 
   if (!publicRoute.includes(currentUrl.value) && userState === "loading") {
-    return <Loading />;
+    return (
+      <div className="h-screen">
+        <Loading />
+      </div>
+    );
   }
 
   if (
@@ -46,7 +51,8 @@ const App = () => {
       <Route path="/home" component={Home} />
       <Route path="/account" component={Account} />
       <Route path="/create-requests" component={Request} />
-      <Route path="/create-requests/:title" component={RequestItems} />
+      <Route path="/create-requests/:id" component={RequestItems} />
+      <Route path="/issued-items/:id" component={IssuedItemsDetails} />
     </Router>
   );
 };

@@ -8,6 +8,7 @@ import { isUser } from "@/store/userState";
 import user from "@/api/user";
 import admin from "@/api/admin";
 import MiddleContent from "@/components/MiddleContent";
+import Snapshort from "@/components/Snapshort";
 
 const Home = () => {
   const currentUser = isUser.value
@@ -30,6 +31,7 @@ const Home = () => {
       <ActivityCard />
       {!isUser.value ? <MiddleContent /> : null}
       <IssuedItems />
+      {!isUser.value ? <Snapshort /> : null}
       <BottomNavbar />
     </div>
   );

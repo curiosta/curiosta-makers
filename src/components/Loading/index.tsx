@@ -2,12 +2,12 @@ import Typography from "@components/Typography";
 
 const Loading = () => {
   return (
-    <div className="w-full h-screen flex justify-center">
+    <div className="w-full h-full flex justify-center">
       <div className="flex justify-center items-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="25"
-          height="35"
+          height="30"
           viewBox="0 0 12 20"
           fill="none"
         >
@@ -16,7 +16,7 @@ const Loading = () => {
             fill="#0B7278"
           />
         </svg>
-        <Typography size="h6/semi-bold">Loading...</Typography>
+        <Typography size="body1/semi-bold">Loading...</Typography>
       </div>
     </div>
   );

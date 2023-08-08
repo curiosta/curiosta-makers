@@ -48,6 +48,27 @@
       ],
       "@MiddleContent/*": [
         "src/components/MiddleContent/*"
+      ],
+      "@product/*": [
+        "src/api/product/*"
+      ],
+      "@OffsetPagination/*": [
+        "src/components/OffsetPagination/*"
+      ],
+      "@Radio/*": [
+        "src/components/Radio/*"
+      ],
+      "@ManageQty/*": [
+        "src/components/ManageQty/*"
+      ],
+      "@Snapshort/*": [
+        "src/components/Snapshort/*"
+      ],
+      "@IssuedItemsDetails/*": [
+        "src/components/IssuedItemsDetails/*"
+      ],
+      "@Popup/*": [
+        "src/components/Popup/*"
       ]
     }
   },
