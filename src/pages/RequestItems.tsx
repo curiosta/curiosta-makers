@@ -12,6 +12,9 @@ import OffsetPagination from "@components/OffsetPagination";
 import Radio from "@/components/Radio";
 import { ChangeEvent } from "preact/compat";
 import ManageQty from "@/components/ManageQty";
+import cart from "@/api/cart";
+import AddProduct from "@/components/AddProduct";
+import ViewCartLayer from "@/components/ViewCartLayer";
 
 interface Props {
   id: string;
@@ -25,7 +28,9 @@ const RequestItems = ({ id }: Props) => {
   const offset = useSignal<number>(0);
   const dialogRef = useRef<HTMLDialogElement[]>([]);
   const isAddClick = useSignal<boolean>(false);
-  const selectedMethod = useSignal<string>("");
+  const selectedCartType = useSignal<string | null>(null);
+  const selectedVariantId = useSignal<string | null>(null);
+  const selectedRefIndex = useSignal<number | null>(null);
 
   const getProducts = async () => {
     isLoading.value = true;
@@ -49,22 +54,38 @@ const RequestItems = ({ id }: Props) => {
   }, [offset.value]);
 
   // handle dialog
-  const handleDialog = (index: number) => {
+  const handleDialog = (index: number, product: PricedProduct) => {
     dialogRef.current.map((val, i) => i != index && val.close());
     if (dialogRef.current[index]?.open) {
       dialogRef.current[index]?.close();
     } else {
       dialogRef.current[index]?.show();
     }
+    selectedRefIndex.value = index;
+    selectedVariantId.value = product.variants[0].id;
   };
 
-  const handleRadioInput = (e: ChangeEvent<HTMLInputElement>) => {
+  // handle radio input and add line items with selected cart type value
+  const handleRadioInput = async (e: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.currentTarget;
     if (checked) {
-      selectedMethod.value = value;
+      selectedCartType.value = value;
+    }
+    if (selectedVariantId.value && selectedCartType.value) {
+      try {
+        await cart.addItem({
+          id: selectedVariantId.value,
+          metadata: { cartType: selectedCartType.value },
+        });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        dialogRef.current[selectedRefIndex.value]?.close();
+      }
+    } else {
+      alert("Can't add to card because variant id not found");
     }
   };
-
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
@@ -95,53 +116,71 @@ const RequestItems = ({ id }: Props) => {
                     {product?.title}
                   </Typography>
                 </div>
-                {!dialogRef.current[index]?.open || !selectedMethod.value ? (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="!w-20 !border-primary-700 !text-app-primary-700 border-2 !rounded-lg uppercase"
-                    onClick={() => {
-                      handleDialog(index), (isAddClick.value = true);
-                    }}
-                  >
-                    Add
-                  </Button>
-                ) : (
-                  <ManageQty />
-                )}
+                <AddProduct
+                  product={product}
+                  index={index}
+                  handleDialog={handleDialog}
+                />
 
                 {/* close on outside click */}
                 <div
-                  className={`w-full h-full absolute ${
-                    isAddClick.value ? "z-10" : "-z-10"
-                  }`}
+                  className={`w-full h-full absolute  ${dialogRef.current[index]?.open}`}
                   onClick={() => {
-                    dialogRef.current[index].close(),
-                      (isAddClick.value = false);
+                    if (cart.loading.value !== "cart:line_items:add") {
+                      dialogRef.current[index]?.close();
+                    }
                   }}
                 />
                 <dialog
                   ref={(e) => (dialogRef.current[index] = e)}
                   className="absolute translate-x-full p-2 shadow-lg rounded-md z-10"
                 >
-                  <Radio
-                    name="add-method"
-                    label="Issue"
-                    value="issue"
-                    // checked={radioValue.value === "issue"}
-                    onChange={handleRadioInput}
-                  />
-                  <Radio
-                    name="add-method"
-                    label="Borrow"
-                    value="borrow"
-                    // checked={radioValue.value === "borrow"}
-                    onChange={handleRadioInput}
-                  />
+                  {cart.loading.value === "cart:line_items:add" ? (
+                    <Typography
+                      size="body2/normal"
+                      className="flex flex-col items-center"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class={
+                          "animate-spin w-6 stroke-primary-600 duration-500"
+                        }
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                        />
+                      </svg>
+                      Please Wait...
+                    </Typography>
+                  ) : (
+                    <>
+                      <Radio
+                        name="add-method"
+                        label="Issue"
+                        value="issue"
+                        onChange={handleRadioInput}
+                        disabled={cart.loading.value === "cart:line_items:add"}
+                      />
+                      <Radio
+                        name="add-method"
+                        label="Borrow"
+                        value="borrow"
+                        onChange={handleRadioInput}
+                        disabled={cart.loading.value === "cart:line_items:add"}
+                      />
+                    </>
+                  )}
                 </dialog>
               </div>
             ))}
             <OffsetPagination limit={limit} offset={offset} count={count} />
+            <ViewCartLayer />
           </div>
         ) : (
           <div className="h-40">

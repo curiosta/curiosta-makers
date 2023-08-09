@@ -16,7 +16,8 @@ import user from "@api/user";
 import Loading from "@/components/Loading";
 import admin from "@api/admin";
 import { isUser } from "./store/userState";
-import IssuedItemsDetails from "@components/IssuedItemsDetails";
+import IssuedItemsDetails from "@pages/IssuedItemsDetails";
+import PickItems from "@pages/PickItems";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
@@ -53,6 +54,7 @@ const App = () => {
       <Route path="/create-requests" component={Request} />
       <Route path="/create-requests/:id" component={RequestItems} />
       <Route path="/issued-items/:id" component={IssuedItemsDetails} />
+      <Route path="/pick-items/:id" component={PickItems} />
     </Router>
   );
 };

@@ -126,7 +126,7 @@ const Signup = () => {
             <Button
               type="submit"
               variant="primary"
-              className="mt-4"
+              className="mt-4 !w-full"
               disabled={isLoading.value}
             >
               {isLoading.value ? "Loading..." : "Sign Up"}

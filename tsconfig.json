@@ -22,53 +22,26 @@
       "@components/*": [
         "src/components/*"
       ],
-      "@ActivityCard/*": [
-        "src/components/ActivityCard/*"
-      ],
-      "@IssuedItems/*": [
-        "src/components/IssuedItems/*"
-      ],
-      "@Menubar/*": [
-        "src/components/Menubar/*"
-      ],
       "@api/*": [
         "src/api/*"
-      ],
-      "@medusa/*": [
-        "src/api/medusa/*"
-      ],
-      "@Loading/*": [
-        "src/components/Loading/*"
-      ],
-      "@admin/*": [
-        "src/api/admin/*"
       ],
       "@store/*": [
         "src/store/*"
       ],
-      "@MiddleContent/*": [
-        "src/components/MiddleContent/*"
-      ],
-      "@product/*": [
-        "src/api/product/*"
-      ],
-      "@OffsetPagination/*": [
-        "src/components/OffsetPagination/*"
-      ],
-      "@Radio/*": [
-        "src/components/Radio/*"
-      ],
-      "@ManageQty/*": [
-        "src/components/ManageQty/*"
-      ],
-      "@Snapshort/*": [
-        "src/components/Snapshort/*"
-      ],
-      "@IssuedItemsDetails/*": [
-        "src/components/IssuedItemsDetails/*"
-      ],
       "@Popup/*": [
         "src/components/Popup/*"
+      ],
+      "@cart/*": [
+        "src/api/cart/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@AddProduct/*": [
+        "src/components/AddProduct/*"
+      ],
+      "@ViewCartLayer/*": [
+        "src/components/ViewCartLayer/*"
       ]
     }
   },

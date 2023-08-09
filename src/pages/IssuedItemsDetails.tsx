@@ -6,11 +6,9 @@ import BottomNavbar from "@components/Navbar/BottomNavbar";
 import { useSignal } from "@preact/signals";
 import PopUp from "@components/Popup";
 
-const index = () => {
+const IssuedItemsDetails = () => {
   const isPopup = useSignal<boolean>(false);
-  const handlePopupAction = () => {
-    console.log("action clicked");
-  };
+
   return (
     <div className="flex flex-col justify-center items-center   p-4 w-full sm:w-1/4 ">
       <TopNavbar />
@@ -40,14 +38,10 @@ const index = () => {
           ))}
       </div>
       <div className=" w-full flex items-center justify-evenly">
-        <Button
-          type="button"
-          className="!w-fit"
-          onClick={() => (isPopup.value = true)}
-        >
+        <Button type="button" onClick={() => (isPopup.value = true)}>
           Approve
         </Button>
-        <Button type="button" variant="danger" className="!w-fit">
+        <Button type="button" variant="danger">
           Reject
         </Button>
       </div>
@@ -56,10 +50,11 @@ const index = () => {
         content="Request is approved and picking task is created successfully"
         subcontent="Pick Task id 345"
         actionText="Start Picking"
+        actionLink="/pick-items/345"
       />
       <BottomNavbar />
     </div>
   );
 };
 
-export default index;
+export default IssuedItemsDetails;

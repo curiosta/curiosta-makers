@@ -22,8 +22,8 @@ const index = ({
 }: PopUp) => {
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-full opacity-0 -z-10 backdrop-brightness-75 flex items-center justify-center ${
-        isPopup.value ? "!z-20 opacity-100" : ""
+      className={`fixed top-0 left-0 w-full h-full backdrop-brightness-75 items-center justify-center ${
+        isPopup.value ? "flex " : "hidden"
       }`}
     >
       {/* close on outside click */}
@@ -39,24 +39,17 @@ const index = ({
           {subcontent ? <Typography>{subcontent}</Typography> : null}
         </div>
 
-        <div className=" w-full flex items-center justify-between">
+        <div className=" w-full flex items-center justify-evenly">
           {actionLink ? (
-            <Button link={actionLink} className="!w-fit">
-              {actionText}
-            </Button>
+            <Button link={actionLink}>{actionText}</Button>
           ) : (
-            <Button
-              type="button"
-              className="!w-fit"
-              onClick={handlePopupAction}
-            >
+            <Button type="button" onClick={handlePopupAction}>
               {actionText}
             </Button>
           )}
           <Button
             type="button"
             variant="danger"
-            className="!w-fit"
             onClick={() => (isPopup.value = false)}
           >
             Closed
