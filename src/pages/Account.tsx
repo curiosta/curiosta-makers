@@ -4,9 +4,16 @@ import Typography from "@components/Typography";
 import Button from "@components/Button";
 import { useSignal } from "@preact/signals";
 import BottomNavbar from "@components/Navbar/BottomNavbar";
+import { isUser } from "@/store/userState";
+import user from "@/api/user";
+import admin from "@/api/admin";
+import Chip from "@/components/Chip";
 
 const Account = () => {
   const nightMode = useSignal<boolean>(false);
+  const currentUser = isUser.value
+    ? user.customer.value
+    : admin.adminData.value;
 
   const accountSettings = [
     {
@@ -173,9 +180,22 @@ const Account = () => {
       <TopNavbar />
       <div className="flex items-center gap-4 w-full rounded-2xl bg-secondray p-4 my-4">
         <div className="w-9 h-9 flex">
-          <img src={avatar} className="rounded-full" alt="profile-logo" />
+          <Chip className="!bg-primary-700 uppercase text-white">
+            {currentUser.first_name
+              ? currentUser.first_name.charAt(0)
+              : currentUser.email.charAt(0)}
+          </Chip>
         </div>
-        <Typography variant="secondary">Snigdha Priyadarshini</Typography>
+        {currentUser?.first_name ? (
+          <Typography
+            variant="secondary"
+            className="capitalize"
+          >{`${currentUser?.first_name} ${currentUser?.last_name}`}</Typography>
+        ) : (
+          <Typography variant="secondary" className="capitalize">
+            {currentUser?.email}
+          </Typography>
+        )}
       </div>
 
       <div className="w-full my-4">

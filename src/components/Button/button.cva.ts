@@ -9,7 +9,7 @@ const button = cva(
           "bg-primary-700",
           "focus:bg-primary-800",
           "hover:bg-primary-800",
-          "disabled:bg-primary-200",
+          "disabled:bg-primary-500",
           "disabled:pointer-events-none",
           "disabled:select-none",
           "focus-visible:outline-primary-800",
