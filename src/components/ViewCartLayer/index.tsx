@@ -1,10 +1,45 @@
+import cart from "@/api/cart";
 import Button from "@components/Button";
 import Typography from "@components/Typography";
+import { useSignal } from "@preact/signals";
+import { useEffect } from "preact/hooks";
 
-const ViewCartLayer = () => {
+type Props = {
+  borrowItems?: number;
+  actionText: string;
+  actionLink?: string;
+  handleAction?: () => void;
+};
+
+const ViewCartLayer = ({
+  actionText,
+  actionLink,
+  handleAction,
+  borrowItems,
+}: Props) => {
+  const isCartLayer = useSignal<boolean>(false);
+  const totalCartItems = cart.store.value?.items?.reduce(
+    (acc, curVal) => acc + curVal.quantity,
+    0
+  );
+
+  useEffect(() => {
+    if (totalCartItems > 0) {
+      isCartLayer.value = true;
+    } else {
+      isCartLayer.value = false;
+    }
+  }, [totalCartItems]);
+
+  const isCartPage = window.location.pathname === "/cart";
+
   return (
-    <div className="fixed bottom-0 left-0 z-10 bg-secondray p-4 ">
-      <div className="flex justify-between items-center">
+    <div
+      className={`fixed left-0 bottom-0 z-10  w-full bg-secondray transition-all shadow-lg ${
+        isCartLayer.value ? "translate-y-0" : "translate-y-full"
+      } `}
+    >
+      <div className="flex justify-between items-center relative p-4 ">
         <div className="flex items-center gap-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -18,9 +53,51 @@ const ViewCartLayer = () => {
               fill="#0B7278"
             />
           </svg>
-          <Typography>2 item(s) added</Typography>
+          <div>
+            <Typography>
+              Total {totalCartItems} {`item${totalCartItems > 1 ? "s" : ""}`}{" "}
+              added
+            </Typography>
+            {borrowItems ? (
+              <Typography size="body2/normal">
+                {borrowItems} {`item${borrowItems > 1 ? "s" : ""}`} added as
+                Borrow Request
+              </Typography>
+            ) : null}
+          </div>
         </div>
-        <Button type="button">View Cart</Button>
+        {actionLink ? (
+          <Button link={actionLink}>{actionText}</Button>
+        ) : (
+          <Button type="button" onClick={handleAction}>
+            {actionText}
+          </Button>
+        )}
+        {!isCartPage ? (
+          <Button
+            type="button"
+            variant="icon"
+            className={`absolute right-0  !p-1 bg-secondray ${
+              isCartLayer.value ? "-top-4" : "top-0"
+            } `}
+            onClick={() => (isCartLayer.value = false)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-6 h-6 stroke-danger-600"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </Button>
+        ) : null}
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ const Welcome = () => {
           Away!
         </Typography>
 
-        <Button link="/login" variant="primary">
+        <Button link="/login" variant="primary" className="w-full">
           Get Started!
         </Button>
       </div>

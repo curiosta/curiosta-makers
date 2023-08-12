@@ -8,6 +8,7 @@ import { ChangeEvent } from "preact/compat";
 
 const ManageQty = ({ productItem }: { productItem: LineItem }) => {
   const loadingQty = useSignal<boolean>(false);
+  const loadingInputQty = useSignal<boolean>(false);
   const errorMessage = useSignal<string | null>(null);
 
   const increaseQty = async () => {
@@ -40,6 +41,7 @@ const ManageQty = ({ productItem }: { productItem: LineItem }) => {
   const handleQty = async (e: ChangeEvent<HTMLInputElement>) => {
     const quantity = e.currentTarget.valueAsNumber;
     errorMessage.value = null;
+    loadingInputQty.value = true;
     try {
       await cart.setItemQuantity(productItem.id, quantity);
     } catch (error) {
@@ -47,8 +49,12 @@ const ManageQty = ({ productItem }: { productItem: LineItem }) => {
       if (error instanceof Error) {
         errorMessage.value = error.message;
       }
+    } finally {
+      loadingInputQty.value = false;
     }
   };
+
+  const isCartPage = window.location.pathname === "/cart";
 
   return (
     <div
@@ -101,9 +107,12 @@ const ManageQty = ({ productItem }: { productItem: LineItem }) => {
           <div className="w-12">
             <Input
               type="number"
-              className="text-center"
+              className={`text-center ${
+                loadingInputQty.value ? "bg-gray-100" : ""
+              }`}
               value={productItem.quantity}
               onBlur={handleQty}
+              disabled={loadingInputQty.value}
             />
           </div>
         )}
@@ -157,12 +166,16 @@ const ManageQty = ({ productItem }: { productItem: LineItem }) => {
         </Button>
       </div>
 
-      <Typography size="body2/normal" className="capitalize">
-        {productItem.metadata?.cartType} Request
-      </Typography>
+      {!isCartPage ? (
+        <Typography size="body2/normal" className="capitalize">
+          {productItem.metadata?.cartType} Request
+        </Typography>
+      ) : null}
 
       <div
-        className={`absolute top-full rounded-lg shadow-xl p-1.5 bg-secondray z-10 ${
+        className={`absolute ${
+          isCartPage ? "top-full" : "-bottom-4"
+        }  rounded-lg shadow-xl p-1.5 bg-secondray z-10 ${
           errorMessage.value ? "block" : "hidden"
         }`}
       >

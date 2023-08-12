@@ -3,12 +3,10 @@ import Typography from "@components/Typography";
 import led_icon from "@assets/led.svg";
 import Button from "@components/Button";
 import BottomNavbar from "@components/Navbar/BottomNavbar";
-import { useSignal } from "@preact/signals";
 import PopUp from "@components/Popup";
+import { isPopup } from "@/store/popUpState";
 
 const IssuedItemsDetails = () => {
-  const isPopup = useSignal<boolean>(false);
-
   return (
     <div className="flex flex-col justify-center items-center   p-4 w-full sm:w-1/4 ">
       <TopNavbar />
@@ -46,9 +44,8 @@ const IssuedItemsDetails = () => {
         </Button>
       </div>
       <PopUp
-        isPopup={isPopup}
-        content="Request is approved and picking task is created successfully"
-        subcontent="Pick Task id 345"
+        title="Request is approved and picking task is created successfully"
+        subtitle="Pick Task id 345"
         actionText="Start Picking"
         actionLink="/pick-items/345"
       />

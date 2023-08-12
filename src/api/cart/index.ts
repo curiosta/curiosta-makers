@@ -14,6 +14,9 @@ import { effect, signal } from "@preact/signals";
 type TCart = Omit<Cart, "refundable_amount" | "refunded_total">;
 type TCartMetadata = {
   cartType: string;
+  borrow?: {
+    returnDate: string;
+  };
 };
 type TCartUpdatePayload = Omit<StorePostCartsCartReq, "metadata"> & {
   metadata?: TCartMetadata;
@@ -195,6 +198,28 @@ class CartStore {
     const response = await medusa.carts.lineItems.delete(
       this.store.value.id,
       id
+    );
+    this.store.value = response.cart;
+    this.loading.value = undefined;
+  }
+
+  async updateItemMetaData({
+    id,
+    metadata,
+  }: {
+    id: string;
+    metadata: TCartMetadata;
+  }) {
+    if (!this.store.value)
+      throw new Error(
+        "Cart was not initialize before using cart.setItemQuantity function."
+      );
+    this.loading.value = "cart:line_items:update";
+    const item = this.store.value.items.find((item) => item.id === id);
+    const response = await medusa.carts.lineItems.update(
+      this.store.value.id,
+      id,
+      { quantity: item.quantity, metadata }
     );
     this.store.value = response.cart;
     this.loading.value = undefined;

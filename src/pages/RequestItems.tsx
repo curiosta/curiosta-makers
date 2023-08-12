@@ -1,5 +1,4 @@
 import { listProducts } from "@/api/product/listProducts";
-import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
@@ -11,7 +10,6 @@ import { useEffect, useRef } from "preact/hooks";
 import OffsetPagination from "@components/OffsetPagination";
 import Radio from "@/components/Radio";
 import { ChangeEvent } from "preact/compat";
-import ManageQty from "@/components/ManageQty";
 import cart from "@/api/cart";
 import AddProduct from "@/components/AddProduct";
 import ViewCartLayer from "@/components/ViewCartLayer";
@@ -27,7 +25,6 @@ const RequestItems = ({ id }: Props) => {
   const limit = useSignal<number>(9);
   const offset = useSignal<number>(0);
   const dialogRef = useRef<HTMLDialogElement[]>([]);
-  const isAddClick = useSignal<boolean>(false);
   const selectedCartType = useSignal<string | null>(null);
   const selectedVariantId = useSignal<string | null>(null);
   const selectedRefIndex = useSignal<number | null>(null);
@@ -180,14 +177,15 @@ const RequestItems = ({ id }: Props) => {
               </div>
             ))}
             <OffsetPagination limit={limit} offset={offset} count={count} />
-            <ViewCartLayer />
           </div>
         ) : (
           <div className="h-40">
             <Loading />
           </div>
         )}
+        <ViewCartLayer actionText="View Cart" actionLink="/cart" />
       </div>
+
       <BottomNavbar />
     </div>
   );
