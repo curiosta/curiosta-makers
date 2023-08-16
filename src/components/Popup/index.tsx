@@ -1,29 +1,30 @@
-import { isPopup } from "@/store/popUpState";
 import Button from "@components/Button";
 import Typography from "@components/Typography";
 import Radio from "@components/Radio";
-import Input from "../Input";
+import Input from "@components/Input";
 import { Signal, useSignal } from "@preact/signals";
-import { useRef } from "preact/hooks";
 
 type PopUp = {
   title: string;
   subtitle?: string;
+  isPopup?: Signal<boolean>;
   actionText: string;
   actionLink?: string;
   formContents?: string[];
   handlePopupAction?: (e?: any) => void;
   selectedDate?: Signal<string>;
+  selectedDateLoading?: Signal<boolean>;
 };
 
 const index = ({
   title,
   subtitle,
+  isPopup,
   actionText,
   actionLink,
   formContents,
-  selectedDate,
   handlePopupAction,
+  selectedDateLoading,
 }: PopUp) => {
   const isCustomDate = useSignal(false);
 
@@ -41,18 +42,29 @@ const index = ({
       }`}
     >
       {/* close on outside click */}
-      <div
-        className="block w-full h-full"
-        onClick={() => (isPopup.value = false)}
-      />
+      {formContents ? (
+        <div
+          className="block w-full h-full"
+          onClick={() =>
+            !selectedDateLoading.value ? (isPopup.value = false) : null
+          }
+        />
+      ) : (
+        <div
+          className="block w-full h-full"
+          onClick={() => (isPopup.value = false)}
+        />
+      )}
       <div
         className={`absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6`}
       >
         <div className="flex flex-col text-center gap-2 mb-4">
-          <Typography className={formContents.length ? "!font-semibold" : ""}>
+          <Typography className={formContents?.length ? "!font-semibold" : ""}>
             {title}
           </Typography>
-          {subtitle ? <Typography>{subtitle}</Typography> : null}
+          {subtitle ? (
+            <Typography className="break-words">{subtitle}</Typography>
+          ) : null}
         </div>
 
         {formContents ? (
@@ -91,14 +103,16 @@ const index = ({
                 type="button"
                 variant="danger"
                 onClick={() => (isPopup.value = false)}
+                className={"disabled:grayscale"}
+                disabled={selectedDateLoading.value}
               >
-                Closed
+                {selectedDateLoading.value ? "Please wait.." : "Closed"}
               </Button>
             </div>
           </div>
         ) : null}
 
-        {!formContents.length ? (
+        {!formContents?.length ? (
           <div className=" w-full flex items-center justify-evenly">
             {actionLink ? (
               <Button link={actionLink}>{actionText}</Button>

@@ -14,9 +14,7 @@ import { effect, signal } from "@preact/signals";
 type TCart = Omit<Cart, "refundable_amount" | "refunded_total">;
 type TCartMetadata = {
   cartType: string;
-  borrow?: {
-    returnDate: string;
-  };
+  borrowReturnDate?: string;
 };
 type TCartUpdatePayload = Omit<StorePostCartsCartReq, "metadata"> & {
   metadata?: TCartMetadata;
@@ -33,8 +31,15 @@ type TLoadableOptionsList = {
     | "reset"
     | "complete"
     | {
-        line_items: "get" | "add" | "remove" | "update" | { quantity: "" };
+        line_items:
+          | "get"
+          | "add"
+          | "remove"
+          | "update"
+          | "update_metadata"
+          | { quantity: "" };
         shipping: "all" | "set";
+        payment_session: "create";
       };
 };
 
@@ -116,7 +121,7 @@ class CartStore {
       const { set } = useLocalStorage();
       set("cartId", result.cart.id);
     }
-    await this.listShippingMethods();
+    // await this.listShippingMethods();
     this.loading.value = undefined;
   }
   async updateCart(payload: TCartUpdatePayload) {
@@ -204,23 +209,27 @@ class CartStore {
   }
 
   async updateItemMetaData({
-    id,
+    variant_id,
+    quantity,
     metadata,
   }: {
-    id: string;
+    variant_id: string;
+    quantity: number;
     metadata: TCartMetadata;
   }) {
     if (!this.store.value)
       throw new Error(
         "Cart was not initialize before using cart.setItemQuantity function."
       );
-    this.loading.value = "cart:line_items:update";
-    const item = this.store.value.items.find((item) => item.id === id);
-    const response = await medusa.carts.lineItems.update(
-      this.store.value.id,
-      id,
-      { quantity: item.quantity, metadata }
-    );
+    this.loading.value = "cart:line_items:update_metadata";
+    // const item = this.store.value.items.find(
+    //   (item) => item.variant_id === variant_id
+    // );
+    const response = await medusa.carts.lineItems.create(this.store.value.id, {
+      variant_id,
+      quantity,
+      metadata,
+    });
     this.store.value = response.cart;
     this.loading.value = undefined;
   }
@@ -281,12 +290,23 @@ class CartStore {
     this.store.value = result.cart;
   }
 
+  // create payment session
+  async createPaymentSession() {
+    if (!this.store.value?.id) return null;
+    await medusa.carts.createPaymentSessions(this.store.value.id);
+    await medusa.carts.updatePaymentSession(this.store.value.id, "manual", {
+      data: {},
+    });
+  }
+
   // complete cart
   async completeCart(id: string) {
     if (!this.store.value?.id) return null;
     this.loading.value = "cart:complete";
+    await this.createPaymentSession();
     const result = await medusa.carts.complete(id);
     this.orderStore.value = result;
+    await this.resetCartId();
     this.loading.value = undefined;
   }
 }

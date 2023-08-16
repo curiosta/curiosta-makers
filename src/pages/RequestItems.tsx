@@ -113,11 +113,15 @@ const RequestItems = ({ id }: Props) => {
                     {product?.title}
                   </Typography>
                 </div>
-                <AddProduct
-                  product={product}
-                  index={index}
-                  handleDialog={handleDialog}
-                />
+                {product.variants[0]?.inventory_quantity > 0 ? (
+                  <AddProduct
+                    product={product}
+                    index={index}
+                    handleDialog={handleDialog}
+                  />
+                ) : (
+                  <Typography variant="error">Out of stock</Typography>
+                )}
 
                 {/* close on outside click */}
                 <div
@@ -180,7 +184,7 @@ const RequestItems = ({ id }: Props) => {
           </div>
         ) : (
           <div className="h-40">
-            <Loading />
+            <Loading loadingText="loading" />
           </div>
         )}
         <ViewCartLayer actionText="View Cart" actionLink="/cart" />

@@ -29,7 +29,7 @@ const App = () => {
   if (!publicRoute.includes(currentUrl.value) && userState === "loading") {
     return (
       <div className="h-screen">
-        <Loading />
+        <Loading loadingText="loading" />
       </div>
     );
   }

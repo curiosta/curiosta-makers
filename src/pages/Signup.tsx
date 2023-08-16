@@ -5,12 +5,16 @@ import FormControl from "@components/FormControl";
 import { useSignal } from "@preact/signals";
 import { route } from "preact-router";
 import Checkbox from "@components/Checkbox";
+import user from "@/api/user";
+import { useRef } from "preact/hooks";
 
 const Signup = () => {
   const errorMessage = useSignal<string>("");
   const isLoading = useSignal<boolean>(false);
+  const termsRef = useRef<HTMLInputElement>(null);
+  const isChecked = useSignal<boolean>(false);
 
-  const handleCreateUser = (data: any) => {
+  const handleCreateUser = async (data: any) => {
     isLoading.value = true;
     if (errorMessage.value) {
       errorMessage.value = "";
@@ -19,14 +23,17 @@ const Signup = () => {
 
     try {
       if (password === cpassword) {
+        if (!isChecked.value)
+          return (errorMessage.value = "Please checked terms and conditions!");
+        await user.register({ first_name, last_name, email, password });
         route("/home");
       } else {
-        errorMessage.value = "Password and confirmation password do not match.";
+        errorMessage.value = "Password and confirmation password do not match!";
       }
     } catch (error) {
       const errorResponse = (error as any)?.toJSON?.();
       if (errorResponse) {
-        errorMessage.value = "Failed to create account.";
+        errorMessage.value = "Failed to create account!";
       }
     } finally {
       isLoading.value = false;
@@ -69,7 +76,10 @@ const Signup = () => {
                 label="Last Name"
                 required={{ message: "Last name is required!", value: true }}
                 autocomplete="family-name"
-                minLength={3}
+                minLength={{
+                  message: "Minimum 3 characters are required!",
+                  value: 3,
+                }}
                 maxLength={20}
                 placeholder={"Doe"}
               />
@@ -121,7 +131,12 @@ const Signup = () => {
               placeholder="Confirm new password"
             />
 
-            <Checkbox label="I agree to the Terms and Conditions and Privacy Policy" />
+            <Checkbox
+              name="terms"
+              label="I agree to the Terms and Conditions and Privacy Policy"
+              defaultChecked={true}
+              onChange={(e) => (isChecked.value = e.currentTarget.checked)}
+            />
 
             <Button
               type="submit"

@@ -71,7 +71,7 @@ const Request = () => {
           </div>
         ) : (
           <div className="h-40">
-            <Loading />
+            <Loading loadingText="loading" />
           </div>
         )}
       </div>
