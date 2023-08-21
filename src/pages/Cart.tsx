@@ -227,7 +227,7 @@ const Cart = () => {
           title="Request is placed successfully"
           subtitle={`Request ID: ${cart.orderStore?.value?.data?.id}`}
           actionText="Check request"
-          actionLink="#"
+          actionLink={`/orders/${cart.orderStore.value?.data?.id}`}
           isPopup={isCartComplete}
         />
       )}

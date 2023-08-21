@@ -16,7 +16,7 @@ type PopUp = {
   selectedDateLoading?: Signal<boolean>;
 };
 
-const index = ({
+const PopUp = ({
   title,
   subtitle,
   isPopup,
@@ -135,4 +135,4 @@ const index = ({
   );
 };
 
-export default index;
+export default PopUp;

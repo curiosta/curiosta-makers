@@ -1,17 +1,81 @@
+import { adminGetOrders } from "@/api/admin/orders/getOrder";
+import { adminFulfillment } from "@/api/admin/orders/orderFulfil";
+import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
 import Button from "@/components/Button";
-import Chip from "@/components/Chip";
+import Input from "@/components/Input";
+import Loading from "@/components/Loading";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
+import PopUp from "@/components/Popup";
+import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import Typography from "@/components/Typography";
-import led_icon from "@assets/led.svg";
+import { LineItem, Order } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
+import { useEffect } from "preact/hooks";
 
 type Props = {
   id: string;
 };
 
+type PickedItem = {
+  item_id: string;
+  quantity: number;
+};
+
+type TLoadableOptions = "order:get" | "order:update" | "order:fulfill";
+
 const PickItems = ({ id }: Props) => {
-  const isPicked = useSignal<boolean>(false);
+  const order = useSignal<Order | null>(null);
+  const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
+  const isPopup = useSignal<boolean>(false);
+
+  const pickedItems = useSignal<PickedItem[]>([]);
+
+  const getOrderInfo = async () => {
+    isLoading.value = "order:get";
+    try {
+      const res = await adminGetOrders(id);
+      order.value = res?.order;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
+  useEffect(() => {
+    getOrderInfo();
+  }, [id]);
+
+  const handlePick = (item: LineItem) => {
+    pickedItems.value = [
+      ...pickedItems.value,
+      { item_id: item.id, quantity: item.quantity },
+    ];
+  };
+
+  const handleShortClose = (item: LineItem) => {};
+
+  const handleUpdateOrder = async () => {
+    isLoading.value = "order:update";
+    try {
+      await adminUpdateOrder(id);
+      isPopup.value = true;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
+  const handleFulfill = async () => {
+    isLoading.value = "order:fulfill";
+    try {
+      await adminFulfillment(id, pickedItems.value);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
 
   return (
     <div className="flex flex-col justify-center items-center   p-4 w-full sm:w-1/4 ">
@@ -19,19 +83,22 @@ const PickItems = ({ id }: Props) => {
       <div className="my-2">
         <Typography size="h6/normal">Pick Items</Typography>
       </div>
-      <Typography size="body1/normal" className="w-full">
+      <Typography size="body1/normal" className="w-full truncate">
         Pick Id {id}
       </Typography>
-      <div className="flex flex-col gap-4 my-2 mb-12">
-        {Array(5)
-          .fill(1)
-          .map((item, index) => (
+      {isLoading.value !== "order:get" ? (
+        <div className="flex flex-col gap-4 my-2 mb-12">
+          {order.value?.items?.map((item, index) => (
             <div className="w-full bg-secondray shadow-lg rounded-2xl p-4">
               <Typography size="small/normal">Item {index + 1}</Typography>
               <div className="flex gap-2 border-b">
-                <img src={led_icon} alt="icon" className="w-8" />
+                <img
+                  src={item.thumbnail || "N/A"}
+                  alt={item.title}
+                  className="w-8 object-cover"
+                />
                 <Typography size="body1/normal" className="text-start">
-                  LED RED CLEAR 1206 SMD...
+                  {item.title}
                 </Typography>
               </div>
               <div className="grid grid-cols-5 w-full items-center my-2">
@@ -54,24 +121,18 @@ const PickItems = ({ id }: Props) => {
                 <Typography>Rack 1</Typography>
                 <Typography className="whitespace-nowrap">Bin CA01</Typography>
               </div>
-              <div className="flex items-center w-full justify-evenly ">
-                <Typography className="flex items-center gap-2">
-                  Qty<Chip className="!bg-gray-100">1</Chip>
-                </Typography>
+              <div className="flex items-center w-full justify-evenly gap-2 ">
+                <Typography className="">Qty</Typography>
+                <div className="w-12">
+                  <Input
+                    type="number"
+                    className={`text-center disabled:bg-gray-100 `}
+                    value={item.quantity}
+                    disabled={true}
+                  />
+                </div>
 
-                {!isPicked.value ? (
-                  <div className="flex items-center justify-evenly w-full">
-                    <Button
-                      type="button"
-                      onClick={() => (isPicked.value = true)}
-                    >
-                      Pick
-                    </Button>
-                    <Button type="button" variant="danger">
-                      Short closed
-                    </Button>
-                  </div>
-                ) : (
+                {pickedItems.value?.some((val) => val.item_id === item.id) ? (
                   <Button
                     type="button"
                     variant="secondary"
@@ -91,14 +152,50 @@ const PickItems = ({ id }: Props) => {
                     </svg>
                     Picked
                   </Button>
+                ) : (
+                  <div className="flex items-center justify-evenly w-full">
+                    <Button type="button" onClick={() => handlePick(item)}>
+                      Pick
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="danger"
+                      onClick={() => handleShortClose(item)}
+                    >
+                      Short closed
+                    </Button>
+                  </div>
                 )}
               </div>
             </div>
           ))}
-        <div className="w-full flex justify-center my-2">
-          <Button type="button">Fullfil</Button>
+          <div className="w-full flex justify-center my-2">
+            <Button
+              type="button"
+              onClick={handleUpdateOrder}
+              disabled={!pickedItems.value.length}
+            >
+              {isLoading.value === "order:update"
+                ? "Please wait.."
+                : "Update order"}
+            </Button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="h-40">
+          <Loading loadingText="loading" />
+        </div>
+      )}
+      <PopUp
+        title={`To Be Picked ${order.value?.items.length}`}
+        subtitle={`Actual Picked ${pickedItems.value?.length} `}
+        actionText="Fullfil"
+        handlePopupAction={handleFulfill}
+        isPopup={isPopup}
+      />
+      {isLoading.value === "order:fulfill" ? (
+        <LoadingPopUp loadingText="Please wait" />
+      ) : null}
       <BottomNavbar />
     </div>
   );

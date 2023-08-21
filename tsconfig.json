@@ -28,20 +28,8 @@
       "@store/*": [
         "src/store/*"
       ],
-      "@Popup/*": [
-        "src/components/Popup/*"
-      ],
-      "@cart/*": [
-        "src/api/cart/*"
-      ],
       "@hooks/*": [
         "src/hooks/*"
-      ],
-      "@AddProduct/*": [
-        "src/components/AddProduct/*"
-      ],
-      "@ViewCartLayer/*": [
-        "src/components/ViewCartLayer/*"
       ]
     }
   },
