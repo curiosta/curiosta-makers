@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
@@ -10,43 +11,18 @@
     "jsxImportSource": "preact",
     "baseUrl": ".",
     "paths": {
-      "@assets/*": [
-        "src/assets/*"
-      ],
-      "@pages/*": [
-        "src/pages/*"
-      ],
-      "@/*": [
-        "src/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@api/*": [
-        "src/api/*"
-      ],
-      "@store/*": [
-        "src/store/*"
-      ],
-      "@Popup/*": [
-        "src/components/Popup/*"
-      ],
-      "@cart/*": [
-        "src/api/cart/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@AddProduct/*": [
-        "src/components/AddProduct/*"
-      ],
-      "@ViewCartLayer/*": [
-        "src/components/ViewCartLayer/*"
-      ]
+      "@assets/*": ["src/assets/*"],
+      "@pages/*": ["src/pages/*"],
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@api/*": ["src/api/*"],
+      "@store/*": ["src/store/*"],
+      "@Popup/*": ["src/components/Popup/*"],
+      "@cart/*": ["src/api/cart/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@AddProduct/*": ["src/components/AddProduct/*"],
+      "@ViewCartLayer/*": ["src/components/ViewCartLayer/*"]
     }
   },
-  "include": [
-    "node_modules/vite/client.d.ts",
-    "**/*"
-  ]
+  "include": ["node_modules/vite/client.d.ts", "**/*"]
 }
