@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
@@ -10,49 +11,18 @@
     "jsxImportSource": "preact",
     "baseUrl": ".",
     "paths": {
-      "@assets/*": [
-        "src/assets/*"
-      ],
-      "@pages/*": [
-        "src/pages/*"
-      ],
-      "@/*": [
-        "src/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@ActivityCard/*": [
-        "src/components/ActivityCard/*"
-      ],
-      "@IssuedItems/*": [
-        "src/components/IssuedItems/*"
-      ],
-      "@Menubar/*": [
-        "src/components/Menubar/*"
-      ],
-      "@api/*": [
-        "src/api/*"
-      ],
-      "@medusa/*": [
-        "src/api/medusa/*"
-      ],
-      "@Loading/*": [
-        "src/components/Loading/*"
-      ],
-      "@admin/*": [
-        "src/api/admin/*"
-      ],
-      "@store/*": [
-        "src/store/*"
-      ],
-      "@MiddleContent/*": [
-        "src/components/MiddleContent/*"
-      ]
+      "@assets/*": ["src/assets/*"],
+      "@pages/*": ["src/pages/*"],
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@api/*": ["src/api/*"],
+      "@store/*": ["src/store/*"],
+      "@Popup/*": ["src/components/Popup/*"],
+      "@cart/*": ["src/api/cart/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@AddProduct/*": ["src/components/AddProduct/*"],
+      "@ViewCartLayer/*": ["src/components/ViewCartLayer/*"]
     }
   },
-  "include": [
-    "node_modules/vite/client.d.ts",
-    "**/*"
-  ]
+  "include": ["node_modules/vite/client.d.ts", "**/*"]
 }

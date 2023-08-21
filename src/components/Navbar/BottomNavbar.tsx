@@ -1,6 +1,5 @@
 import Button from "@components/Button";
 import Typography from "@components/Typography";
-import { useSignal } from "@preact/signals";
 
 const BottomNavbar = () => {
   const activePath = window.location.pathname;

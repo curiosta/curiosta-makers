@@ -72,12 +72,16 @@ const Guide = () => {
           </div>
         ))}
         <div className="w-full flex flex-col gap-2">
-          <Button type="button" onClick={handleNext} className="!rounded-xl">
+          <Button
+            type="button"
+            onClick={handleNext}
+            className="!rounded-xl w-full"
+          >
             Next
           </Button>
           <Button
             type="button"
-            className={"!bg-primary-100 text-primary-900 !rounded-xl"}
+            className={"!bg-primary-100 text-primary-900 !rounded-xl w-full"}
             onClick={() => route("/welcome")}
           >
             Skip

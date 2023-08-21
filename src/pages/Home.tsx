@@ -8,6 +8,7 @@ import { isUser } from "@/store/userState";
 import user from "@/api/user";
 import admin from "@/api/admin";
 import MiddleContent from "@/components/MiddleContent";
+import Snapshort from "@/components/Snapshort";
 
 const Home = () => {
   const currentUser = isUser.value
@@ -22,6 +23,11 @@ const Home = () => {
           {currentUser.first_name ? currentUser.first_name : currentUser.email}
           👋
         </Typography>
+        <Typography>
+          Hello{" "}
+          {currentUser.first_name ? currentUser.first_name : currentUser.email}
+          👋
+        </Typography>
         <Typography size="small/normal">
           Let’s find you something to make
         </Typography>
@@ -29,7 +35,9 @@ const Home = () => {
       <SearchInput />
       <ActivityCard />
       {!isUser.value ? <MiddleContent /> : null}
+      {!isUser.value ? <MiddleContent /> : null}
       <IssuedItems />
+      {!isUser.value ? <Snapshort /> : null}
       <BottomNavbar />
     </div>
   );

@@ -1,22 +1,26 @@
 import Typography from "@components/Typography";
 
-const Loading = () => {
+const Loading = ({ loadingText }: { loadingText: string }) => {
   return (
-    <div className="w-full h-screen flex justify-center">
+    <div className="w-full h-full flex justify-center">
       <div className="flex justify-center items-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="25"
-          height="35"
-          viewBox="0 0 12 20"
           fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class={"animate-spin w-6 stroke-primary-600 duration-500"}
         >
           <path
-            d="M12 20L11.99 14L8 10L11.99 5.99L12 0H0V6L4 10L0 13.99V20H12ZM2 5.5V2H10V5.5L6 9.5L2 5.5Z"
-            fill="#0B7278"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
           />
         </svg>
-        <Typography size="h6/semi-bold">Loading...</Typography>
+        <Typography size="body1/semi-bold" className="capitalize">
+          {loadingText}...
+        </Typography>
       </div>
     </div>
   );

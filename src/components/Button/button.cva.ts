@@ -14,7 +14,7 @@ const button = cva(
           "disabled:select-none",
           "focus-visible:outline-primary-800",
           "text-white",
-          "py-3 px-8 w-full",
+          "py-3 px-4 w-fit",
         ],
         secondary: [
           "bg-secondary",
@@ -25,9 +25,9 @@ const button = cva(
           "focus:ring-offset-2",
           "active:bg-gray-100",
           "disabled:bg-secondary-200",
-          "text-primary-600",
-          "border border-gray-300",
-          "px-4 py-2 w-full",
+          "text-app-primary-700",
+          "border border-primary-700",
+          "px-4 py-2 w-fit",
         ],
         dropDown: [
           "bg-secondary",
@@ -42,7 +42,7 @@ const button = cva(
           "hover:bg-danger-600",
           "focus-visible:outline-danger-600",
           "text-white",
-          "py-3 px-8 w-full",
+          "py-3 px-4 w-fit",
         ],
         icon: ["p-2 !shadow-none"],
         "icon-active": [
