@@ -4,16 +4,17 @@ import Radio from "@components/Radio";
 import Input from "@components/Input";
 import { Signal, useSignal } from "@preact/signals";
 
-type PopUp = {
+type TPopUp = {
   title: string;
   subtitle?: string;
-  isPopup?: Signal<boolean>;
-  actionText: string;
+  isPopup: Signal<boolean>;
+  actionText?: string;
   actionLink?: string;
   formContents?: string[];
   handlePopupAction?: (e?: any) => void;
   selectedDate?: Signal<string>;
   selectedDateLoading?: Signal<boolean>;
+  errorMessage?: string;
 };
 
 const PopUp = ({
@@ -25,7 +26,8 @@ const PopUp = ({
   formContents,
   handlePopupAction,
   selectedDateLoading,
-}: PopUp) => {
+  errorMessage,
+}: TPopUp) => {
   const isCustomDate = useSignal(false);
 
   // today date and future dates
@@ -66,7 +68,6 @@ const PopUp = ({
             <Typography className="break-words">{subtitle}</Typography>
           ) : null}
         </div>
-
         {formContents ? (
           <div className="flex flex-col gap-2">
             {formContents.map((content) => (
@@ -106,18 +107,21 @@ const PopUp = ({
                 className={"disabled:grayscale"}
                 disabled={selectedDateLoading.value}
               >
-                {selectedDateLoading.value ? "Please wait.." : "Closed"}
+                {selectedDateLoading.value ? "Please wait.." : "Close"}
               </Button>
             </div>
           </div>
         ) : null}
-
         {!formContents?.length ? (
           <div className=" w-full flex items-center justify-evenly">
             {actionLink ? (
               <Button link={actionLink}>{actionText}</Button>
             ) : (
-              <Button type="button" onClick={handlePopupAction}>
+              <Button
+                type="button"
+                className={`${actionText ? "flex" : "hidden"}`}
+                onClick={handlePopupAction}
+              >
                 {actionText}
               </Button>
             )}
@@ -126,9 +130,14 @@ const PopUp = ({
               variant="danger"
               onClick={() => (isPopup.value = false)}
             >
-              Closed
+              Close
             </Button>
           </div>
+        ) : null}
+        {errorMessage ? (
+          <Typography variant="error" className="text-center mt-2">
+            {errorMessage}
+          </Typography>
         ) : null}
       </div>
     </div>

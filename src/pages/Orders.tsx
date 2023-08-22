@@ -9,7 +9,6 @@ import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import OffsetPagination from "@components/OffsetPagination";
 import { isUser } from "@/store/userState";
-import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { adminOrdersList } from "@/api/admin/orders/ordersList";
 
 const Orders = () => {

@@ -23,7 +23,7 @@ const index: FunctionComponent<TOffsetPagination> = ({
     <div
       class={`${
         hidePagination ? "hidden" : "flex"
-      } items-center justify-between border-t border-gray-200 mt-12 py-3 sm:px-6`}
+      } items-center justify-between border-t border-gray-200 mt-4 py-3 sm:px-6`}
       aria-label="Pagination"
     >
       <div class="hidden sm:block">

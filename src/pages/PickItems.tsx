@@ -2,6 +2,7 @@ import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { adminFulfillment } from "@/api/admin/orders/orderFulfil";
 import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
 import Button from "@/components/Button";
+import Chip from "@/components/Chip";
 import Input from "@/components/Input";
 import Loading from "@/components/Loading";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
@@ -28,6 +29,8 @@ const PickItems = ({ id }: Props) => {
   const order = useSignal<Order | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const isPopup = useSignal<boolean>(false);
+  const isFulfillComplete = useSignal<boolean>(false);
+  const errorMessage = useSignal<string>("");
 
   const pickedItems = useSignal<PickedItem[]>([]);
 
@@ -56,22 +59,37 @@ const PickItems = ({ id }: Props) => {
   const handleShortClose = (item: LineItem) => {};
 
   const handleUpdateOrder = async () => {
+    if (errorMessage.value) {
+      errorMessage.value = "";
+    }
     isLoading.value = "order:update";
     try {
       await adminUpdateOrder(id);
       isPopup.value = true;
     } catch (error) {
+      if (error instanceof Error) {
+        errorMessage.value = error.message;
+      }
     } finally {
       isLoading.value = undefined;
     }
   };
 
   const handleFulfill = async () => {
+    if (errorMessage.value) {
+      errorMessage.value = "";
+    }
     isLoading.value = "order:fulfill";
     try {
-      await adminFulfillment(id, pickedItems.value);
+      const fulfill = await adminFulfillment(id, pickedItems.value);
+      order.value = fulfill?.order;
+      isFulfillComplete.value = true;
     } catch (error) {
-      console.log(error);
+      if (error instanceof Error) {
+        if (error.message.includes("status code 400")) {
+          errorMessage.value = "Order has been already fulfilled";
+        }
+      }
     } finally {
       isLoading.value = undefined;
     }
@@ -122,21 +140,22 @@ const PickItems = ({ id }: Props) => {
                 <Typography className="whitespace-nowrap">Bin CA01</Typography>
               </div>
               <div className="flex items-center w-full justify-evenly gap-2 ">
-                <Typography className="">Qty</Typography>
-                <div className="w-12">
-                  <Input
-                    type="number"
-                    className={`text-center disabled:bg-gray-100 `}
-                    value={item.quantity}
-                    disabled={true}
-                  />
+                <div className="flex items-center gap-2">
+                  <Typography>Qty</Typography>
+                  <Chip className="!bg-gray-100 !rounded-md ">
+                    {item.quantity}
+                  </Chip>
                 </div>
-
                 {pickedItems.value?.some((val) => val.item_id === item.id) ? (
                   <Button
                     type="button"
                     variant="secondary"
                     className="items-center gap-3"
+                    onClick={() =>
+                      (pickedItems.value = pickedItems.value.filter(
+                        (val) => val.item_id !== item.id
+                      ))
+                    }
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -153,18 +172,9 @@ const PickItems = ({ id }: Props) => {
                     Picked
                   </Button>
                 ) : (
-                  <div className="flex items-center justify-evenly w-full">
-                    <Button type="button" onClick={() => handlePick(item)}>
-                      Pick
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="danger"
-                      onClick={() => handleShortClose(item)}
-                    >
-                      Short closed
-                    </Button>
-                  </div>
+                  <Button type="button" onClick={() => handlePick(item)}>
+                    Pick
+                  </Button>
                 )}
               </div>
             </div>
@@ -186,16 +196,32 @@ const PickItems = ({ id }: Props) => {
           <Loading loadingText="loading" />
         </div>
       )}
-      <PopUp
-        title={`To Be Picked ${order.value?.items.length}`}
-        subtitle={`Actual Picked ${pickedItems.value?.length} `}
-        actionText="Fullfil"
-        handlePopupAction={handleFulfill}
-        isPopup={isPopup}
-      />
-      {isLoading.value === "order:fulfill" ? (
+      {isLoading.value === "order:fulfill" ? null : (
+        <PopUp
+          title={`To Be Picked item${
+            order.value?.items?.length > 1 ? "s" : ""
+          }:- ${order.value?.items?.length}`}
+          subtitle={`Actual Picked item${
+            pickedItems.value?.length > 1 ? "s" : ""
+          }:- ${pickedItems.value?.length} `}
+          actionText="Fullfil"
+          handlePopupAction={handleFulfill}
+          isPopup={isPopup}
+          errorMessage={errorMessage.value}
+        />
+      )}
+
+      {isLoading.value === "order:fulfill" && !isFulfillComplete.value ? (
         <LoadingPopUp loadingText="Please wait" />
-      ) : null}
+      ) : (
+        <PopUp
+          title="Request is fulfilled successfully"
+          subtitle={`Fulfilled ID: ${order.value?.fulfillments?.[0]?.id} `}
+          isPopup={isFulfillComplete}
+          actionText="Check status"
+          actionLink={`/orders/${order.value?.id}`}
+        />
+      )}
       <BottomNavbar />
     </div>
   );

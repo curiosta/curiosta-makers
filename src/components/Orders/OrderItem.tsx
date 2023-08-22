@@ -31,16 +31,6 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
             </dd>
           </div>
         </dl>
-
-        {page !== "home" && isUser.value ? (
-          <Button
-            link={`/orders/${order.id}`}
-            variant={"secondary"}
-            className={"!w-fit"}
-          >
-            <span>View Order</span>
-          </Button>
-        ) : null}
       </div>
 
       {!isUser.value ? (
@@ -94,7 +84,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
           order.items.length - 3
         } more item${order.items.length - 3 > 1 ? "s" : ""}`}</Typography>
       </div>
-      {page !== "orders" && isUser.value ? (
+      {isUser.value ? (
         <div className="flex justify-center items-center  gap-4 p-4 border-t">
           <Button link={`/orders/${order.id}`}>View Details</Button>
           <Button type="button" variant="secondary" className="!py-3">
@@ -104,7 +94,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
       ) : (
         <div className="flex items-center  gap-4 p-4 border-t">
           <Typography size="body1/normal" variant="secondary" className="ml-2 ">
-            Status: {order.status}
+            Status: {order.fulfillment_status}
           </Typography>
         </div>
       )}

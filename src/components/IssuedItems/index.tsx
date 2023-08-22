@@ -11,7 +11,7 @@ import Loading from "../Loading";
 import { adminOrdersList } from "@/api/admin/orders/ordersList";
 
 const IssuedItems = () => {
-  const activeToggle = useSignal<string>("pending");
+  const activeToggle = useSignal<string[]>(["not_fulfilled"]);
   const orders = useSignal<Order[]>([]);
   const isLoading = useSignal<boolean>(false);
   const count = useSignal<null | number>(null);
@@ -40,71 +40,19 @@ const IssuedItems = () => {
     getOrdersList();
   }, []);
 
-  const toggleItems = ["pending", "closed"];
-
-  const usersIssuedItems = [
+  const toggleItems = [
     {
-      date: "27th May 2023 11:10:08 AM",
-      items: [
-        {
-          title: "Issue Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-        {
-          title: "Borrow Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-      ],
+      title: "Pending",
+      fulfillStatus: ["not_fulfilled"],
     },
     {
-      date: "27th May 2023 11:10:08 AM",
-      items: [
-        {
-          title: "Issue Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-        {
-          title: "Borrow Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-      ],
+      title: "Closed",
+      fulfillStatus: ["fulfilled", "partially_fulfilled"],
     },
   ];
 
-  const ordersFilter = orders.value.filter((orders) =>
-    orders.status.toLowerCase().includes(activeToggle.value.toLowerCase())
+  const ordersFilter = orders.value.filter((order) =>
+    activeToggle.value.includes(order.fulfillment_status)
   );
 
   return (
@@ -120,17 +68,25 @@ const IssuedItems = () => {
           <Button
             type="button"
             variant="icon"
-            onClick={() => (activeToggle.value = item)}
+            onClick={() => (activeToggle.value = item.fulfillStatus)}
             className={`!rounded-2xl items-center capitalize ${
-              activeToggle.value === item ? "!bg-primary-700 text-white" : ""
+              JSON.stringify(activeToggle.value) ===
+              JSON.stringify(item.fulfillStatus)
+                ? "!bg-primary-700 text-white"
+                : ""
             }`}
           >
-            <span class="text-sm font-normal">{item}</span>
+            <span class="text-sm font-normal">{item.title}</span>
             <Typography
               size="body2/normal"
               variant="app-primary"
               className={`bg-primary-600/10 w-6 h-6 mx-1 items-center  justify-center rounded-full 
-               ${activeToggle.value === item ? "!bg-white flex" : "hidden"}
+               ${
+                 JSON.stringify(activeToggle.value) ===
+                 JSON.stringify(item.fulfillStatus)
+                   ? "!bg-white flex"
+                   : "hidden"
+               }
             `}
             >
               {ordersFilter.length}
@@ -141,9 +97,13 @@ const IssuedItems = () => {
 
       {!isLoading.value ? (
         <div className="w-full flex flex-col gap-4 mb-12 ">
-          {ordersFilter?.map((order) => (
-            <OrderItem order={order} page="home" />
-          ))}
+          {ordersFilter.length ? (
+            ordersFilter?.map((order) => (
+              <OrderItem order={order} page="home" />
+            ))
+          ) : (
+            <Typography>No Item found</Typography>
+          )}
         </div>
       ) : (
         <div className="h-40">

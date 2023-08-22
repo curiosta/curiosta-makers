@@ -15,12 +15,11 @@ import Router, {
 import user from "@api/user";
 import Loading from "@/components/Loading";
 import admin from "@api/admin";
-import { isUser } from "./store/userState";
-import IssuedItemsDetails from "@pages/IssuedItemsDetails";
+import { isUser } from "@store/userState";
 import PickItems from "@pages/PickItems";
 import Cart from "@pages/Cart";
 import Orders from "@pages/Orders";
-import OrderInfo from "./components/Orders/OrderInfo";
+import OrderInfo from "@components/Orders/OrderInfo";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
@@ -56,7 +55,6 @@ const App = () => {
       <Route path="/account" component={Account} />
       <Route path="/create-requests" component={Request} />
       <Route path="/create-requests/:id" component={RequestItems} />
-      <Route path="/issued-items/:id" component={IssuedItemsDetails} />
       <Route path="/pick-items/:id" component={PickItems} />
       <Route path="/cart" component={Cart} />
       <Route path="/orders" component={Orders} />
