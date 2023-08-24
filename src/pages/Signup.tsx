@@ -11,8 +11,7 @@ import { useRef } from "preact/hooks";
 const Signup = () => {
   const errorMessage = useSignal<string>("");
   const isLoading = useSignal<boolean>(false);
-  const termsRef = useRef<HTMLInputElement>(null);
-  const isChecked = useSignal<boolean>(false);
+  const isChecked = useSignal<boolean>(true);
 
   const handleCreateUser = async (data: any) => {
     isLoading.value = true;
@@ -39,6 +38,8 @@ const Signup = () => {
       isLoading.value = false;
     }
   };
+
+  console.log(isChecked.value);
   return (
     <div className="flex justify-center p-4">
       <div className="flex flex-col justify-center items-center  w-full sm:w-1/4 ">
