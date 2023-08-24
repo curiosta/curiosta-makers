@@ -11,8 +11,7 @@ import { useRef } from "preact/hooks";
 const Signup = () => {
   const errorMessage = useSignal<string>("");
   const isLoading = useSignal<boolean>(false);
-  const termsRef = useRef<HTMLInputElement>(null);
-  const isChecked = useSignal<boolean>(false);
+  const isChecked = useSignal<boolean>(true);
 
   const handleCreateUser = async (data: any) => {
     isLoading.value = true;
@@ -26,19 +25,25 @@ const Signup = () => {
         if (!isChecked.value)
           return (errorMessage.value = "Please checked terms and conditions!");
         await user.register({ first_name, last_name, email, password });
+        if (!isChecked.value)
+          return (errorMessage.value = "Please checked terms and conditions!");
+        await user.register({ first_name, last_name, email, password });
         route("/home");
       } else {
+        errorMessage.value = "Password and confirmation password do not match!";
         errorMessage.value = "Password and confirmation password do not match!";
       }
     } catch (error) {
       const errorResponse = (error as any)?.toJSON?.();
       if (errorResponse) {
         errorMessage.value = "Failed to create account!";
+        errorMessage.value = "Failed to create account!";
       }
     } finally {
       isLoading.value = false;
     }
   };
+
   return (
     <div className="flex justify-center p-4">
       <div className="flex flex-col justify-center items-center  w-full sm:w-1/4 ">
@@ -131,6 +136,12 @@ const Signup = () => {
               placeholder="Confirm new password"
             />
 
+            <Checkbox
+              name="terms"
+              label="I agree to the Terms and Conditions and Privacy Policy"
+              defaultChecked={true}
+              onChange={(e) => (isChecked.value = e.currentTarget.checked)}
+            />
             <Checkbox
               name="terms"
               label="I agree to the Terms and Conditions and Privacy Policy"

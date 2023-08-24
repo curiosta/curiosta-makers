@@ -3,280 +3,113 @@ import Button from "../Button";
 import Typography from "../Typography";
 import { useSignal } from "@preact/signals";
 import { isUser } from "@/store/userState";
-import Chip from "../Chip";
+import { ordersList } from "@/api/user/orders/ordersList";
+import { Order } from "@medusajs/medusa";
+import { useEffect } from "preact/hooks";
+import OrderItem from "../Orders/OrderItem";
+import Loading from "../Loading";
+import { adminOrdersList } from "@/api/admin/orders/ordersList";
 
 const IssuedItems = () => {
-  const activeIndex = useSignal<number>(0);
+  const activeToggle = useSignal<string[]>(["not_fulfilled"]);
+  const orders = useSignal<Order[]>([]);
+  const isLoading = useSignal<boolean>(false);
+  const count = useSignal<null | number>(null);
+  const limit = useSignal<number>(3);
+  const offset = useSignal<number>(0);
+
+  const getOrdersList = async () => {
+    isLoading.value = true;
+    try {
+      const res = isUser.value
+        ? await ordersList({
+            limit: limit.value,
+            offset: offset.value,
+          })
+        : await adminOrdersList({ limit: limit.value, offset: offset.value });
+
+      count.value = res?.count;
+      orders.value = res?.orders;
+    } catch (error) {
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  useEffect(() => {
+    getOrdersList();
+  }, []);
 
   const toggleItems = [
     {
       title: "Pending",
-      count: 3,
-    },
-    {
-      title: "Active",
-      count: 30,
+      fulfillStatus: ["not_fulfilled"],
     },
     {
       title: "Closed",
-      count: 10,
+      fulfillStatus: ["fulfilled", "partially_fulfilled"],
     },
   ];
 
-  const requestedItems = [
-    {
-      date: "27th May 2023 11:10:08 AM",
-      items: [
-        {
-          title: "Issue Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-        {
-          title: "Borrow Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-      ],
-    },
-    {
-      date: "27th May 2023 11:10:08 AM",
-      items: [
-        {
-          title: "Issue Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-        {
-          title: "Borrow Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-      ],
-    },
-  ];
-  const usersIssuedItems = [
-    {
-      date: "27th May 2023 11:10:08 AM",
-      items: [
-        {
-          title: "Issue Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-        {
-          title: "Borrow Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-      ],
-    },
-    {
-      date: "27th May 2023 11:10:08 AM",
-      items: [
-        {
-          title: "Issue Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-        {
-          title: "Borrow Requests",
-          quantity: 4,
-        },
-        {
-          title: "Unique items",
-          quantity: 14,
-        },
-        {
-          title: "Qty Requested",
-          quantity: 1,
-        },
-      ],
-    },
-  ];
+  const ordersFilter = orders.value.filter((order) =>
+    activeToggle.value.includes(order.fulfillment_status)
+  );
 
   return (
     <div className="w-full my-4">
       <div className="flex justify-between items-center">
         <Typography>Recently Issued Items</Typography>
-        <Link href={"#"} className="text-app-primary-600">
+        <Link href="/orders" className="text-app-primary-600">
           View All
         </Link>
       </div>
-      <div className="flex justify-between items-center w-full my-2 bg-white p-2 shadow-lg rounded-2xl">
-        {toggleItems.map((item, index) => (
+      <div className="flex justify-evenly items-center w-full my-2 bg-white p-2 shadow-lg rounded-2xl">
+        {toggleItems.map((item) => (
           <Button
-            key={index}
             type="button"
             variant="icon"
-            onClick={() => (activeIndex.value = index)}
-            className={`!rounded-3xl items-center ${
-              activeIndex.value === index ? "!bg-primary-700 text-white" : ""
+            onClick={() => (activeToggle.value = item.fulfillStatus)}
+            className={`!rounded-2xl items-center capitalize ${
+              JSON.stringify(activeToggle.value) ===
+              JSON.stringify(item.fulfillStatus)
+                ? "!bg-primary-700 text-white"
+                : ""
             }`}
           >
             <span class="text-sm font-normal">{item.title}</span>
             <Typography
               size="body2/normal"
               variant="app-primary"
-              className={`bg-primary-600/10 w-6 h-6 mx-1 items-center justify-center rounded-full ${
-                item.count ? "flex" : "hidden"
-              } ${activeIndex.value === index ? "!bg-white" : ""}
+              className={`bg-primary-600/10 w-6 h-6 mx-1 items-center  justify-center rounded-full 
+               ${
+                 JSON.stringify(activeToggle.value) ===
+                 JSON.stringify(item.fulfillStatus)
+                   ? "!bg-white flex"
+                   : "hidden"
+               }
             `}
             >
-              {item.count}
+              {ordersFilter.length}
             </Typography>
           </Button>
         ))}
       </div>
 
-      {isUser.value
-        ? requestedItems.map((requestedItem) => (
-            <div className="w-full my-2 bg-white p-4 shadow-lg rounded-2xl last:mb-12">
-              <div className="flex justify-between items-center">
-                <Typography size="body2/normal" variant="secondary">
-                  Requested at {requestedItem.date}
-                </Typography>
-                <Button type="button" variant="icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="w-6 h-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                    />
-                  </svg>
-                </Button>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {requestedItem.items.map((item) => (
-                  <div>
-                    <Typography size="body2/normal" variant="secondary">
-                      {item.title}
-                    </Typography>
-                    <Typography size="body2/normal" variant="primary">
-                      {item.quantity}
-                    </Typography>
-                  </div>
-                ))}
-              </div>
-              <div className="flex justify-center items-center mt-4 gap-4">
-                <Button type="button" className="!px-3 !w-fit">
-                  View Details
-                </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="!px-3 !py-3 !w-fit"
-                >
-                  Return
-                </Button>
-              </div>
-            </div>
-          ))
-        : usersIssuedItems.map((issuedItem, index) => (
-            <div className="w-full my-2 bg-white p-4 shadow-lg rounded-2xl">
-              <div className="flex justify-between items-center">
-                <Typography size="body2/normal" variant="secondary">
-                  Requested at {issuedItem.date}
-                </Typography>
-                <Button type="button" variant="icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="w-6 h-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                    />
-                  </svg>
-                </Button>
-              </div>
-              <div className="flex justify-between items-center my-2 mr-4">
-                <Chip className="!bg-primary-700 uppercase text-white">
-                  {"R"}
-                </Chip>
-
-                <Button
-                  link={`/issued-items/${index + 1}`}
-                  className="!px-4 py-2 !w-fit"
-                >
-                  View
-                </Button>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {issuedItem.items.map((item) => (
-                  <div>
-                    <Typography size="body2/normal" variant="secondary">
-                      {item.title}
-                    </Typography>
-                    <Typography size="body2/normal" variant="primary">
-                      {item.quantity}
-                    </Typography>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+      {!isLoading.value ? (
+        <div className="w-full flex flex-col gap-4 mb-12 ">
+          {ordersFilter.length ? (
+            ordersFilter?.map((order) => (
+              <OrderItem order={order} page="home" />
+            ))
+          ) : (
+            <Typography>No Item found</Typography>
+          )}
+        </div>
+      ) : (
+        <div className="h-40">
+          <Loading loadingText="loading" />
+        </div>
+      )}
     </div>
   );
 };
