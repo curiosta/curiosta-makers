@@ -40,22 +40,39 @@ const Login = () => {
   return (
     <div className="flex justify-center p-4">
       <div className="flex flex-col justify-center items-center  w-full sm:w-1/4 ">
-        <div className=" w-full flex justify-end">
+        <div className="flex flex-col  items-center gap-2.5 ">
+          <img src="/images/curiosta_logo.svg" alt="curiosta-logo" />
+          <Typography size="h6/bold" className="text-center">
+            Makerspace Management System
+          </Typography>
+
           <Button
             type="button"
             variant="icon"
-            className="!bg-gray-100 !rounded-2xl"
+            className=" relative h-8 w-32 !p-0 !justify-normal flex-shrink-0 bg-gray-200 rounded-full border-2 
+            border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-700 focus:ring-offset-2"
             onClick={() => (isUser.value = !isUser.value)}
           >
-            {isUser.value ? "User" : "Admin"}
+            <span
+              aria-hidden="true"
+              class={`${
+                isUser.value ? "translate-x-0" : "translate-x-full"
+              }  pointer-events-none flex items-center justify-center h-full w-1/2 transform rounded-full
+               bg-primary-700 text-secondray shadow ring-0 transition duration-200 ease-in-out`}
+            >
+              {isUser.value ? "User" : "Admin"}
+            </span>
+
+            <span
+              class={`${
+                isUser.value ? "translate-x-0" : "-translate-x-full"
+              }  pointer-events-none flex items-center justify-center h-full w-1/2 transform text-gray-600  transition duration-200 ease-in-out`}
+            >
+              {isUser.value ? "Admin" : "User"}
+            </span>
           </Button>
         </div>
-        <div className="flex flex-col  items-center gap-2.5 ">
-          <img src="/images/curiosta_logo.svg" alt="curiosta-logo" />
-          <Typography size="h6/bold" className="text-center uppercase">
-            MMS
-          </Typography>
-        </div>
+
         <div className="w-full p-4">
           <FormControl
             noValidate

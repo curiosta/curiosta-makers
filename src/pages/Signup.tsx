@@ -50,7 +50,7 @@ const Signup = () => {
         <div className="flex flex-col  items-center gap-2.5 ">
           <img src="/images/curiosta_logo.svg" alt="curiosta-logo" />
           <Typography size="h6/bold" className="text-center uppercase">
-            MMS
+            Makerspace Management System
           </Typography>
         </div>
         <div className="w-full p-4">
