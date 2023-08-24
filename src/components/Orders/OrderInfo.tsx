@@ -1,5 +1,5 @@
 import { getOrders } from "@/api/user/orders/getOrder";
-import { Order } from "@medusajs/medusa";
+import { Item, Order } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import TopNavbar from "@components/Navbar/TopNavbar";
@@ -38,6 +38,19 @@ const OrderInfo = ({ id }: Props) => {
   useEffect(() => {
     getOrderInfo();
   }, [id]);
+
+  // filter out fulfilled and not fulfilled items
+  const fulfilledItemId = order.value?.fulfillments?.flatMap((fulfill) =>
+    fulfill.items.map((item) => item.item_id)
+  );
+  console.log(fulfilledItemId);
+  const fulfilledItem = order.value?.items.filter((item) =>
+    fulfilledItemId.includes(item.id)
+  );
+
+  const notFulfilledItem = order.value?.items.filter(
+    (item) => !fulfilledItemId.includes(item.id)
+  );
 
   const hanldeReject = async () => {
     isLoading.value = "order:cancel";
@@ -79,21 +92,85 @@ const OrderInfo = ({ id }: Props) => {
               <Typography size="h6/normal">Quantity</Typography>
             </div>
 
-            {order.value?.items?.map((item) => (
-              <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
-                <div className="flex gap-2 items-center">
-                  <img
-                    src={item.thumbnail || "N/A"}
-                    alt={item.title}
-                    className="w-10 h-10 object-cover"
-                  />
-                  <Typography size="body1/normal" className="text-start">
-                    {item.title}
-                  </Typography>
-                </div>
-                <Typography className="pr-8">x{item.quantity}</Typography>
+            {order.value?.fulfillment_status === "partially_fulfilled" ? (
+              <div className="my-4">
+                <Typography
+                  size="body1/normal"
+                  className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-blue-600 text-white"
+                >
+                  Approved
+                </Typography>
+                {fulfilledItem?.map((item) => (
+                  <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
+                    <div className="flex gap-2 items-center">
+                      <img
+                        src={item.thumbnail || "N/A"}
+                        alt={item.title}
+                        className="w-10 h-10 object-cover"
+                      />
+                      <Typography size="body1/normal" className="text-start">
+                        {item.title}
+                      </Typography>
+                    </div>
+                    <Typography className="pr-8">x{item.quantity}</Typography>
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              order.value?.items?.map((item) => (
+                <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
+                  <div className="flex gap-2 items-center">
+                    <img
+                      src={item.thumbnail || "N/A"}
+                      alt={item.title}
+                      className="w-10 h-10 object-cover"
+                    />
+                    <Typography size="body1/normal" className="text-start">
+                      {item.title}
+                    </Typography>
+                  </div>
+                  <Typography className="pr-8">x{item.quantity}</Typography>
+                </div>
+              ))
+            )}
+
+            {notFulfilledItem?.length &&
+            order.value?.fulfillment_status !== "canceled" &&
+            order.value?.fulfillment_status !== "not_fulfilled" ? (
+              <div className="my-4">
+                <Typography
+                  size="body1/normal"
+                  className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-yellow-900 text-white"
+                >
+                  Not Approved
+                </Typography>
+                {notFulfilledItem?.map((item) => (
+                  <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
+                    <div className="flex gap-2 items-center">
+                      <img
+                        src={item.thumbnail || "N/A"}
+                        alt={item.title}
+                        className="w-10 h-10 object-cover"
+                      />
+                      <Typography size="body1/normal" className="text-start">
+                        {item.title}
+                      </Typography>
+                    </div>
+                    <Typography className="pr-8">x{item.quantity}</Typography>
+                  </div>
+                ))}
+                {!isUser.value ? (
+                  <div className="flex items-center justify-center">
+                    <Button
+                      type="button"
+                      onClick={() => (isPopup.value = true)}
+                    >
+                      Approve
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
 
             {!isUser.value &&
             order.value?.fulfillment_status === "not_fulfilled" ? (
