@@ -112,9 +112,9 @@ const PickItems = ({ id }: Props) => {
         Pick Id {id}
       </Typography>
       {isLoading.value !== "order:get" ? (
-        <div className="flex flex-col gap-4 my-2 mb-12">
+        <div className="w-full">
           {notFulfilledItem?.length ? (
-            <div>
+            <div className="flex flex-col gap-4 my-2 mb-12">
               {notFulfilledItem?.map((item, index) => (
                 <div className="w-full bg-secondray shadow-lg rounded-2xl p-4">
                   <Typography size="small/normal">Item {index + 1}</Typography>
@@ -205,7 +205,9 @@ const PickItems = ({ id }: Props) => {
               </div>
             </div>
           ) : (
-            <Typography className="mt-8">No item for pick</Typography>
+            <Typography className="mt-8 text-center">
+              No item for pick
+            </Typography>
           )}
         </div>
       ) : (

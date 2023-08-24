@@ -28,7 +28,6 @@ const Request = () => {
       });
       categories.value = categoryRes?.product_categories;
       count.value = categoryRes?.count;
-      // console.log(categoryRes);
     } catch (error) {
     } finally {
       isLoading.value = false;

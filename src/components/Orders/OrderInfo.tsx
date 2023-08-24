@@ -43,7 +43,7 @@ const OrderInfo = ({ id }: Props) => {
   const fulfilledItemId = order.value?.fulfillments?.flatMap((fulfill) =>
     fulfill.items.map((item) => item.item_id)
   );
-  console.log(fulfilledItemId);
+
   const fulfilledItem = order.value?.items.filter((item) =>
     fulfilledItemId.includes(item.id)
   );
