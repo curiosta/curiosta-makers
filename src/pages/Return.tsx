@@ -11,7 +11,7 @@ import OffsetPagination from "@components/OffsetPagination";
 import { isUser } from "@/store/userState";
 import { adminOrdersList } from "@/api/admin/orders/ordersList";
 
-const Orders = () => {
+const Return = () => {
   const orders = useSignal<Order[]>([]);
   const isLoading = useSignal<boolean>(false);
   const count = useSignal<null | number>(null);
@@ -43,14 +43,14 @@ const Orders = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Orders</Typography>
+        <Typography size="h6/normal">Return</Typography>
       </div>
 
       {!isLoading.value ? (
         orders.value?.length ? (
           <div className="w-full flex flex-col gap-4 mb-12 ">
             {orders.value?.map((order) => (
-              <OrderItem order={order} page="orders" />
+              <OrderItem order={order} page="return" />
             ))}
             <OffsetPagination limit={limit} offset={offset} count={count} />
           </div>
@@ -67,4 +67,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default Return;
