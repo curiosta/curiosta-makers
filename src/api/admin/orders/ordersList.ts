@@ -5,5 +5,5 @@ export const adminOrdersList = async ({
   limit,
   offset,
 }: AdminGetOrdersParams) => {
-  return medusa.admin.orders.list({ limit, offset, expand: "items" });
+  return medusa.admin.orders.list({ limit, offset, expand: "items,returns" });
 };

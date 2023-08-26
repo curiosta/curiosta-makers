@@ -7,7 +7,7 @@ import Chip from "@components/Chip";
 
 type TOrderItemProps = {
   order: Order;
-  page: "orders" | "home" | "return";
+  page: "orders" | "home" | "return" | "adminReturn";
 };
 const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
   const borrowItems = order.items?.filter(
@@ -18,19 +18,36 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
     <div class="border-b border-t border-gray-200 bg-white shadow-sm rounded-lg border">
       <div class="flex items-center border-b border-gray-200 p-4 sm:grid sm:grid-cols-4 sm:gap-x-6 sm:p-6">
         <dl class="grid flex-1 grid-cols-2 gap-x-6 text-sm sm:col-span-3 sm:grid-cols-3 lg:col-span-2">
-          <div>
-            <dt class="font-medium text-gray-900">Order number</dt>
-            <dd class="mt-1 text-gray-500 truncate">{order.id}</dd>
-          </div>
+          {page !== "adminReturn" ? (
+            <div>
+              <dt class="font-medium text-gray-900">Order number</dt>
+              <dd class="mt-1 text-gray-500 truncate">{order.id}</dd>
+            </div>
+          ) : (
+            <div>
+              <dt class="font-medium text-gray-900">Return number</dt>
+              <dd class="mt-1 text-gray-500 truncate">
+                {order.returns?.at(0)?.id}
+              </dd>
+            </div>
+          )}
           <div class="block">
             <dt class="font-medium text-gray-900">Requested date</dt>
             <dd class="mt-1 text-gray-500">
               <time dateTime="2021-07-06">
-                {new Date(order.created_at).toLocaleDateString("default", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
+                {page !== "adminReturn"
+                  ? new Date(order.created_at).toLocaleDateString("default", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : new Date(
+                      order.returns?.at(0)?.created_at
+                    ).toLocaleDateString("default", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
               </time>
             </dd>
           </div>
@@ -47,7 +64,14 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
               {order.email}
             </Typography>
           </div>
-          <Button link={`/orders/${order.id}`} className="">
+
+          <Button
+            link={
+              page !== "adminReturn"
+                ? `/orders/${order.id}`
+                : `/return/${order.id}/${order.returns?.at(0)?.id}`
+            }
+          >
             View
           </Button>
         </div>
@@ -58,7 +82,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
         Items
       </Typography>
       <ul role="list" class="divide-y divide-gray-200">
-        {page !== "return"
+        {page !== "return" && page !== "adminReturn"
           ? order.items.slice(0, 3).map((item) => (
               <li class="p-4 sm:p-6">
                 <div class="flex items-center sm:items-start">
@@ -83,7 +107,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
                 </div>
               </li>
             ))
-          : borrowItems.slice(0, 3).map((item) => (
+          : borrowItems?.slice(0, 3).map((item) => (
               <li class="p-4 sm:p-6">
                 <div class="flex items-center sm:items-start">
                   <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 sm:h-40 sm:w-40">
@@ -127,7 +151,10 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
       ) : (
         <div className="flex items-center  gap-4 p-4 border-t">
           <Typography size="body1/normal" variant="secondary" className="ml-2 ">
-            Status: {order.fulfillment_status}
+            Status:{" "}
+            {page !== "adminReturn"
+              ? order.fulfillment_status
+              : order.returns?.at?.(0).status}
           </Typography>
         </div>
       )}

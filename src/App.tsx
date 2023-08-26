@@ -62,7 +62,7 @@ const App = () => {
       <Route path="/orders" component={Orders} />
       <Route path="/orders/:id" component={OrderInfo} />
       <Route path="/return" component={Return} />
-      <Route path="/return/:id" component={ReturnItems} />
+      <Route path="/return/:order_id/:return_id?" component={ReturnItems} />
     </Router>
   );
 };

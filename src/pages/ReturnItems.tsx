@@ -1,23 +1,26 @@
+import { adminApproveReturn } from "@/api/admin/orders/approveReturn";
+import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { TReturnItem, createReturn } from "@/api/user/orders/createReturn";
 import { getOrders } from "@/api/user/orders/getOrder";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
-import ManageQty from "@/components/ManageQty";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
 import PopUp from "@/components/Popup";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import Typography from "@/components/Typography";
+import { isUser } from "@/store/userState";
 import { Order, Return } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 
 type Props = {
-  id: string;
+  order_id: string;
+  return_id: string;
 };
 type TLoadableOptions = "order:get" | "order:return";
 
-const ReturnItems = ({ id }: Props) => {
+const ReturnItems = ({ order_id, return_id }: Props) => {
   const order = useSignal<Order | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const isRequestReturn = useSignal<boolean>(false);
@@ -26,7 +29,9 @@ const ReturnItems = ({ id }: Props) => {
   const getOrderInfo = async () => {
     isLoading.value = "order:get";
     try {
-      const res = await getOrders(id);
+      const res = isUser.value
+        ? await getOrders(order_id)
+        : await adminGetOrders(order_id);
       order.value = res?.order;
     } catch (error) {
     } finally {
@@ -35,9 +40,19 @@ const ReturnItems = ({ id }: Props) => {
   };
   useEffect(() => {
     getOrderInfo();
-  }, [id]);
+  }, [order_id]);
 
-  const borrowItems = order.value?.items?.filter(
+  // filter out fulfilled items
+  const fulfilledItemId = order.value?.fulfillments?.flatMap((fulfill) =>
+    fulfill.items.map((item) => item.item_id)
+  );
+
+  const fulfilledItem = order.value?.items.filter((item) =>
+    fulfilledItemId.includes(item.id)
+  );
+
+  // if item fulfilled then only it can return
+  const borrowItems = fulfilledItem?.filter(
     (item) => item.metadata?.cartType === "borrow"
   );
 
@@ -48,8 +63,23 @@ const ReturnItems = ({ id }: Props) => {
       borrowItems?.map((item) =>
         returnItems.push({ item_id: item.id, quantity: item.quantity })
       );
-      console.log(returnItems);
-      const res = await createReturn(id, returnItems);
+      const res = await createReturn(order_id, returnItems);
+      returnItem.value = res?.return;
+      isRequestReturn.value = true;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
+  const handleApproveReturn = async () => {
+    isLoading.value = "order:return";
+    try {
+      const returnItems: TReturnItem[] = [];
+      borrowItems?.map((item) =>
+        returnItems.push({ item_id: item.id, quantity: item.quantity })
+      );
+      const res = await adminApproveReturn(return_id, returnItems);
       returnItem.value = res?.return;
       isRequestReturn.value = true;
     } catch (error) {
@@ -65,34 +95,46 @@ const ReturnItems = ({ id }: Props) => {
         <Typography size="h6/normal">Return items</Typography>
       </div>
       {isLoading.value !== "order:get" ? (
-        <div className="w-full">
-          <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondray">
-            <Typography size="h6/normal">Items</Typography>
-            <Typography size="h6/normal">Quantity</Typography>
-          </div>
+        borrowItems?.length ? (
           <div className="w-full">
-            {borrowItems?.map((item) => (
-              <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
-                <div className="flex gap-2 items-center">
-                  <img
-                    src={item.thumbnail || "N/A"}
-                    alt={item.title}
-                    className="w-10 h-10 object-cover"
-                  />
-                  <Typography size="body1/normal" className="text-start">
-                    {item.title}
-                  </Typography>
+            <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondray">
+              <Typography size="h6/normal">Items</Typography>
+              <Typography size="h6/normal">Quantity</Typography>
+            </div>
+            <div className="w-full">
+              {borrowItems?.map((item) => (
+                <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
+                  <div className="flex gap-2 items-center">
+                    <img
+                      src={item.thumbnail || "N/A"}
+                      alt={item.title}
+                      className="w-10 h-10 object-cover"
+                    />
+                    <Typography size="body1/normal" className="text-start">
+                      {item.title}
+                    </Typography>
+                  </div>
+                  <Typography className="pr-8">x{item.quantity}</Typography>
                 </div>
-                <Typography className="pr-8">x{item.quantity}</Typography>
+              ))}
+              <div className="flex items-center justify-center">
+                {isUser.value ? (
+                  <Button type="button" onClick={handleReqestReturn}>
+                    Request Return
+                  </Button>
+                ) : (
+                  <Button type="button" onClick={handleApproveReturn}>
+                    Approve Return
+                  </Button>
+                )}
               </div>
-            ))}
-            <div className="flex items-center justify-center">
-              <Button type="button" onClick={handleReqestReturn}>
-                Request Return
-              </Button>
             </div>
           </div>
-        </div>
+        ) : (
+          <Typography className="mt-8" size="body2/normal">
+            No item for return
+          </Typography>
+        )
       ) : (
         <div className="h-40">
           <Loading loadingText="loading" />

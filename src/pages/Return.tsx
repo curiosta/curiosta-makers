@@ -39,6 +39,11 @@ const Return = () => {
     getOrdersList();
   }, [offset.value]);
 
+  // filter out only returns orders
+  const returnOrders = orders.value?.filter(
+    (order) => order.returns?.length >= 1
+  );
+
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
@@ -47,11 +52,15 @@ const Return = () => {
       </div>
 
       {!isLoading.value ? (
-        orders.value?.length ? (
+        orders.value?.length || returnOrders?.length ? (
           <div className="w-full flex flex-col gap-4 mb-12 ">
-            {orders.value?.map((order) => (
-              <OrderItem order={order} page="return" />
-            ))}
+            {isUser.value
+              ? orders.value?.map((order) => (
+                  <OrderItem order={order} page="return" />
+                ))
+              : returnOrders?.map((order) => (
+                  <OrderItem order={order} page="adminReturn" />
+                ))}
             <OffsetPagination limit={limit} offset={offset} count={count} />
           </div>
         ) : (
