@@ -16,7 +16,7 @@ const ActivityCard = () => {
     {
       title: "Return",
       icon: return_icon,
-      link: "#",
+      link: "/return",
     },
     {
       title: "Inbound",

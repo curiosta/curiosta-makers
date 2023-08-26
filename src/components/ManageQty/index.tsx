@@ -6,7 +6,12 @@ import cart from "@/api/cart";
 import Input from "../Input";
 import { ChangeEvent } from "preact/compat";
 
-const ManageQty = ({ productItem }: { productItem: LineItem }) => {
+type TManageQty = {
+  productItem: LineItem;
+  page: "cart" | "request";
+};
+
+const ManageQty = ({ productItem, page }: TManageQty) => {
   const loadingQty = useSignal<boolean>(false);
   const loadingInputQty = useSignal<boolean>(false);
   const errorMessage = useSignal<string | null>(null);
@@ -53,8 +58,6 @@ const ManageQty = ({ productItem }: { productItem: LineItem }) => {
       loadingInputQty.value = false;
     }
   };
-
-  const isCartPage = window.location.pathname === "/cart";
 
   return (
     <div
@@ -142,6 +145,7 @@ const ManageQty = ({ productItem }: { productItem: LineItem }) => {
         </Button>
 
         {/* Remove cart items */}
+
         <Button
           type="button"
           variant="icon"
@@ -166,7 +170,7 @@ const ManageQty = ({ productItem }: { productItem: LineItem }) => {
         </Button>
       </div>
 
-      {!isCartPage ? (
+      {page === "request" ? (
         <Typography size="body2/normal" className="capitalize">
           {productItem.metadata?.cartType} Request
         </Typography>
@@ -174,7 +178,7 @@ const ManageQty = ({ productItem }: { productItem: LineItem }) => {
 
       <div
         className={`absolute ${
-          isCartPage ? "top-full" : "-bottom-4"
+          page !== "cart" ? "top-full" : "-bottom-4"
         }  rounded-lg shadow-xl p-1.5 bg-secondray z-10 ${
           errorMessage.value ? "block" : "hidden"
         }`}

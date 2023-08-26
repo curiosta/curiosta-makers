@@ -43,7 +43,7 @@ const AddProduct = ({ product, index, handleDialog }: TAddProduct) => {
           Add
         </Button>
       ) : (
-        <ManageQty productItem={isProductItemInCart} />
+        <ManageQty productItem={isProductItemInCart} page="request" />
       )}
     </div>
   );

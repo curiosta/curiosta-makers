@@ -32,7 +32,6 @@ const Home = () => {
       {!isUser.value ? <MiddleContent /> : null}
       <IssuedItems />
       {!isUser.value ? <Snapshort /> : null}
-      {!isUser.value ? <Snapshort /> : null}
       <BottomNavbar />
     </div>
   );

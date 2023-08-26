@@ -1,5 +1,6 @@
 import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { adminFulfillment } from "@/api/admin/orders/orderFulfil";
+import { adminPaymentCapture } from "@/api/admin/orders/paymentCapture";
 import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
@@ -88,6 +89,8 @@ const PickItems = ({ id }: Props) => {
     }
     isLoading.value = "order:fulfill";
     try {
+      const paymentId = order.value?.payments?.at(0)?.id;
+      await adminPaymentCapture(paymentId);
       const fulfill = await adminFulfillment(id, pickedItems.value);
       order.value = fulfill?.order;
       isFulfillComplete.value = true;

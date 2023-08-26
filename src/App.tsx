@@ -20,6 +20,8 @@ import PickItems from "@pages/PickItems";
 import Cart from "@pages/Cart";
 import Orders from "@pages/Orders";
 import OrderInfo from "@components/Orders/OrderInfo";
+import Return from "@pages/Return";
+import ReturnItems from "@pages/ReturnItems";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
@@ -59,6 +61,8 @@ const App = () => {
       <Route path="/cart" component={Cart} />
       <Route path="/orders" component={Orders} />
       <Route path="/orders/:id" component={OrderInfo} />
+      <Route path="/return" component={Return} />
+      <Route path="/return/:order_id/:return_id?" component={ReturnItems} />
     </Router>
   );
 };

@@ -105,7 +105,7 @@ const Cart = () => {
                           {product?.title}
                         </Typography>
                       </div>
-                      <ManageQty productItem={product} />
+                      <ManageQty productItem={product} page="cart" />
                     </div>
                   ))}
                 </div>
@@ -141,7 +141,7 @@ const Cart = () => {
                           {product?.title}
                         </Typography>
                       </div>
-                      <ManageQty productItem={product} />
+                      <ManageQty productItem={product} page="cart" />
                     </div>
                   ))}
                 </div>
