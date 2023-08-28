@@ -123,9 +123,15 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
                     Request Return
                   </Button>
                 ) : (
-                  <Button type="button" onClick={handleApproveReturn}>
-                    Approve Return
-                  </Button>
+                  <div>
+                    {!order.value?.fulfillment_status.includes("returned") ? (
+                      <Button type="button" onClick={handleApproveReturn}>
+                        Approve Return
+                      </Button>
+                    ) : (
+                      <Typography>Already Approved</Typography>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -144,7 +150,11 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
         <LoadingPopUp loadingText="Please wait" />
       ) : (
         <PopUp
-          title="Return request is placed successfully"
+          title={
+            isUser.value
+              ? "Return request is placed successfully"
+              : "Return request is approved successfully"
+          }
           subtitle={`Request ID: ${returnItem.value?.id} `}
           isPopup={isRequestReturn}
           actionText="Check status"
