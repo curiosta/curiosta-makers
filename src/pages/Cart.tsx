@@ -31,6 +31,7 @@ const Cart = () => {
   const selectedDate = useSignal<string>("");
   const selectedDateLoading = useSignal<boolean>(false);
   const isCartComplete = useSignal<boolean>(false);
+  const isCartDiscarding = useSignal<boolean>(false);
 
   const handleSelectDate = async (e: ChangeEvent<HTMLInputElement>) => {
     const { value, checked, name } = e.currentTarget;
@@ -45,6 +46,7 @@ const Cart = () => {
     selectedDateLoading.value = true;
     cartBorrowItem.map(async (borrowItem) => {
       try {
+        if (!selectedDate.value) return;
         await cart.removeItem(borrowItem.id);
         await cart.updateItemMetaData({
           variant_id: borrowItem.variant_id,
@@ -71,6 +73,21 @@ const Cart = () => {
       console.log(error);
     }
   };
+
+  // discart cart
+  const handleDiscard = () => {
+    cart.store.value?.items?.map(async (item) => {
+      try {
+        isCartDiscarding.value = true;
+        await cart.removeItem(item.id);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        isCartDiscarding.value = false;
+      }
+    });
+  };
+
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
@@ -186,7 +203,7 @@ const Cart = () => {
                   </svg>
                 </Button>
 
-                <Button type="button" variant="danger">
+                <Button type="button" variant="danger" onClick={handleDiscard}>
                   Discard
                 </Button>
               </div>
@@ -240,6 +257,10 @@ const Cart = () => {
         selectedDate={selectedDate}
         selectedDateLoading={selectedDateLoading}
       />
+
+      {isCartDiscarding.value ? (
+        <LoadingPopUp loadingText="Removing all item please wait" />
+      ) : null}
     </div>
   );
 };

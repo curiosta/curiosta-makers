@@ -222,9 +222,6 @@ class CartStore {
         "Cart was not initialize before using cart.setItemQuantity function."
       );
     this.loading.value = "cart:line_items:update_metadata";
-    // const item = this.store.value.items.find(
-    //   (item) => item.variant_id === variant_id
-    // );
     const response = await medusa.carts.lineItems.create(this.store.value.id, {
       variant_id,
       quantity,
@@ -262,7 +259,6 @@ class CartStore {
     );
     this.store.value = response.cart;
     this.loading.value = undefined;
-    // await this.listShippingMethods();
   }
 
   // shipping methods

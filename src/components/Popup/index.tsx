@@ -97,6 +97,7 @@ const PopUp = ({
                 name="custom_date"
                 label="Select return date"
                 onChange={handlePopupAction}
+                min={new Date().toISOString().split("T")[0]}
               />
             ) : null}
             <div className=" w-full flex items-center justify-center mt-2">

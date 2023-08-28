@@ -18,10 +18,7 @@ const ViewCartLayer = ({
   borrowItems,
 }: Props) => {
   const isCartLayer = useSignal<boolean>(false);
-  const totalCartItems = cart.store.value?.items?.reduce(
-    (acc, curVal) => acc + curVal.quantity,
-    0
-  );
+  const totalCartItems = cart.store.value?.items?.length;
 
   useEffect(() => {
     if (totalCartItems > 0) {
@@ -39,7 +36,7 @@ const ViewCartLayer = ({
         isCartLayer.value ? "translate-y-0" : "translate-y-full"
       } `}
     >
-      <div className="flex justify-between items-center relative p-4 ">
+      <div className="flex justify-between items-center relative p-4 gap-2 ">
         <div className="flex items-center gap-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
