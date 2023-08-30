@@ -28,12 +28,10 @@ const ViewCartLayer = ({
     }
   }, [totalCartItems]);
 
-  const isCartPage = window.location.pathname === "/cart";
-
   return (
     <div
-      className={`fixed left-0 bottom-0 z-10  w-full bg-secondray transition-all shadow-lg ${
-        isCartLayer.value ? "translate-y-0" : "translate-y-full"
+      className={`fixed left-0 bottom-16 z-10  w-full bg-secondray transition-all shadow-lg ${
+        isCartLayer.value ? "translate-x-0" : "translate-x-full"
       } `}
     >
       <div className="flex justify-between items-center relative p-4 gap-2 ">
@@ -70,31 +68,6 @@ const ViewCartLayer = ({
             {actionText}
           </Button>
         )}
-        {!isCartPage ? (
-          <Button
-            type="button"
-            variant="icon"
-            className={`absolute right-0  !p-1 bg-secondray ${
-              isCartLayer.value ? "-top-4" : "top-0"
-            } `}
-            onClick={() => (isCartLayer.value = false)}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6 stroke-danger-600"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </Button>
-        ) : null}
       </div>
     </div>
   );
