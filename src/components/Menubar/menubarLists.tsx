@@ -36,46 +36,6 @@ export const menubarItems = [
     link: "/return",
   },
   {
-    title: "Wishlist",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="22"
-        viewBox="0 0 18 22"
-        fill="none"
-      >
-        <path
-          d="M12 6V18.97L7.79 17.16L7 16.82L6.21 17.16L2 18.97V6H12ZM16 0H5.99C4.89 0 4 0.9 4 2H14C15.1 2 16 2.9 16 4V17L18 18V2C18 0.9 17.1 0 16 0ZM12 4H2C0.9 4 0 4.9 0 6V22L7 19L14 22V6C14 4.9 13.1 4 12 4Z"
-          fill="black"
-        />
-      </svg>
-    ),
-    link: "#",
-  },
-  {
-    title: "Transations",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="20"
-        viewBox="0 0 18 20"
-        fill="none"
-      >
-        <path
-          d="M16.5 1.5L15 0L13.5 1.5L12 0L10.5 1.5L9 0L7.5 1.5L6 0L4.5 1.5L3 0V14H0V17C0 18.66 1.34 20 3 20H15C16.66 20 18 18.66 18 17V0L16.5 1.5ZM12 18H3C2.45 18 2 17.55 2 17V16H12V18ZM16 17C16 17.55 15.55 18 15 18C14.45 18 14 17.55 14 17V14H5V3H16V17Z"
-          fill="black"
-        />
-        <path d="M12 5H6V7H12V5Z" fill="black" />
-        <path d="M15 5H13V7H15V5Z" fill="black" />
-        <path d="M12 8H6V10H12V8Z" fill="black" />
-        <path d="M15 8H13V10H15V8Z" fill="black" />
-      </svg>
-    ),
-    link: "#",
-  },
-  {
     title: "Account",
     icon: (
       <svg
@@ -115,44 +75,9 @@ export const menubarAdminItems = [
         />
       </svg>
     ),
-    link: "#",
+    link: "/inbound",
   },
-  {
-    title: "Approve Requests",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="17"
-        height="20"
-        viewBox="0 0 17 20"
-        fill="none"
-      >
-        <path
-          d="M0 14V20H16.0618V14C16.0618 12.9 15.1583 12 14.0541 12H2.00772C0.903475 12 0 12.9 0 14ZM14.0541 16H2.00772V14H14.0541V16ZM8.03089 0C5.26023 0 3.01158 2.24 3.01158 5L8.03089 12L13.0502 5C13.0502 2.24 10.8015 0 8.03089 0ZM8.03089 9L5.0193 5C5.0193 3.34 6.36448 2 8.03089 2C9.6973 2 11.0425 3.34 11.0425 5L8.03089 9Z"
-          fill="black"
-        />
-      </svg>
-    ),
-    link: "#",
-  },
-  {
-    title: "Fulfil Request",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="22"
-        viewBox="0 0 18 22"
-        fill="none"
-      >
-        <path
-          d="M12 6V18.97L7.79 17.16L7 16.82L6.21 17.16L2 18.97V6H12ZM16 0H5.99C4.89 0 4 0.9 4 2H14C15.1 2 16 2.9 16 4V17L18 18V2C18 0.9 17.1 0 16 0ZM12 4H2C0.9 4 0 4.9 0 6V22L7 19L14 22V6C14 4.9 13.1 4 12 4Z"
-          fill="black"
-        />
-      </svg>
-    ),
-    link: "#",
-  },
+
   {
     title: "Manage Masters",
     icon: (
@@ -194,28 +119,6 @@ export const menubarAdminItems = [
     link: "#",
   },
 
-  {
-    title: "Transations",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="20"
-        viewBox="0 0 18 20"
-        fill="none"
-      >
-        <path
-          d="M16.5 1.5L15 0L13.5 1.5L12 0L10.5 1.5L9 0L7.5 1.5L6 0L4.5 1.5L3 0V14H0V17C0 18.66 1.34 20 3 20H15C16.66 20 18 18.66 18 17V0L16.5 1.5ZM12 18H3C2.45 18 2 17.55 2 17V16H12V18ZM16 17C16 17.55 15.55 18 15 18C14.45 18 14 17.55 14 17V14H5V3H16V17Z"
-          fill="black"
-        />
-        <path d="M12 5H6V7H12V5Z" fill="black" />
-        <path d="M15 5H13V7H15V5Z" fill="black" />
-        <path d="M12 8H6V10H12V8Z" fill="black" />
-        <path d="M15 8H13V10H15V8Z" fill="black" />
-      </svg>
-    ),
-    link: "#",
-  },
   {
     title: "Reports",
     icon: (

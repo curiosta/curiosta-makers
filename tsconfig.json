@@ -30,6 +30,9 @@
       ],
       "@hooks/*": [
         "src/hooks/*"
+      ],
+      "@FileInput/*": [
+        "src/components/FileInput/*"
       ]
     }
   },

@@ -22,6 +22,7 @@ import Orders from "@pages/Orders";
 import OrderInfo from "@components/Orders/OrderInfo";
 import Return from "@pages/Return";
 import ReturnItems from "@pages/ReturnItems";
+import Inbound from "@pages/Inbound";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
@@ -63,6 +64,7 @@ const App = () => {
       <Route path="/orders/:id" component={OrderInfo} />
       <Route path="/return" component={Return} />
       <Route path="/return/:order_id/:return_id?" component={ReturnItems} />
+      <Route path="/inbound" component={Inbound} />
     </Router>
   );
 };
