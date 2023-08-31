@@ -10,6 +10,7 @@ import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
 import PopUp from "@/components/Popup";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
+import ShortClosePopup from "@/components/Popup/ShortClosePopup";
 import Typography from "@/components/Typography";
 import { LineItem, Order } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
@@ -32,6 +33,7 @@ const PickItems = ({ id }: Props) => {
   const isPopup = useSignal<boolean>(false);
   const isFulfillComplete = useSignal<boolean>(false);
   const errorMessage = useSignal<string>("");
+  const selectedItem = useSignal<LineItem | null>(null);
 
   const pickedItems = useSignal<PickedItem[]>([]);
 
@@ -66,31 +68,12 @@ const PickItems = ({ id }: Props) => {
     ];
   };
 
-  const handleUpdateOrder = async () => {
-    if (errorMessage.value) {
-      errorMessage.value = "";
-    }
-    isLoading.value = "order:update";
-    try {
-      await adminUpdateOrder(id);
-      isPopup.value = true;
-    } catch (error) {
-      if (error instanceof Error) {
-        errorMessage.value = error.message;
-      }
-    } finally {
-      isLoading.value = undefined;
-    }
-  };
-
   const handleFulfill = async () => {
     if (errorMessage.value) {
       errorMessage.value = "";
     }
     isLoading.value = "order:fulfill";
     try {
-      const paymentId = order.value?.payments?.at(0)?.id;
-      await adminPaymentCapture(paymentId);
       const fulfill = await adminFulfillment(id, pickedItems.value);
       order.value = fulfill?.order;
       isFulfillComplete.value = true;
@@ -153,7 +136,7 @@ const PickItems = ({ id }: Props) => {
                       Bin CA01
                     </Typography>
                   </div>
-                  <div className="flex items-center w-full justify-evenly gap-2 ">
+                  <div className="flex items-center w-full justify-between gap-2 ">
                     <div className="flex items-center gap-2">
                       <Typography>Qty</Typography>
                       <Chip className="!bg-gray-100 !rounded-md ">
@@ -188,9 +171,20 @@ const PickItems = ({ id }: Props) => {
                         Picked
                       </Button>
                     ) : (
-                      <Button type="button" onClick={() => handlePick(item)}>
-                        Pick
-                      </Button>
+                      <div className="flex items-center gap-4">
+                        <Button type="button" onClick={() => handlePick(item)}>
+                          Pick
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="danger"
+                          onClick={() => {
+                            (isPopup.value = true), (selectedItem.value = item);
+                          }}
+                        >
+                          Short close
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -198,12 +192,10 @@ const PickItems = ({ id }: Props) => {
               <div className="w-full flex justify-center my-2">
                 <Button
                   type="button"
-                  onClick={handleUpdateOrder}
+                  onClick={handleFulfill}
                   disabled={!pickedItems.value.length}
                 >
-                  {isLoading.value === "order:update"
-                    ? "Please wait.."
-                    : "Update order"}
+                  Fulfil
                 </Button>
               </div>
             </div>
@@ -218,21 +210,11 @@ const PickItems = ({ id }: Props) => {
           <Loading loadingText="loading" />
         </div>
       )}
-      {isLoading.value === "order:fulfill" ? null : (
-        <PopUp
-          title={`To Be Picked item${
-            notFulfilledItem?.length > 1 ? "s" : ""
-          }:- ${notFulfilledItem?.length}`}
-          subtitle={`Actual Picked item${
-            pickedItems.value?.length > 1 ? "s" : ""
-          }:- ${pickedItems.value?.length} `}
-          actionText="Fullfil"
-          handlePopupAction={handleFulfill}
-          isPopup={isPopup}
-          errorMessage={errorMessage.value}
-        />
-      )}
-
+      <ShortClosePopup
+        isPopup={isPopup}
+        actionText="okay"
+        selectedItem={selectedItem}
+      />
       {isLoading.value === "order:fulfill" && !isFulfillComplete.value ? (
         <LoadingPopUp loadingText="Please wait" />
       ) : (

@@ -3,16 +3,22 @@ import Typography from "@components/Typography";
 const Progressbar = ({ status }: { status: string }) => {
   const progressSteps = [
     { step: 1, stepText: "ordered", title: "Order Placed" },
-    { step: 2, stepText: "not_fulfilled", title: "Pending Approval" },
+    { step: 2, stepText: "awaiting", title: "Pending Approval" },
     { step: 3, stepText: "canceled", title: "Canceled" },
     {
       step: 4,
+      stepText: "captured",
+      stepSubText: "not_fulfilled",
+      title: "Approved",
+    },
+    {
+      step: 5,
       stepText: "fulfilled",
       stepSubText: "partially_fulfilled",
       title: "Issued",
     },
-    { step: 5, stepText: "return initiated", title: "Return Initiated" },
-    { step: 6, stepText: "returned", title: "Returned" },
+    { step: 6, stepText: "return initiated", title: "Return Initiated" },
+    { step: 7, stepText: "returned", title: "Returned" },
   ];
 
   const currentStep = progressSteps.find(
@@ -25,7 +31,7 @@ const Progressbar = ({ status }: { status: string }) => {
         {status !== "canceled"
           ? progressSteps.map((step, index) => (
               <li
-                class={`relative pr-10 last:pr-0 ${
+                class={`relative pr-8 last:pr-0 ${
                   step.stepText !== "canceled" ? "block" : "hidden"
                 }`}
               >
@@ -67,7 +73,8 @@ const Progressbar = ({ status }: { status: string }) => {
                 </div>
               </li>
             ))
-          : progressSteps.slice(0, 3).map((step, index) => (
+          : // if Cancel status
+            progressSteps.slice(0, 3).map((step, index) => (
               <li class={`relative pr-10 last:pr-0 `}>
                 <div
                   class="absolute inset-0 -z-10 flex items-center"

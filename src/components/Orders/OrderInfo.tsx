@@ -13,11 +13,13 @@ import PopUp from "@components/Popup";
 import Progressbar from "@components/Progressbar";
 import { adminCancelOrder } from "@/api/admin/orders/cancelOrder";
 import LoadingPopUp from "@components/Popup/LoadingPopUp";
+import { adminPaymentCapture } from "@/api/admin/orders/paymentCapture";
+import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
 
 interface Props {
   id: string;
 }
-type TLoadableOptions = "order:get" | "order:cancel";
+type TLoadableOptions = "order:get" | "order:approve" | "order:cancel";
 
 const OrderInfo = ({ id }: Props) => {
   const order = useSignal<Order | null>(null);
@@ -52,6 +54,18 @@ const OrderInfo = ({ id }: Props) => {
     (item) => !fulfilledItemId.includes(item.id)
   );
 
+  const hanldeApprove = async () => {
+    isLoading.value = "order:approve";
+    try {
+      await adminUpdateOrder(id);
+      await adminPaymentCapture(id);
+      isPopup.value = true;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
   const hanldeReject = async () => {
     isLoading.value = "order:cancel";
     try {
@@ -84,7 +98,13 @@ const OrderInfo = ({ id }: Props) => {
                 Order ID:{" "}
                 {order.value?.id.substring(order.value?.id.length - 5)}
               </Typography>
-              <Progressbar status={order.value?.fulfillment_status} />
+              <Progressbar
+                status={
+                  order.value?.payment_status === "captured"
+                    ? order.value?.fulfillment_status
+                    : order.value?.payment_status
+                }
+              />
             </div>
 
             <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondray">
@@ -174,14 +194,22 @@ const OrderInfo = ({ id }: Props) => {
 
             {!isUser.value &&
             order.value?.fulfillment_status === "not_fulfilled" ? (
-              <div className="w-full flex items-center justify-evenly mt-8">
-                <Button type="button" onClick={() => (isPopup.value = true)}>
-                  Approve
-                </Button>
-                <Button type="button" variant="danger" onClick={hanldeReject}>
-                  Reject
-                </Button>
-              </div>
+              order.value?.payment_status === "awaiting" ? (
+                <div className="w-full flex items-center justify-evenly mt-8">
+                  <Button type="button" onClick={hanldeApprove}>
+                    Approve
+                  </Button>
+                  <Button type="button" variant="danger" onClick={hanldeReject}>
+                    Reject
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex justify-center">
+                  <Button link={`/pick-items/${order.value?.id}`}>
+                    Start Picking
+                  </Button>
+                </div>
+              )
             ) : null}
           </div>
         ) : (
@@ -193,13 +221,17 @@ const OrderInfo = ({ id }: Props) => {
       {isLoading.value === "order:cancel" ? (
         <LoadingPopUp loadingText="Please wait" />
       ) : null}
-      <PopUp
-        title="Request is approved and picking task is created successfully"
-        subtitle={`Pick Task id ${order.value?.id}`}
-        actionText="Start Picking"
-        actionLink={`/pick-items/${order.value?.id}`}
-        isPopup={isPopup}
-      />
+      {isLoading.value === "order:approve" ? (
+        <LoadingPopUp loadingText="Please wait" />
+      ) : (
+        <PopUp
+          title="Request is approved and picking task is created successfully"
+          subtitle={`Pick Task id ${order.value?.id}`}
+          actionText="Start Picking"
+          actionLink={`/pick-items/${order.value?.id}`}
+          isPopup={isPopup}
+        />
+      )}
       <BottomNavbar />
     </div>
   );
