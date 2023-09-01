@@ -40,6 +40,7 @@ const button = cva(
           "bg-danger-600",
           "focus:bg-danger-600",
           "hover:bg-danger-600",
+          "disabled:bg-danger-300",
           "focus-visible:outline-danger-600",
           "text-white",
           "py-3 px-4 w-fit",

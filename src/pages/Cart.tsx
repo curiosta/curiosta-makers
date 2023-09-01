@@ -2,6 +2,7 @@ import cart from "@/api/cart";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import ManageQty from "@/components/ManageQty";
+import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import Typography from "@/components/Typography";
@@ -75,17 +76,15 @@ const Cart = () => {
   };
 
   // discart cart
-  const handleDiscard = () => {
-    cart.store.value?.items?.map(async (item) => {
-      try {
-        isCartDiscarding.value = true;
-        await cart.removeItem(item.id);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        isCartDiscarding.value = false;
-      }
-    });
+  const handleDiscard = async () => {
+    isCartDiscarding.value = true;
+    try {
+      await cart.resetCartId();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isCartDiscarding.value = false;
+    }
   };
 
   return (
@@ -173,7 +172,7 @@ const Cart = () => {
               />
             ) : (
               // confirm order or discard buttons
-              <div className=" fixed bottom-0 left-0 p-4 w-full flex items-center justify-around">
+              <div className="fixed bottom-16 left-0 p-4 w-full flex items-center justify-around">
                 <Button
                   type="button"
                   variant="primary"
@@ -259,8 +258,10 @@ const Cart = () => {
       />
 
       {isCartDiscarding.value ? (
-        <LoadingPopUp loadingText="Removing all item please wait" />
+        <LoadingPopUp loadingText="Deleting please wait" />
       ) : null}
+
+      <BottomNavbar />
     </div>
   );
 };

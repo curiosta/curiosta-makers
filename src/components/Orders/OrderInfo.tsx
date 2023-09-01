@@ -13,11 +13,13 @@ import PopUp from "@components/Popup";
 import Progressbar from "@components/Progressbar";
 import { adminCancelOrder } from "@/api/admin/orders/cancelOrder";
 import LoadingPopUp from "@components/Popup/LoadingPopUp";
+import { adminPaymentCapture } from "@/api/admin/orders/paymentCapture";
+import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
 
 interface Props {
   id: string;
 }
-type TLoadableOptions = "order:get" | "order:cancel";
+type TLoadableOptions = "order:get" | "order:approve" | "order:cancel";
 
 const OrderInfo = ({ id }: Props) => {
   const order = useSignal<Order | null>(null);
@@ -52,6 +54,19 @@ const OrderInfo = ({ id }: Props) => {
     (item) => !fulfilledItemId.includes(item.id)
   );
 
+  const hanldeApprove = async () => {
+    isLoading.value = "order:approve";
+    try {
+      await adminUpdateOrder(id);
+      const payment = await adminPaymentCapture(id);
+      order.value = payment?.order;
+      isPopup.value = true;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
   const hanldeReject = async () => {
     isLoading.value = "order:cancel";
     try {
@@ -84,7 +99,15 @@ const OrderInfo = ({ id }: Props) => {
                 Order ID:{" "}
                 {order.value?.id.substring(order.value?.id.length - 5)}
               </Typography>
-              <Progressbar status={order.value?.fulfillment_status} />
+              <Progressbar
+                status={
+                  order.value?.payment_status === "captured"
+                    ? order.value?.returns?.length
+                      ? order.value?.returns?.at(0).status
+                      : order.value?.fulfillment_status
+                    : order.value?.payment_status
+                }
+              />
             </div>
 
             <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondray">
@@ -98,18 +121,23 @@ const OrderInfo = ({ id }: Props) => {
                   size="body1/normal"
                   className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-blue-600 text-white"
                 >
-                  Approved
+                  Fulfilled
                 </Typography>
                 {fulfilledItem?.map((item) => (
                   <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
-                    <div className="flex gap-2 items-center">
-                      <img
-                        src={item.thumbnail || "N/A"}
-                        alt={item.title}
-                        className="w-10 h-10 object-cover"
-                      />
-                      <Typography size="body1/normal" className="text-start">
-                        {item.title}
+                    <div>
+                      <div className="flex gap-2 items-center">
+                        <img
+                          src={item.thumbnail || "N/A"}
+                          alt={item.title}
+                          className="w-10 h-10 object-cover"
+                        />
+                        <Typography size="body1/normal" className="text-start">
+                          {item.title}
+                        </Typography>
+                      </div>
+                      <Typography size="body2/normal">
+                        fulfilled Qty: {item.fulfilled_quantity}
                       </Typography>
                     </div>
                     <Typography className="pr-8">x{item.quantity}</Typography>
@@ -142,7 +170,7 @@ const OrderInfo = ({ id }: Props) => {
                   size="body1/normal"
                   className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-yellow-900 text-white"
                 >
-                  Not Approved
+                  Not Fullfilled
                 </Typography>
                 {notFulfilledItem?.map((item) => (
                   <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
@@ -160,12 +188,9 @@ const OrderInfo = ({ id }: Props) => {
                   </div>
                 ))}
                 {!isUser.value ? (
-                  <div className="flex items-center justify-center">
-                    <Button
-                      type="button"
-                      onClick={() => (isPopup.value = true)}
-                    >
-                      Approve
+                  <div className="flex justify-center">
+                    <Button link={`/pick-items/${order.value?.id}`}>
+                      Start Picking
                     </Button>
                   </div>
                 ) : null}
@@ -174,14 +199,22 @@ const OrderInfo = ({ id }: Props) => {
 
             {!isUser.value &&
             order.value?.fulfillment_status === "not_fulfilled" ? (
-              <div className="w-full flex items-center justify-evenly mt-8">
-                <Button type="button" onClick={() => (isPopup.value = true)}>
-                  Approve
-                </Button>
-                <Button type="button" variant="danger" onClick={hanldeReject}>
-                  Reject
-                </Button>
-              </div>
+              order.value?.payment_status === "awaiting" ? (
+                <div className="w-full flex items-center justify-evenly mt-8">
+                  <Button type="button" onClick={hanldeApprove}>
+                    Approve
+                  </Button>
+                  <Button type="button" variant="danger" onClick={hanldeReject}>
+                    Reject
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex justify-center">
+                  <Button link={`/pick-items/${order.value?.id}`}>
+                    Start Picking
+                  </Button>
+                </div>
+              )
             ) : null}
           </div>
         ) : (
@@ -193,13 +226,17 @@ const OrderInfo = ({ id }: Props) => {
       {isLoading.value === "order:cancel" ? (
         <LoadingPopUp loadingText="Please wait" />
       ) : null}
-      <PopUp
-        title="Request is approved and picking task is created successfully"
-        subtitle={`Pick Task id ${order.value?.id}`}
-        actionText="Start Picking"
-        actionLink={`/pick-items/${order.value?.id}`}
-        isPopup={isPopup}
-      />
+      {isLoading.value === "order:approve" ? (
+        <LoadingPopUp loadingText="Please wait" />
+      ) : (
+        <PopUp
+          title="Request is approved and picking task is created successfully"
+          subtitle={`Pick Task id ${order.value?.id}`}
+          actionText="Start Picking"
+          actionLink={`/pick-items/${order.value?.id}`}
+          isPopup={isPopup}
+        />
+      )}
       <BottomNavbar />
     </div>
   );

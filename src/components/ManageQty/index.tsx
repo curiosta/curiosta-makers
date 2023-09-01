@@ -1,9 +1,9 @@
 import { useSignal } from "@preact/signals";
-import Button from "../Button";
-import Typography from "../Typography";
+import Button from "@components/Button";
+import Typography from "@components/Typography";
 import { LineItem } from "@medusajs/medusa";
 import cart from "@/api/cart";
-import Input from "../Input";
+import Input from "@components/Input";
 import { ChangeEvent } from "preact/compat";
 
 type TManageQty = {
@@ -176,9 +176,18 @@ const ManageQty = ({ productItem, page }: TManageQty) => {
         </Typography>
       ) : null}
 
+      {/* close on outside click */}
+      <div
+        className={`w-full h-full absolute ${
+          errorMessage.value ? "z-10" : "-z-10"
+        } `}
+        onClick={() => {
+          errorMessage.value = null;
+        }}
+      />
       <div
         className={`absolute ${
-          page !== "cart" ? "top-full" : "-bottom-4"
+          page !== "cart" ? "bottom-full" : "top-full"
         }  rounded-lg shadow-xl p-1.5 bg-secondray z-10 ${
           errorMessage.value ? "block" : "hidden"
         }`}

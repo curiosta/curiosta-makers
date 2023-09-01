@@ -25,7 +25,7 @@ import ReturnItems from "@pages/ReturnItems";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
-  const publicRoute = ["/", "/welcome", "/login", "/signup"];
+  const publicRoute = ["/welcome", "/login", "/signup"];
 
   const userState = isUser.value ? user.state.value : admin.state.value;
 
@@ -37,11 +37,17 @@ const App = () => {
     );
   }
 
+  // if user not authenticated then redirect to /login page
   if (
     !publicRoute.includes(currentUrl.value) &&
-    userState !== "authenticated"
+    userState !== "authenticated" &&
+    currentUrl.value !== "/"
   ) {
     currentUrl.value = "/login";
+  }
+  // if user authenticated then redirect to /home page
+  if (currentUrl.value === "/" && userState === "authenticated") {
+    currentUrl.value = "/home";
   }
 
   return (
