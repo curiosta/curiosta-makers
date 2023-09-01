@@ -3,7 +3,9 @@ import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { TReturnItem, createReturn } from "@/api/user/orders/createReturn";
 import { getOrders } from "@/api/user/orders/getOrder";
 import Button from "@/components/Button";
+import Input from "@/components/Input";
 import Loading from "@/components/Loading";
+import ReturnItemQty from "@/components/ManageQty/ReturnItemQty";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
 import PopUp from "@/components/Popup";
@@ -25,6 +27,7 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const isRequestReturn = useSignal<boolean>(false);
   const returnItem = useSignal<Return | null>(null);
+  const requestReturnItems = useSignal<TReturnItem[]>([]);
 
   const getOrderInfo = async () => {
     isLoading.value = "order:get";
@@ -42,30 +45,16 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
     getOrderInfo();
   }, [order_id]);
 
-  // filter out fulfilled items
-  const fulfilledItemId = order.value?.fulfillments?.flatMap((fulfill) =>
-    fulfill.items.map((item) => item.item_id)
-  );
-
-  const fulfilledItem = order.value?.items.filter((item) =>
-    fulfilledItemId.includes(item.id)
-  );
-
-  // if item fulfilled then only it can return
-  const borrowItems = fulfilledItem?.filter(
+  const borrowItems = order.value?.items?.filter(
     (item) => item.metadata?.cartType === "borrow"
   );
 
   const handleReqestReturn = async () => {
     isLoading.value = "order:return";
     try {
-      const returnItems: TReturnItem[] = [];
-      borrowItems?.map((item) =>
-        returnItems.push({ item_id: item.id, quantity: item.quantity })
-      );
-      const res = await createReturn(order_id, returnItems);
-      returnItem.value = res?.return;
-      isRequestReturn.value = true;
+      // const res = await createReturn(order_id, returnItems);
+      // returnItem.value = res?.return;
+      // isRequestReturn.value = true;
     } catch (error) {
     } finally {
       isLoading.value = undefined;
@@ -114,14 +103,31 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
                       {item.title}
                     </Typography>
                   </div>
-                  <Typography className="pr-8">x{item.quantity}</Typography>
+                  <ReturnItemQty
+                    item={item}
+                    requestReturnItems={requestReturnItems}
+                  />
                 </div>
               ))}
               <div className="flex items-center justify-center">
                 {isUser.value ? (
-                  <Button type="button" onClick={handleReqestReturn}>
-                    Request Return
-                  </Button>
+                  order.value?.returns?.at(0)?.status !== "requested" ? (
+                    <Button type="button" onClick={handleReqestReturn}>
+                      Request Return
+                    </Button>
+                  ) : (
+                    <div className="flex flex-col items-center gap-4 ">
+                      <Typography size="body2/normal">
+                        Already return requested
+                      </Typography>
+                      <Button
+                        link={`/orders/${order.value?.id}`}
+                        variant="secondary"
+                      >
+                        Check status
+                      </Button>
+                    </div>
+                  )
                 ) : (
                   <div>
                     {!order.value?.fulfillment_status.includes("returned") ? (
