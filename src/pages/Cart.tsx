@@ -76,17 +76,15 @@ const Cart = () => {
   };
 
   // discart cart
-  const handleDiscard = () => {
-    cart.store.value?.items?.map(async (item) => {
-      try {
-        isCartDiscarding.value = true;
-        await cart.removeItem(item.id);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        isCartDiscarding.value = false;
-      }
-    });
+  const handleDiscard = async () => {
+    isCartDiscarding.value = true;
+    try {
+      await cart.resetCartId();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isCartDiscarding.value = false;
+    }
   };
 
   return (
@@ -260,7 +258,7 @@ const Cart = () => {
       />
 
       {isCartDiscarding.value ? (
-        <LoadingPopUp loadingText="Removing all item please wait" />
+        <LoadingPopUp loadingText="Deleting please wait" />
       ) : null}
 
       <BottomNavbar />

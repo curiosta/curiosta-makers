@@ -17,8 +17,8 @@ const Progressbar = ({ status }: { status: string }) => {
       stepSubText: "partially_fulfilled",
       title: "Issued",
     },
-    { step: 6, stepText: "return initiated", title: "Return Initiated" },
-    { step: 7, stepText: "returned", title: "Returned" },
+    { step: 6, stepText: "requested", title: "Return Initiated" },
+    { step: 7, stepText: "received", title: "Returned" },
   ];
 
   const currentStep = progressSteps.find(

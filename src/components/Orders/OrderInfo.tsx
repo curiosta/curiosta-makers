@@ -102,7 +102,9 @@ const OrderInfo = ({ id }: Props) => {
               <Progressbar
                 status={
                   order.value?.payment_status === "captured"
-                    ? order.value?.fulfillment_status
+                    ? order.value?.returns?.length
+                      ? order.value?.returns?.at(0).status
+                      : order.value?.fulfillment_status
                     : order.value?.payment_status
                 }
               />
