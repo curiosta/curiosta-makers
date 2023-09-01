@@ -119,9 +119,23 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
               ))}
               <div className="flex items-center justify-center">
                 {isUser.value ? (
-                  <Button type="button" onClick={handleReqestReturn}>
-                    Request Return
-                  </Button>
+                  order.value?.returns?.at(0)?.status !== "requested" ? (
+                    <Button type="button" onClick={handleReqestReturn}>
+                      Request Return
+                    </Button>
+                  ) : (
+                    <div className="flex flex-col items-center gap-4 ">
+                      <Typography size="body2/normal">
+                        Already return requested
+                      </Typography>
+                      <Button
+                        link={`/orders/${order.value?.id}`}
+                        variant="secondary"
+                      >
+                        Check status
+                      </Button>
+                    </div>
+                  )
                 ) : (
                   <div>
                     {!order.value?.fulfillment_status.includes("returned") ? (
