@@ -11,11 +11,11 @@ import Loading from "../Loading";
 import { adminOrdersList } from "@/api/admin/orders/ordersList";
 
 const IssuedItems = () => {
-  const activeToggle = useSignal<string[]>(["not_fulfilled"]);
+  const activeToggle = useSignal<string[]>(["awaiting"]);
   const orders = useSignal<Order[]>([]);
   const isLoading = useSignal<boolean>(false);
   const count = useSignal<null | number>(null);
-  const limit = useSignal<number>(3);
+  const limit = useSignal<number>(4);
   const offset = useSignal<number>(0);
 
   const getOrdersList = async () => {
@@ -43,6 +43,10 @@ const IssuedItems = () => {
   const toggleItems = [
     {
       title: "Pending",
+      fulfillStatus: ["awaiting"],
+    },
+    {
+      title: "Active",
       fulfillStatus: ["not_fulfilled"],
     },
     {
@@ -52,7 +56,11 @@ const IssuedItems = () => {
   ];
 
   const ordersFilter = orders.value.filter((order) =>
-    activeToggle.value.includes(order.fulfillment_status)
+    activeToggle.value.includes(
+      order.payment_status === "captured"
+        ? order.fulfillment_status
+        : order.payment_status
+    )
   );
 
   return (

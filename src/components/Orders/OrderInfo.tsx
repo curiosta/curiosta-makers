@@ -58,7 +58,8 @@ const OrderInfo = ({ id }: Props) => {
     isLoading.value = "order:approve";
     try {
       await adminUpdateOrder(id);
-      await adminPaymentCapture(id);
+      const payment = await adminPaymentCapture(id);
+      order.value = payment?.order;
       isPopup.value = true;
     } catch (error) {
     } finally {
@@ -118,18 +119,23 @@ const OrderInfo = ({ id }: Props) => {
                   size="body1/normal"
                   className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-blue-600 text-white"
                 >
-                  Approved
+                  Fulfilled
                 </Typography>
                 {fulfilledItem?.map((item) => (
                   <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
-                    <div className="flex gap-2 items-center">
-                      <img
-                        src={item.thumbnail || "N/A"}
-                        alt={item.title}
-                        className="w-10 h-10 object-cover"
-                      />
-                      <Typography size="body1/normal" className="text-start">
-                        {item.title}
+                    <div>
+                      <div className="flex gap-2 items-center">
+                        <img
+                          src={item.thumbnail || "N/A"}
+                          alt={item.title}
+                          className="w-10 h-10 object-cover"
+                        />
+                        <Typography size="body1/normal" className="text-start">
+                          {item.title}
+                        </Typography>
+                      </div>
+                      <Typography size="body2/normal">
+                        fulfilled Qty: {item.fulfilled_quantity}
                       </Typography>
                     </div>
                     <Typography className="pr-8">x{item.quantity}</Typography>
@@ -162,7 +168,7 @@ const OrderInfo = ({ id }: Props) => {
                   size="body1/normal"
                   className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-yellow-900 text-white"
                 >
-                  Not Approved
+                  Not Fullfilled
                 </Typography>
                 {notFulfilledItem?.map((item) => (
                   <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
@@ -180,12 +186,9 @@ const OrderInfo = ({ id }: Props) => {
                   </div>
                 ))}
                 {!isUser.value ? (
-                  <div className="flex items-center justify-center">
-                    <Button
-                      type="button"
-                      onClick={() => (isPopup.value = true)}
-                    >
-                      Approve
+                  <div className="flex justify-center">
+                    <Button link={`/pick-items/${order.value?.id}`}>
+                      Start Picking
                     </Button>
                   </div>
                 ) : null}

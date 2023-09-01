@@ -1,6 +1,10 @@
 import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { adminFulfillment } from "@/api/admin/orders/orderFulfil";
 import { adminPaymentCapture } from "@/api/admin/orders/paymentCapture";
+import {
+  TShortItem,
+  adminUpdateItemsQty,
+} from "@/api/admin/orders/updateItemsQty";
 import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
@@ -14,7 +18,8 @@ import ShortClosePopup from "@/components/Popup/ShortClosePopup";
 import Typography from "@/components/Typography";
 import { LineItem, Order } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
+import { ChangeEvent } from "preact/compat";
+import { useEffect, useRef } from "preact/hooks";
 
 type Props = {
   id: string;
@@ -36,6 +41,8 @@ const PickItems = ({ id }: Props) => {
   const selectedItem = useSignal<LineItem | null>(null);
 
   const pickedItems = useSignal<PickedItem[]>([]);
+  const shortItems = useSignal<TShortItem[]>([]);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const getOrderInfo = async () => {
     isLoading.value = "order:get";
@@ -68,13 +75,29 @@ const PickItems = ({ id }: Props) => {
     ];
   };
 
+  const handleShortClose = async (e: ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!formRef.current) return;
+    const formData = new FormData(formRef.current);
+    const quantity = formData.get("actual_qty");
+    shortItems.value = [
+      ...shortItems.value,
+      {
+        item_id: selectedItem.value.id,
+        quantity: parseInt(quantity as string),
+      },
+    ];
+    isPopup.value = false;
+  };
+
   const handleFulfill = async () => {
     if (errorMessage.value) {
       errorMessage.value = "";
     }
     isLoading.value = "order:fulfill";
+    const fulfillItems = [...shortItems.value, ...pickedItems.value];
     try {
-      const fulfill = await adminFulfillment(id, pickedItems.value);
+      const fulfill = await adminFulfillment(id, fulfillItems);
       order.value = fulfill?.order;
       isFulfillComplete.value = true;
     } catch (error) {
@@ -143,49 +166,99 @@ const PickItems = ({ id }: Props) => {
                         {item.quantity}
                       </Chip>
                     </div>
-                    {pickedItems.value?.some(
-                      (val) => val.item_id === item.id
+                    {shortItems.value?.some(
+                      (short) => short.item_id === item.id
                     ) ? (
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        className="items-center gap-3"
-                        onClick={() =>
-                          (pickedItems.value = pickedItems.value.filter(
-                            (val) => val.item_id !== item.id
-                          ))
-                        }
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="14"
-                          height="10"
-                          viewBox="0 0 14 10"
-                          fill="none"
+                      <div className="flex items-center ">
+                        <Typography size="small/normal">Short Qty</Typography>
+                        <Chip className="!bg-gray-100 !rounded-md text-sm">
+                          {
+                            shortItems.value?.find(
+                              (short) => short.item_id === item.id
+                            )?.quantity
+                          }
+                        </Chip>
+                      </div>
+                    ) : null}
+                    <div className="flex items-center gap-4">
+                      {pickedItems.value?.some(
+                        (val) => val.item_id === item.id
+                      ) ? (
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          className="items-center gap-3"
+                          onClick={() =>
+                            (pickedItems.value = pickedItems.value.filter(
+                              (val) => val.item_id !== item.id
+                            ))
+                          }
                         >
-                          <path
-                            d="M4.45455 7.6194L1.11364 4.79851L0 5.73881L4.45455 9.5L14 1.4403L12.8864 0.5L4.45455 7.6194Z"
-                            fill="#0B7278"
-                          />
-                        </svg>
-                        Picked
-                      </Button>
-                    ) : (
-                      <div className="flex items-center gap-4">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14"
+                            height="10"
+                            viewBox="0 0 14 10"
+                            fill="none"
+                          >
+                            <path
+                              d="M4.45455 7.6194L1.11364 4.79851L0 5.73881L4.45455 9.5L14 1.4403L12.8864 0.5L4.45455 7.6194Z"
+                              fill="#0B7278"
+                            />
+                          </svg>
+                          Picked
+                        </Button>
+                      ) : shortItems.value?.some(
+                          (val) => val.item_id === item.id
+                        ) ? null : (
                         <Button type="button" onClick={() => handlePick(item)}>
                           Pick
                         </Button>
+                      )}
+
+                      {shortItems.value?.some(
+                        (val) => val.item_id === item.id
+                      ) ? (
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          className="items-center gap-3 !ring-danger-600 !border-danger-600 !text-danger-600"
+                          onClick={() =>
+                            (shortItems.value = shortItems.value.filter(
+                              (val) => val.item_id !== item.id
+                            ))
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14"
+                            height="10"
+                            viewBox="0 0 14 10"
+                            fill="none"
+                            className="stroke-current"
+                          >
+                            <path
+                              d="M4.45455 7.6194L1.11364 4.79851L0 5.73881L4.45455 9.5L14 1.4403L12.8864 0.5L4.45455 7.6194Z"
+                              fill="#0B7278"
+                            />
+                          </svg>
+                          Short Closed
+                        </Button>
+                      ) : pickedItems.value?.some(
+                          (val) => val.item_id === item.id
+                        ) ? null : (
                         <Button
                           type="button"
                           variant="danger"
                           onClick={() => {
                             (isPopup.value = true), (selectedItem.value = item);
                           }}
+                          disabled={item.quantity <= 1}
                         >
                           Short close
                         </Button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -193,7 +266,9 @@ const PickItems = ({ id }: Props) => {
                 <Button
                   type="button"
                   onClick={handleFulfill}
-                  disabled={!pickedItems.value.length}
+                  disabled={
+                    !pickedItems.value?.length && !shortItems.value?.length
+                  }
                 >
                   Fulfil
                 </Button>
@@ -201,7 +276,7 @@ const PickItems = ({ id }: Props) => {
             </div>
           ) : (
             <Typography className="mt-8 text-center">
-              No item for pick
+              No item for fulfill
             </Typography>
           )}
         </div>
@@ -214,6 +289,8 @@ const PickItems = ({ id }: Props) => {
         isPopup={isPopup}
         actionText="okay"
         selectedItem={selectedItem}
+        formRef={formRef}
+        handlePopupAction={handleShortClose}
       />
       {isLoading.value === "order:fulfill" && !isFulfillComplete.value ? (
         <LoadingPopUp loadingText="Please wait" />

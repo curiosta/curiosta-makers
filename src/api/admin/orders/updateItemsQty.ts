@@ -1,12 +1,12 @@
 import medusa from "@api/medusa";
 
-type shortItem = {
+export type TShortItem = {
   item_id: string;
   quantity: number;
 };
 export const adminUpdateItemsQty = async (
   orderId: string,
-  items: shortItem[]
+  items: TShortItem[]
 ) => {
   return medusa.admin.orders.update(orderId, { items });
 };

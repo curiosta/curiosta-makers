@@ -3,18 +3,22 @@ import Button from "../Button";
 import Typography from "../Typography";
 import Input from "../Input";
 import { LineItem } from "@medusajs/medusa";
+import { ChangeEvent } from "preact/compat";
+import { MutableRef } from "preact/hooks";
 
 type PopUp = {
   isPopup: Signal<boolean>;
   selectedItem: Signal<LineItem>;
   actionText: string;
-  handlePopupAction?: () => void;
+  formRef: MutableRef<HTMLFormElement>;
+  handlePopupAction?: (e: ChangeEvent<HTMLFormElement>) => void;
 };
 
 const ShortClosePopup = ({
   isPopup,
   selectedItem,
   handlePopupAction,
+  formRef,
   actionText,
 }: PopUp) => {
   return (
@@ -42,34 +46,35 @@ const ShortClosePopup = ({
             />
           </div>
         </div>
-        <div className="flex gap-4 items-center justify-center w-full my-4">
-          <Typography>Actual Picked</Typography>
-          <div className="w-12">
-            <Input
+        <form onSubmit={handlePopupAction} ref={formRef}>
+          <div className="flex gap-4 items-center justify-center w-full my-4">
+            <Typography>Actual Picked</Typography>
+            <input
               type="number"
-              className="text-center disabled:bg-gray-100"
-              value={3}
+              className="w-12 text-center rounded-lg disabled:bg-gray-100"
+              value={selectedItem.value?.quantity}
+              name="actual_qty"
+              min={1}
+              max={selectedItem.value?.variant?.inventory_quantity}
             />
           </div>
-        </div>
+          <div className="w-full flex items-center justify-evenly">
+            <Button
+              type="submit"
+              className={`capitalize ${actionText ? "flex" : "hidden"}`}
+            >
+              {actionText}
+            </Button>
 
-        <div className="w-full flex items-center justify-evenly">
-          <Button
-            type="button"
-            className={`capitalize ${actionText ? "flex" : "hidden"}`}
-            onClick={handlePopupAction}
-          >
-            {actionText}
-          </Button>
-
-          <Button
-            type="button"
-            variant="danger"
-            onClick={() => (isPopup.value = false)}
-          >
-            Close
-          </Button>
-        </div>
+            <Button
+              type="button"
+              variant="danger"
+              onClick={() => (isPopup.value = false)}
+            >
+              Close
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
