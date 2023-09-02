@@ -39,19 +39,21 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
             <dt class="font-medium text-gray-900">Requested date</dt>
             <dd class="mt-1 text-gray-500">
               <time dateTime="2021-07-06">
-                {page !== "adminReturn"
+                {page !== "adminReturn" && page !== "return"
                   ? new Date(order.created_at).toLocaleDateString("default", {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
                     })
-                  : new Date(
+                  : order.returns?.length
+                  ? new Date(
                       order.returns?.at(0)?.created_at
                     ).toLocaleDateString("default", {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
-                    })}
+                    })
+                  : "N/A"}
               </time>
             </dd>
           </div>
