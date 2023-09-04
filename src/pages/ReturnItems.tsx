@@ -52,6 +52,7 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
   const handleReqestReturn = async () => {
     isLoading.value = "order:return";
     try {
+      console.log(requestReturnItems.value);
       // const res = await createReturn(order_id, returnItems);
       // returnItem.value = res?.return;
       // isRequestReturn.value = true;

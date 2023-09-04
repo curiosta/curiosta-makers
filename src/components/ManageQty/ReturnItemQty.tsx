@@ -3,7 +3,7 @@ import Button from "../Button";
 import Input from "../Input";
 import { TReturnItem } from "@/api/user/orders/createReturn";
 import { Signal, useSignal } from "@preact/signals";
-import { ChangeEvent } from "preact/compat";
+import { ChangeEvent, useEffect } from "preact/compat";
 
 type TReturnItemQty = {
   item: LineItem;
@@ -15,6 +15,7 @@ const ReturnItemQty = ({ item, requestReturnItems }: TReturnItemQty) => {
     item_id: item.id,
     quantity: item.quantity,
   });
+  // console.log(returnItem.value);
 
   const decreaseQty = () => {
     returnItem.value = { item_id: item.id, quantity: --item.quantity };
@@ -26,6 +27,26 @@ const ReturnItemQty = ({ item, requestReturnItems }: TReturnItemQty) => {
     const quantity = e.currentTarget.valueAsNumber;
     returnItem.value = { item_id: item.id, quantity };
   };
+
+  // useEffect(() => {
+  //   const exist = requestReturnItems.value.some(
+  //     (val) => val.item_id === returnItem.value.item_id
+  //   );
+  //   console.log({ exist });
+  //   if (!exist) {
+  //     requestReturnItems.value = requestReturnItems.value.concat(
+  //       returnItem.value
+  //     );
+  //   } else {
+  //     requestReturnItems.value = [
+  //       ...requestReturnItems.value,
+  //       {
+  //         item_id: returnItem.value.item_id,
+  //         quantity: returnItem.value.quantity,
+  //       },
+  //     ];
+  //   }
+  // }, []);
 
   return (
     <div className={`flex flex-col gap-2 items-center relative `}>
