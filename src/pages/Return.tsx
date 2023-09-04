@@ -49,7 +49,8 @@ const Return = () => {
     (order) =>
       !order.returns?.length &&
       order.payment_status !== "canceled" &&
-      order.fulfillment_status !== "not_fulfilled"
+      order.fulfillment_status !== "not_fulfilled" &&
+      order.items?.some((item) => item.metadata?.cartType === "borrow")
   );
 
   return (
