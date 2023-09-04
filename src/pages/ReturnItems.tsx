@@ -1,7 +1,7 @@
 import { adminApproveReturn } from "@/api/admin/orders/approveReturn";
 import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { TReturnItem, createReturn } from "@/api/user/orders/createReturn";
-import { getOrders } from "@/api/user/orders/getOrder";
+import { ordersList } from "@/api/user/orders/ordersList";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
@@ -30,9 +30,9 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
     isLoading.value = "order:get";
     try {
       const res = isUser.value
-        ? await getOrders(order_id)
+        ? await ordersList({ id: order_id, limit: 0, offset: 0 })
         : await adminGetOrders(order_id);
-      order.value = res?.order;
+      order.value = isUser.value ? res?.orders?.at(0) : res?.order;
     } catch (error) {
     } finally {
       isLoading.value = undefined;

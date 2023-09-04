@@ -1,14 +1,8 @@
 import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { adminFulfillment } from "@/api/admin/orders/orderFulfil";
-import { adminPaymentCapture } from "@/api/admin/orders/paymentCapture";
-import {
-  TShortItem,
-  adminUpdateItemsQty,
-} from "@/api/admin/orders/updateItemsQty";
-import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
+import { TShortItem } from "@/api/admin/orders/updateItemsQty";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
-import Input from "@/components/Input";
 import Loading from "@/components/Loading";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
