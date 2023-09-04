@@ -2,6 +2,10 @@ import Typography from "@components/Typography";
 import Button from "@components/Button";
 import { useSignal } from "@preact/signals";
 import { route } from "preact-router";
+import { useEffect } from "preact/hooks";
+import { isUser } from "@/store/userState";
+import user from "@/api/user";
+import admin from "@/api/admin";
 
 const Guide = () => {
   const activeIndex = useSignal<number>(0);
@@ -34,6 +38,13 @@ const Guide = () => {
       route("/welcome");
     }
   };
+
+  useEffect(() => {
+    const userState = isUser.value ? user.state.value : admin.state.value;
+    if (userState === "authenticated") {
+      route("/home");
+    }
+  }, []);
 
   return (
     <div className="flex justify-center  p-4">

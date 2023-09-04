@@ -10,6 +10,8 @@ import { useEffect } from "preact/hooks";
 import OffsetPagination from "@components/OffsetPagination";
 import { isUser } from "@/store/userState";
 import { adminOrdersList } from "@/api/admin/orders/ordersList";
+import { listProducts } from "@/api/product/listProducts";
+import medusa from "@/api/medusa";
 
 const Orders = () => {
   const orders = useSignal<Order[]>([]);
