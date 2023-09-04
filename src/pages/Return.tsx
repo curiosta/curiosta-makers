@@ -41,7 +41,15 @@ const Return = () => {
 
   // filter out only returns orders
   const returnOrders = orders.value?.filter(
-    (order) => order.returns?.length >= 1
+    (order) => order.returns?.at(0)?.status === "requested"
+  );
+
+  // filter out not returns orders
+  const requestReturnOrder = orders.value?.filter(
+    (order) =>
+      !order.returns?.length &&
+      order.payment_status !== "canceled" &&
+      order.fulfillment_status !== "not_fulfilled"
   );
 
   return (
@@ -52,10 +60,10 @@ const Return = () => {
       </div>
 
       {!isLoading.value ? (
-        orders.value?.length || returnOrders?.length ? (
+        requestReturnOrder?.length && returnOrders?.length ? (
           <div className="w-full flex flex-col gap-4 mb-12 ">
             {isUser.value
-              ? orders.value?.map((order) => (
+              ? requestReturnOrder?.map((order) => (
                   <OrderItem order={order} page="return" />
                 ))
               : returnOrders?.map((order) => (
