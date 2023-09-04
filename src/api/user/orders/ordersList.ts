@@ -1,5 +1,3 @@
-import Medusa from "@medusajs/medusa-js";
-
 import type { StoreGetCustomersCustomerOrdersParams } from "@medusajs/medusa";
 import medusa from "@/api/medusa";
 
