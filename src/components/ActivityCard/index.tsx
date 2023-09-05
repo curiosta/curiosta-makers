@@ -31,7 +31,7 @@ const ActivityCard = () => {
     {
       title: "Requests",
       icon: request_icon,
-      link: "#",
+      link: "/orders",
     },
   ];
 
