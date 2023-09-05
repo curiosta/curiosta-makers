@@ -39,9 +39,18 @@ const Return = () => {
     getOrdersList();
   }, [offset.value]);
 
-  // filter out only returns orders
-  const returnOrders = orders.value?.filter(
-    (order) => order.returns?.length >= 1
+  // filter out only returns orders for admin
+  const adminReturnOrders = orders.value?.filter(
+    (order) => order.returns?.at(0)?.status === "requested"
+  );
+
+  // filter out not returns orders for user
+  const requestReturnOrder = orders.value?.filter(
+    (order) =>
+      !order.returns?.length &&
+      order.payment_status !== "canceled" &&
+      order.fulfillment_status !== "not_fulfilled" &&
+      order.items?.some((item) => item.metadata?.cartType === "borrow")
   );
 
   return (
@@ -52,15 +61,22 @@ const Return = () => {
       </div>
 
       {!isLoading.value ? (
-        orders.value?.length || returnOrders?.length ? (
+        isUser.value ? (
+          requestReturnOrder?.length ? (
+            <div className="w-full flex flex-col gap-4 mb-12 ">
+              {requestReturnOrder?.map((order) => (
+                <OrderItem order={order} page="return" />
+              ))}
+              <OffsetPagination limit={limit} offset={offset} count={count} />
+            </div>
+          ) : (
+            <Typography>No order found</Typography>
+          )
+        ) : adminReturnOrders?.length ? (
           <div className="w-full flex flex-col gap-4 mb-12 ">
-            {isUser.value
-              ? orders.value?.map((order) => (
-                  <OrderItem order={order} page="return" />
-                ))
-              : returnOrders?.map((order) => (
-                  <OrderItem order={order} page="adminReturn" />
-                ))}
+            {adminReturnOrders?.map((order) => (
+              <OrderItem order={order} page="adminReturn" />
+            ))}
             <OffsetPagination limit={limit} offset={offset} count={count} />
           </div>
         ) : (

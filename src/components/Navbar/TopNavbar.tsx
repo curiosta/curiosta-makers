@@ -66,9 +66,9 @@ const TopNavbar = () => {
         ) : null}
         <div className="w-9 h-9 flex">
           <Chip className="!bg-primary-700 uppercase text-white">
-            {currentUser.first_name
-              ? currentUser.first_name.charAt(0)
-              : currentUser.email.charAt(0)}
+            {currentUser?.first_name
+              ? currentUser?.first_name.charAt(0)
+              : currentUser?.email.charAt(0)}
           </Chip>
         </div>
       </div>

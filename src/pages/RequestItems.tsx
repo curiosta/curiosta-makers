@@ -97,7 +97,7 @@ const RequestItems = ({ id }: Props) => {
         </Typography>
 
         {!isLoading.value ? (
-          <div>
+          <div className="mb-20">
             {products.value.map((product, index) => (
               <div
                 key={product?.id}
@@ -166,14 +166,12 @@ const RequestItems = ({ id }: Props) => {
                         label="Issue"
                         value="issue"
                         onChange={handleRadioInput}
-                        disabled={cart.loading.value === "cart:line_items:add"}
                       />
                       <Radio
                         name="add-method"
                         label="Borrow"
                         value="borrow"
                         onChange={handleRadioInput}
-                        disabled={cart.loading.value === "cart:line_items:add"}
                       />
                     </>
                   )}

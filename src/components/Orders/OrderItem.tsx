@@ -15,7 +15,11 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
   );
 
   return (
-    <div class="border-b border-t border-gray-200 bg-white shadow-sm rounded-lg border">
+    <div
+      class={`border-b border-t border-gray-200 bg-white shadow-sm rounded-lg border ${
+        page === "home" ? "!block" : ""
+      }  ${borrowItems?.length ? "block" : "hidden"}`}
+    >
       <div class="flex items-center border-b border-gray-200 p-4 sm:grid sm:grid-cols-4 sm:gap-x-6 sm:p-6">
         <dl class="grid flex-1 grid-cols-2 gap-x-6 text-sm sm:col-span-3 sm:grid-cols-3 lg:col-span-2">
           {page !== "adminReturn" ? (
@@ -35,19 +39,21 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
             <dt class="font-medium text-gray-900">Requested date</dt>
             <dd class="mt-1 text-gray-500">
               <time dateTime="2021-07-06">
-                {page !== "adminReturn"
+                {page !== "adminReturn" && page !== "return"
                   ? new Date(order.created_at).toLocaleDateString("default", {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
                     })
-                  : new Date(
+                  : order.returns?.length
+                  ? new Date(
                       order.returns?.at(0)?.created_at
                     ).toLocaleDateString("default", {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
-                    })}
+                    })
+                  : "N/A"}
               </time>
             </dd>
           </div>
@@ -140,13 +146,16 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
       {isUser.value ? (
         <div className="flex justify-center items-center  gap-4 p-4 border-t">
           <Button link={`/orders/${order.id}`}>View Details</Button>
-          <Button
-            link={`/return/${order.id}`}
-            variant="secondary"
-            className="!py-3"
-          >
-            Return
-          </Button>
+          {page === "return" ? (
+            <Button
+              link={`/return/${order.id}`}
+              variant="secondary"
+              className="!py-3 disabled:bg-gray-200 disabled:text-gray-500 disabled:!border-none"
+              disabled={order.fulfillment_status === "not_fulfilled"}
+            >
+              Return
+            </Button>
+          ) : null}
         </div>
       ) : (
         <div className="flex items-center  gap-4 p-4 border-t">

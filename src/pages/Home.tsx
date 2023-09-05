@@ -8,19 +8,21 @@ import { isUser } from "@/store/userState";
 import user from "@/api/user";
 import admin from "@/api/admin";
 import MiddleContent from "@/components/MiddleContent";
-import Snapshort from "@/components/Snapshort";
+import Snapshot from "@/components/Snapshot";
 
 const Home = () => {
   const currentUser = isUser.value
     ? user.customer.value
     : admin.adminData.value;
   return (
-    <div className="flex flex-col justify-center items-center  bg-neutral-50 p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center bg-neutral-50 p-4 w-full sm:w-1/4 ">
       <TopNavbar />
       <div className="w-full pl-2 my-4">
         <Typography>
           Hello{" "}
-          {currentUser.first_name ? currentUser.first_name : currentUser.email}
+          {currentUser?.first_name
+            ? currentUser?.first_name
+            : currentUser?.email}
           👋
         </Typography>
         <Typography size="small/normal">
@@ -31,7 +33,7 @@ const Home = () => {
       <ActivityCard />
       {!isUser.value ? <MiddleContent /> : null}
       <IssuedItems />
-      {!isUser.value ? <Snapshort /> : null}
+      {!isUser.value ? <Snapshot /> : null}
       <BottomNavbar />
     </div>
   );

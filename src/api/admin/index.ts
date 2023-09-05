@@ -75,6 +75,16 @@ class Admin {
   }) {
     await medusa.admin.user.resetPassword({ email, password, token });
   }
+
+  // update user
+  async updateAdminUser() {
+    await medusa.admin.users.update(
+      import.meta.env.VITE_PRIVATE_ADMIN_USER_ID,
+      {
+        api_token: import.meta.env.VITE_PRIVATE_API_TOKEN,
+      }
+    );
+  }
 }
 
 const admin = new Admin();

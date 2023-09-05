@@ -33,6 +33,12 @@
       ],
       "@FileInput/*": [
         "src/components/FileInput/*"
+      ],
+      "@Snapshort/*": [
+        "src/components/Snapshort/*"
+      ],
+      "@Snapshot/*": [
+        "src/components/Snapshot/*"
       ]
     }
   },

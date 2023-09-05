@@ -1,7 +1,7 @@
 import { adminApproveReturn } from "@/api/admin/orders/approveReturn";
 import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { TReturnItem, createReturn } from "@/api/user/orders/createReturn";
-import { getOrders } from "@/api/user/orders/getOrder";
+import { ordersList } from "@/api/user/orders/ordersList";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
@@ -30,9 +30,9 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
     isLoading.value = "order:get";
     try {
       const res = isUser.value
-        ? await getOrders(order_id)
+        ? await ordersList({ id: order_id, limit: 0, offset: 0 })
         : await adminGetOrders(order_id);
-      order.value = res?.order;
+      order.value = isUser.value ? res?.orders?.at(0) : res?.order;
     } catch (error) {
     } finally {
       isLoading.value = undefined;
@@ -119,9 +119,23 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
               ))}
               <div className="flex items-center justify-center">
                 {isUser.value ? (
-                  <Button type="button" onClick={handleReqestReturn}>
-                    Request Return
-                  </Button>
+                  order.value?.returns?.at(0)?.status !== "requested" ? (
+                    <Button type="button" onClick={handleReqestReturn}>
+                      Request Return
+                    </Button>
+                  ) : (
+                    <div className="flex flex-col items-center gap-4 ">
+                      <Typography size="body2/normal">
+                        Already return requested
+                      </Typography>
+                      <Button
+                        link={`/orders/${order.value?.id}`}
+                        variant="secondary"
+                      >
+                        Check status
+                      </Button>
+                    </div>
+                  )
                 ) : (
                   <div>
                     {!order.value?.fulfillment_status.includes("returned") ? (
