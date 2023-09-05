@@ -24,9 +24,9 @@ const ActivityCard = () => {
       link: "#",
     },
     {
-      title: "Fulfil",
+      title: "Fulfill",
       icon: fulfil_icon,
-      link: "#",
+      link: "/fulfill",
     },
     {
       title: "Requests",
