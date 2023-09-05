@@ -33,6 +33,9 @@
       ],
       "@Snapshot/*": [
         "src/components/Snapshot/*"
+      ],
+      "@UserReturnRequest/*": [
+        "src/components/UserReturnRequest/*"
       ]
     }
   },
