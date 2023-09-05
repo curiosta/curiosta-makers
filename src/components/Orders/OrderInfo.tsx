@@ -1,4 +1,3 @@
-import { getOrders } from "@/api/user/orders/getOrder";
 import { Item, Order } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
@@ -15,6 +14,7 @@ import { adminCancelOrder } from "@/api/admin/orders/cancelOrder";
 import LoadingPopUp from "@components/Popup/LoadingPopUp";
 import { adminPaymentCapture } from "@/api/admin/orders/paymentCapture";
 import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
+import { ordersList } from "@/api/user/orders/ordersList";
 
 interface Props {
   id: string;
@@ -29,8 +29,10 @@ const OrderInfo = ({ id }: Props) => {
   const getOrderInfo = async () => {
     isLoading.value = "order:get";
     try {
-      const res = isUser.value ? await getOrders(id) : await adminGetOrders(id);
-      order.value = res?.order;
+      const res = isUser.value
+        ? await ordersList({ id, limit: 0, offset: 0 })
+        : await adminGetOrders(id);
+      order.value = isUser.value ? res?.orders?.at(0) : res?.order;
     } catch (error) {
     } finally {
       isLoading.value = undefined;
@@ -47,11 +49,11 @@ const OrderInfo = ({ id }: Props) => {
   );
 
   const fulfilledItem = order.value?.items.filter((item) =>
-    fulfilledItemId.includes(item.id)
+    fulfilledItemId?.includes(item.id)
   );
 
   const notFulfilledItem = order.value?.items.filter(
-    (item) => !fulfilledItemId.includes(item.id)
+    (item) => !fulfilledItemId?.includes(item.id)
   );
 
   const hanldeApprove = async () => {
