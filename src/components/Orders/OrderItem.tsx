@@ -17,7 +17,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({ order, page }) => {
   return (
     <div
       class={`border-b border-t border-gray-200 bg-white shadow-sm rounded-lg border ${
-        page === "home" ? "!block" : ""
+        page === "home" || page === "orders" ? "!block" : ""
       }  ${borrowItems?.length ? "block" : "hidden"}`}
     >
       <div class="flex items-center border-b border-gray-200 p-4 sm:grid sm:grid-cols-4 sm:gap-x-6 sm:p-6">
