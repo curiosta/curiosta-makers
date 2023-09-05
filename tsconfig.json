@@ -31,11 +31,14 @@
       "@hooks/*": [
         "src/hooks/*"
       ],
-      "@Snapshot/*": [
-        "src/components/Snapshot/*"
-      ],
       "@UserReturnRequest/*": [
         "src/components/UserReturnRequest/*"
+      ],
+      "@SelectInput/*": [
+        "src/components/SelectInput/*"
+      ],
+      "@Select/*": [
+        "src/components/Select/*"
       ]
     }
   },

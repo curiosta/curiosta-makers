@@ -169,7 +169,7 @@ export const menubarAdminItems = [
         />
       </svg>
     ),
-    link: "#",
+    link: "/master",
   },
   {
     title: "Inventory",

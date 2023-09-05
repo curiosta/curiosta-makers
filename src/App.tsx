@@ -24,6 +24,8 @@ import Return from "@pages/Return";
 import ReturnItems from "@pages/ReturnItems";
 import Fulfill from "@pages/Fulfill";
 import Approve from "@pages/Approve";
+import Master from "@pages/Master";
+import CategoryMaster from "@pages/CategoryMaster";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
@@ -73,6 +75,8 @@ const App = () => {
       <Route path="/return/:order_id/:return_id?" component={ReturnItems} />
       <Route path="/fulfill" component={Fulfill} />
       <Route path="/approve" component={Approve} />
+      <Route path="/master" component={Master} />
+      <Route path="/category-master" component={CategoryMaster} />
     </Router>
   );
 };
