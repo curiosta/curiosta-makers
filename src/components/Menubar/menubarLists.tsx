@@ -133,7 +133,7 @@ export const menubarAdminItems = [
         />
       </svg>
     ),
-    link: "#",
+    link: "/approve",
   },
   {
     title: "Fulfil Request",
@@ -151,7 +151,7 @@ export const menubarAdminItems = [
         />
       </svg>
     ),
-    link: "#",
+    link: "/fulfill",
   },
   {
     title: "Manage Masters",

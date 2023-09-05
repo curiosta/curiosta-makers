@@ -2,16 +2,14 @@ import { Link } from "preact-router/match";
 import Button from "../Button";
 import Typography from "../Typography";
 import { useSignal } from "@preact/signals";
-import { isUser } from "@/store/userState";
-import { ordersList } from "@/api/user/orders/ordersList";
 import { Order } from "@medusajs/medusa";
 import { useEffect } from "preact/hooks";
 import OrderItem from "../Orders/OrderItem";
 import Loading from "../Loading";
 import { adminOrdersList } from "@/api/admin/orders/ordersList";
 
-const IssuedItems = () => {
-  const activeToggle = useSignal<string[]>(["awaiting"]);
+const UserReturnRequest = () => {
+  const activeToggle = useSignal<string[]>(["requested"]);
   const orders = useSignal<Order[]>([]);
   const isLoading = useSignal<boolean>(false);
   const count = useSignal<null | number>(null);
@@ -21,12 +19,10 @@ const IssuedItems = () => {
   const getOrdersList = async () => {
     isLoading.value = true;
     try {
-      const res = isUser.value
-        ? await ordersList({
-            limit: limit.value,
-            offset: offset.value,
-          })
-        : await adminOrdersList({ limit: limit.value, offset: offset.value });
+      const res = await adminOrdersList({
+        limit: limit.value,
+        offset: offset.value,
+      });
 
       count.value = res?.count;
       orders.value = res?.orders;
@@ -43,35 +39,23 @@ const IssuedItems = () => {
   const toggleItems = [
     {
       title: "Pending",
-      fulfillStatus: ["awaiting"],
-    },
-    {
-      title: "Active",
-      fulfillStatus: ["not_fulfilled"],
+      returnStatus: ["requested"],
     },
     {
       title: "Closed",
-      fulfillStatus: ["fulfilled", "partially_fulfilled"],
+      returnStatus: ["received"],
     },
   ];
 
   const ordersFilter = orders.value.filter((order) =>
-    activeToggle.value.includes(
-      order.payment_status === "captured"
-        ? order.fulfillment_status
-        : order.payment_status
-    )
+    activeToggle.value.includes(order.returns?.at(0)?.status)
   );
 
   return (
     <div className="w-full my-4">
       <div className="flex justify-between items-center">
-        {isUser.value ? (
-          <Typography>Recently Issued Items</Typography>
-        ) : (
-          <Typography>User Issue Requests</Typography>
-        )}
-        <Link href="/orders" className="text-app-primary-600">
+        <Typography>User Return Requests</Typography>
+        <Link href="/return" className="text-app-primary-600">
           View All
         </Link>
       </div>
@@ -80,10 +64,10 @@ const IssuedItems = () => {
           <Button
             type="button"
             variant="icon"
-            onClick={() => (activeToggle.value = item.fulfillStatus)}
+            onClick={() => (activeToggle.value = item.returnStatus)}
             className={`!rounded-2xl items-center capitalize ${
               JSON.stringify(activeToggle.value) ===
-              JSON.stringify(item.fulfillStatus)
+              JSON.stringify(item.returnStatus)
                 ? "!bg-primary-700 text-white"
                 : ""
             }`}
@@ -95,7 +79,7 @@ const IssuedItems = () => {
               className={`bg-primary-600/10 w-6 h-6 mx-1 items-center  justify-center rounded-full 
                ${
                  JSON.stringify(activeToggle.value) ===
-                 JSON.stringify(item.fulfillStatus)
+                 JSON.stringify(item.returnStatus)
                    ? "!bg-white flex"
                    : "hidden"
                }
@@ -108,10 +92,10 @@ const IssuedItems = () => {
       </div>
 
       {!isLoading.value ? (
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-4 mb-12 ">
           {ordersFilter.length ? (
             ordersFilter?.map((order) => (
-              <OrderItem order={order} page="home" />
+              <OrderItem order={order} page="adminReturn" />
             ))
           ) : (
             <Typography>No Item found</Typography>
@@ -126,4 +110,4 @@ const IssuedItems = () => {
   );
 };
 
-export default IssuedItems;
+export default UserReturnRequest;

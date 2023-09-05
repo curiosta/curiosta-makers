@@ -24,14 +24,14 @@ const ActivityCard = () => {
       link: "#",
     },
     {
-      title: "Fulfil",
+      title: "Fulfill",
       icon: fulfil_icon,
-      link: "#",
+      link: "/fulfill",
     },
     {
       title: "Requests",
       icon: request_icon,
-      link: "#",
+      link: "/orders",
     },
   ];
 
