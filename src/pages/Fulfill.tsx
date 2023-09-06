@@ -20,6 +20,8 @@ const Fulfill = () => {
     isLoading.value = true;
     try {
       const res = await adminOrdersList({
+        payment_status: ["captured"],
+        fulfillment_status: ["not_fulfilled"],
         limit: limit.value,
         offset: offset.value,
       });
@@ -35,13 +37,6 @@ const Fulfill = () => {
     getOrdersList();
   }, [offset.value]);
 
-  // filter out not fulfill orders for admin
-  const notFulfilOrders = orders.value?.filter(
-    (order) =>
-      order.payment_status === "captured" &&
-      order.fulfillment_status === "not_fulfilled"
-  );
-
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
@@ -50,9 +45,9 @@ const Fulfill = () => {
       </div>
 
       {!isLoading.value ? (
-        notFulfilOrders?.length ? (
+        orders.value?.length ? (
           <div className="w-full flex flex-col gap-4 mb-12 ">
-            {notFulfilOrders?.map((order) => (
+            {orders.value?.map((order) => (
               <OrderItem order={order} page="orders" />
             ))}
             <OffsetPagination limit={limit} offset={offset} count={count} />

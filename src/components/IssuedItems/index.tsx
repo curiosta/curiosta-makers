@@ -4,7 +4,7 @@ import Typography from "../Typography";
 import { useSignal } from "@preact/signals";
 import { isUser } from "@/store/userState";
 import { ordersList } from "@/api/user/orders/ordersList";
-import { Order } from "@medusajs/medusa";
+import { FulfillmentStatus, Order, PaymentStatus } from "@medusajs/medusa";
 import { useEffect } from "preact/hooks";
 import OrderItem from "../Orders/OrderItem";
 import Loading from "../Loading";
@@ -15,7 +15,7 @@ const IssuedItems = () => {
   const orders = useSignal<Order[]>([]);
   const isLoading = useSignal<boolean>(false);
   const count = useSignal<null | number>(null);
-  const limit = useSignal<number>(4);
+  const limit = useSignal<number>(10);
   const offset = useSignal<number>(0);
 
   const getOrdersList = async () => {
@@ -23,10 +23,41 @@ const IssuedItems = () => {
     try {
       const res = isUser.value
         ? await ordersList({
+            payment_status: activeToggle.value.some((active) =>
+              ["awaiting", "captured"].includes(active)
+            )
+              ? activeToggle.value
+              : [],
+            fulfillment_status: activeToggle.value.some((active) =>
+              ["fulfilled", "partially_fulfilled"].includes(active)
+            )
+              ? activeToggle.value
+              : activeToggle.value.some((active) =>
+                  ["captured"].includes(active)
+                )
+              ? ["not_fulfilled"]
+              : [],
             limit: limit.value,
             offset: offset.value,
           })
-        : await adminOrdersList({ limit: limit.value, offset: offset.value });
+        : await adminOrdersList({
+            payment_status: activeToggle.value.some((active) =>
+              ["awaiting", "captured"].includes(active)
+            )
+              ? activeToggle.value
+              : [],
+            fulfillment_status: activeToggle.value.some((active) =>
+              ["fulfilled", "partially_fulfilled"].includes(active)
+            )
+              ? activeToggle.value
+              : activeToggle.value.some((active) =>
+                  ["captured"].includes(active)
+                )
+              ? ["not_fulfilled"]
+              : [],
+            limit: limit.value,
+            offset: offset.value,
+          });
 
       count.value = res?.count;
       orders.value = res?.orders;
@@ -38,7 +69,7 @@ const IssuedItems = () => {
 
   useEffect(() => {
     getOrdersList();
-  }, []);
+  }, [activeToggle.value]);
 
   const toggleItems = [
     {
@@ -47,21 +78,13 @@ const IssuedItems = () => {
     },
     {
       title: "Active",
-      fulfillStatus: ["not_fulfilled"],
+      fulfillStatus: ["captured"],
     },
     {
       title: "Closed",
       fulfillStatus: ["fulfilled", "partially_fulfilled"],
     },
   ];
-
-  const ordersFilter = orders.value.filter((order) =>
-    activeToggle.value.includes(
-      order.payment_status === "captured"
-        ? order.fulfillment_status
-        : order.payment_status
-    )
-  );
 
   return (
     <div className="w-full my-4">
@@ -101,16 +124,16 @@ const IssuedItems = () => {
                }
             `}
             >
-              {ordersFilter.length}
+              {isLoading.value ? "-" : orders.value?.length}
             </Typography>
           </Button>
         ))}
       </div>
 
       {!isLoading.value ? (
-        <div className="w-full flex flex-col gap-4">
-          {ordersFilter.length ? (
-            ordersFilter?.map((order) => (
+        <div className="w-full flex flex-col gap-4 mb-12">
+          {orders.value?.length ? (
+            orders.value?.map((order) => (
               <OrderItem order={order} page="home" />
             ))
           ) : (
