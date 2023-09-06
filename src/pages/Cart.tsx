@@ -127,7 +127,7 @@ const Cart = () => {
                 </div>
               ) : null}
               {cartBorrowItem?.length ? (
-                <div>
+                <div className="mb-8">
                   <div className="flex justify-between items-center">
                     <Typography
                       size="body1/normal"
@@ -145,7 +145,7 @@ const Cart = () => {
                   {cartBorrowItem?.map((product, index) => (
                     <div
                       key={product?.id}
-                      className="flex justify-between items-center gap-4 my-3 py-2 border-b last:border-none relative"
+                      className="flex justify-between items-center gap-4 my-3 py-2 border-b last:border-none last:mb-20 relative"
                     >
                       <div className="flex gap-2">
                         <img
@@ -172,7 +172,7 @@ const Cart = () => {
               />
             ) : (
               // confirm order or discard buttons
-              <div className="fixed bottom-16 left-0 p-4 w-full flex items-center justify-around">
+              <div className="fixed bottom-16 left-0 p-4 w-full flex items-center justify-around z-10 bg-secondray">
                 <Button
                   type="button"
                   variant="primary"
