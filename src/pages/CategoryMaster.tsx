@@ -12,6 +12,7 @@ import CategoryPopup from "@/components/Popup/CategoryPopUp";
 import { ChangeEvent } from "preact/compat";
 import { adminAddCategory } from "@/api/admin/category/addCategory";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
+import PopUp from "@/components/Popup";
 
 type TLoadableOptions = "category:get" | "category:add";
 
@@ -22,8 +23,10 @@ const CategoryMaster = () => {
   const limit = useSignal<number>(10);
   const offset = useSignal<number>(0);
   const isCategoryPopUp = useSignal<boolean>(false);
+  const isPopUp = useSignal<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
   const errorMessage = useSignal<string | null>(null);
+  const addCategory = useSignal<ProductCategory | null>(null);
 
   const getCategories = async () => {
     isLoading.value = "category:get";
@@ -54,20 +57,20 @@ const CategoryMaster = () => {
     const formDataObj = Object.fromEntries(formData.entries());
     const { categoryName, categoryDescription, status, visibility } =
       formDataObj;
-    console.log(status, visibility, categoryDescription, categoryName);
 
     try {
       const isActive = status === "active" ? true : false;
       const isInternal = visibility === "private" ? true : false;
 
-      await adminAddCategory({
+      const addCategoryRes = await adminAddCategory({
         categoryName: categoryName.toString(),
         categoryDescription: categoryDescription.toString(),
         isActive,
         isInternal,
       });
-
+      addCategory.value = addCategoryRes?.product_category;
       isCategoryPopUp.value = false;
+      isPopUp.value = true;
     } catch (error) {
       if (error instanceof Error) {
         errorMessage.value = error.message;
@@ -174,6 +177,12 @@ const CategoryMaster = () => {
           errorMessage={errorMessage}
         />
       )}
+
+      <PopUp
+        isPopup={isPopUp}
+        title="Category is created successfully "
+        subtitle={`Category ID: ${addCategory.value?.id} `}
+      />
       <BottomNavbar />
     </div>
   );
