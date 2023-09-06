@@ -56,6 +56,10 @@ const OrderInfo = ({ id }: Props) => {
     (item) => !fulfilledItemId?.includes(item.id)
   );
 
+  const returnItemIds = order.value?.returns
+    ?.at(0)
+    ?.items?.flatMap((item) => item.item_id);
+
   const hanldeApprove = async () => {
     isLoading.value = "order:approve";
     try {
@@ -141,6 +145,14 @@ const OrderInfo = ({ id }: Props) => {
                       <Typography size="body2/normal">
                         fulfilled Qty: {item.fulfilled_quantity}
                       </Typography>
+                      {returnItemIds && returnItemIds.includes(item.id) ? (
+                        <Typography size="body2/normal">
+                          return_status:{" "}
+                          {order.value.returns?.at(0).status === "received"
+                            ? "returned"
+                            : order.value.returns?.at(0).status}
+                        </Typography>
+                      ) : null}
                     </div>
                     <Typography className="pr-8">x{item.quantity}</Typography>
                   </div>
@@ -149,15 +161,25 @@ const OrderInfo = ({ id }: Props) => {
             ) : (
               order.value?.items?.map((item) => (
                 <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
-                  <div className="flex gap-2 items-center">
-                    <img
-                      src={item.thumbnail || "N/A"}
-                      alt={item.title}
-                      className="w-10 h-10 object-cover"
-                    />
-                    <Typography size="body1/normal" className="text-start">
-                      {item.title}
-                    </Typography>
+                  <div>
+                    <div className="flex gap-2 items-center">
+                      <img
+                        src={item.thumbnail || "N/A"}
+                        alt={item.title}
+                        className="w-10 h-10 object-cover"
+                      />
+                      <Typography size="body1/normal" className="text-start">
+                        {item.title}
+                      </Typography>
+                    </div>
+                    {returnItemIds && returnItemIds.includes(item.id) ? (
+                      <Typography size="body2/normal">
+                        return_status:{" "}
+                        {order.value.returns?.at(0).status === "received"
+                          ? "returned"
+                          : order.value.returns?.at(0).status}
+                      </Typography>
+                    ) : null}
                   </div>
                   <Typography className="pr-8">x{item.quantity}</Typography>
                 </div>
