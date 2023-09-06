@@ -4,31 +4,38 @@ import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
 import OrderItem from "@/components/Orders/OrderItem";
 import Typography from "@/components/Typography";
-import { Order } from "@medusajs/medusa";
+import { Order, Return } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import OffsetPagination from "@components/OffsetPagination";
 import { isUser } from "@/store/userState";
-import { adminOrdersList } from "@/api/admin/orders/ordersList";
+import { adminReturnsList } from "@/api/admin/orders/returnsList";
 
-const Return = () => {
+const Returns = () => {
   const orders = useSignal<Order[]>([]);
   const isLoading = useSignal<boolean>(false);
   const count = useSignal<null | number>(null);
   const limit = useSignal<number>(9);
   const offset = useSignal<number>(0);
+  const returns = useSignal<Return[]>([]);
 
   const getOrdersList = async () => {
     isLoading.value = true;
     try {
       const res = isUser.value
         ? await ordersList({
+            payment_status: ["captured"],
+            fulfillment_status: ["fulfilled", "partially_fulfilled"],
             limit: limit.value,
             offset: offset.value,
           })
-        : await adminOrdersList({ limit: limit.value, offset: offset.value });
+        : await adminReturnsList({ limit: limit.value, offset: offset.value });
       count.value = res?.count;
-      orders.value = res?.orders;
+      {
+        isUser.value
+          ? (orders.value = res?.orders)
+          : (returns.value = res?.returns);
+      }
     } catch (error) {
     } finally {
       isLoading.value = false;
@@ -39,9 +46,8 @@ const Return = () => {
     getOrdersList();
   }, [offset.value]);
 
-  // filter out only returns orders for admin
-  const adminReturnOrders = orders.value?.filter(
-    (order) => order.returns?.at(0)?.status === "requested"
+  const adminReturns = returns.value.filter(
+    (returnVal) => returnVal.status === "requested"
   );
 
   // filter out not returns orders for user
@@ -62,9 +68,9 @@ const Return = () => {
 
       {!isLoading.value ? (
         isUser.value ? (
-          requestReturnOrder?.length ? (
+          orders.value?.length ? (
             <div className="w-full flex flex-col gap-4 mb-12 ">
-              {requestReturnOrder?.map((order) => (
+              {orders.value?.map((order) => (
                 <OrderItem order={order} page="return" />
               ))}
               <OffsetPagination limit={limit} offset={offset} count={count} />
@@ -72,10 +78,10 @@ const Return = () => {
           ) : (
             <Typography>No order found</Typography>
           )
-        ) : adminReturnOrders?.length ? (
+        ) : returns.value?.length ? (
           <div className="w-full flex flex-col gap-4 mb-12 ">
-            {adminReturnOrders?.map((order) => (
-              <OrderItem order={order} page="adminReturn" />
+            {returns.value?.map((returnVal) => (
+              <OrderItem returnVal={returnVal} page="adminReturn" />
             ))}
             <OffsetPagination limit={limit} offset={offset} count={count} />
           </div>
@@ -92,4 +98,4 @@ const Return = () => {
   );
 };
 
-export default Return;
+export default Returns;
