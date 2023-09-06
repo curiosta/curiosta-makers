@@ -46,19 +46,6 @@ const Returns = () => {
     getOrdersList();
   }, [offset.value]);
 
-  const adminReturns = returns.value.filter(
-    (returnVal) => returnVal.status === "requested"
-  );
-
-  // filter out not returns orders for user
-  const requestReturnOrder = orders.value?.filter(
-    (order) =>
-      !order.returns?.length &&
-      order.payment_status !== "canceled" &&
-      order.fulfillment_status !== "not_fulfilled" &&
-      order.items?.some((item) => item.metadata?.cartType === "borrow")
-  );
-
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
