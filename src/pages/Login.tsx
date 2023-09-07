@@ -18,18 +18,15 @@ const Login = () => {
     if (errorMessage.value) {
       errorMessage.value = "";
     }
+    const path = location.pathname;
     try {
       if (isUser.value) {
         await user.login(data);
       } else {
         await admin.login(data);
       }
-      const url = new URL(document.referrer);
-      console.log(url);
-      const path = location.pathname;
-      console.log(path);
-      if (url.hostname !== location.hostname) {
-        // route(path);
+      if (path !== "/login") {
+        route(path);
       } else {
         route("/home");
       }
