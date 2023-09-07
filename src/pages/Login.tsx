@@ -26,9 +26,9 @@ const Login = () => {
       }
       const url = new URL(document.referrer);
       console.log(url);
-
+      const path = location.pathname;
+      console.log(path);
       if (url.hostname !== location.hostname) {
-        const path = location.pathname;
         // route(path);
       } else {
         route("/home");
