@@ -24,8 +24,15 @@ const Login = () => {
       } else {
         await admin.login(data);
       }
+      const url = new URL(document.referrer);
+      console.log(url);
 
-      route("/home");
+      if (url.hostname !== location.hostname) {
+        const path = location.pathname;
+        // route(path);
+      } else {
+        route("/home");
+      }
     } catch (error) {
       const errorResponse = (error as any)?.toJSON?.();
       if (errorResponse) {
