@@ -9,6 +9,7 @@ import user from "@/api/user";
 import admin from "@/api/admin";
 import MiddleContent from "@/components/MiddleContent";
 import Snapshot from "@/components/Snapshot";
+import UserReturnRequest from "@/components/UserReturnRequest";
 
 const Home = () => {
   const currentUser = isUser.value

@@ -18,14 +18,18 @@ const Login = () => {
     if (errorMessage.value) {
       errorMessage.value = "";
     }
+    const path = location.pathname;
     try {
       if (isUser.value) {
         await user.login(data);
       } else {
         await admin.login(data);
       }
-
-      route("/home");
+      if (path !== "/login") {
+        route(path);
+      } else {
+        route("/home");
+      }
     } catch (error) {
       const errorResponse = (error as any)?.toJSON?.();
       if (errorResponse) {

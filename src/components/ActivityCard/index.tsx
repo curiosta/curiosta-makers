@@ -18,16 +18,20 @@ const ActivityCard = () => {
       icon: return_icon,
       link: "/return",
     },
-
-    {
-      title: "Requests",
-      icon: request_icon,
-      link: "/orders",
-    },
     {
       title: "Inbound",
       icon: inbound_icon,
       link: "/inbound",
+    },
+    {
+      title: "Fulfill",
+      icon: fulfil_icon,
+      link: "/fulfill",
+    },
+    {
+      title: "Requests",
+      icon: request_icon,
+      link: "/orders",
     },
   ];
 
