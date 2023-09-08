@@ -37,6 +37,7 @@ const FileInput = ({ selectedFile, acceptFileType }: TFileInput) => {
         onChange={(e) => {
           selectedFile.value = e.currentTarget.files[0];
         }}
+        onClick={(e) => (e.currentTarget.value = null)}
       />
     </div>
   );

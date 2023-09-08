@@ -1,12 +1,16 @@
 import medusa from "@api/medusa";
 
+type TCreateBatchJobs = {
+  fileKey?: string;
+  type: "product-export" | "product-import";
+};
+
 export const adminCreateBatchJobs = async ({
   fileKey,
-}: {
-  fileKey: string;
-}) => {
+  type,
+}: TCreateBatchJobs) => {
   return medusa.admin.batchJobs.create({
-    type: "product-import",
+    type,
     context: {
       fileKey,
     },
