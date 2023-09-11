@@ -5,6 +5,7 @@ import { adminUploadFile } from "@/api/admin/product/uploadFile";
 import Button from "@/components/Button";
 import FileInput from "@/components/FileInput";
 import Loading from "@/components/Loading";
+import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
 import PopUp from "@/components/Popup";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
@@ -96,7 +97,6 @@ const Inbound = () => {
     try {
       if (!batchjobId.value) return;
       const res = await adminGetBatchJobs({ batchJobId: batchjobId.value });
-      console.log(res);
       if (res?.batch_job?.status === "completed") {
         const downloadLinkRes = await adminGetDownloadLink({
           file_key: res?.batch_job?.result.file_key,
@@ -213,6 +213,7 @@ const Inbound = () => {
           isPopup={isBatchJobComplete}
         />
       )}
+      <BottomNavbar />
     </div>
   );
 };
