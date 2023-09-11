@@ -134,11 +134,14 @@ const OrderInfo = ({ id }: Props) => {
                     <div>
                       <div className="flex gap-2 items-center">
                         <img
-                          src={item.thumbnail || "N/A"}
+                          src={item.thumbnail ?? "/images/placeholderImg.svg"}
                           alt={item.title}
                           className="w-10 h-10 object-cover"
                         />
-                        <Typography size="body1/normal" className="text-start">
+                        <Typography
+                          size="body1/normal"
+                          className="text-start truncate w-56"
+                        >
                           {item.title}
                         </Typography>
                       </div>
@@ -164,11 +167,14 @@ const OrderInfo = ({ id }: Props) => {
                   <div>
                     <div className="flex gap-2 items-center">
                       <img
-                        src={item.thumbnail || "N/A"}
+                        src={item.thumbnail ?? "/images/placeholderImg.svg"}
                         alt={item.title}
                         className="w-10 h-10 object-cover"
                       />
-                      <Typography size="body1/normal" className="text-start">
+                      <Typography
+                        size="body1/normal"
+                        className="text-start truncate w-56"
+                      >
                         {item.title}
                       </Typography>
                     </div>
@@ -200,11 +206,14 @@ const OrderInfo = ({ id }: Props) => {
                   <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
                     <div className="flex gap-2 items-center">
                       <img
-                        src={item.thumbnail || "N/A"}
+                        src={item.thumbnail ?? "/images/placeholderImg.svg"}
                         alt={item.title}
                         className="w-10 h-10 object-cover"
                       />
-                      <Typography size="body1/normal" className="text-start">
+                      <Typography
+                        size="body1/normal"
+                        className="text-start truncate w-56"
+                      >
                         {item.title}
                       </Typography>
                     </div>

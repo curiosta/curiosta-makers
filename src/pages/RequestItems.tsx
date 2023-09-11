@@ -52,7 +52,7 @@ const RequestItems = ({ id }: Props) => {
 
   // handle dialog
   const handleDialog = (index: number, product: PricedProduct) => {
-    dialogRef.current.map((val, i) => i != index && val.close());
+    dialogRef.current.map((val, i) => i != index && val?.close());
     if (dialogRef.current[index]?.open) {
       dialogRef.current[index]?.close();
     } else {
@@ -105,11 +105,14 @@ const RequestItems = ({ id }: Props) => {
               >
                 <div className="flex gap-2">
                   <img
-                    src={product?.thumbnail || "N/A"}
-                    alt="product"
+                    src={product.thumbnail ?? "/images/placeholderImg.svg"}
+                    alt={product.title}
                     className="w-8 h-8 object-cover"
                   />
-                  <Typography size="body1/normal" className="text-start">
+                  <Typography
+                    size="body1/normal"
+                    className="text-start truncate w-44"
+                  >
                     {product?.title}
                   </Typography>
                 </div>
