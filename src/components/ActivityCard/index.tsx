@@ -21,7 +21,7 @@ const ActivityCard = () => {
     {
       title: "Inbound",
       icon: inbound_icon,
-      link: "#",
+      link: "/inbound",
     },
     {
       title: "Fulfill",
