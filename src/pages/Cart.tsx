@@ -113,11 +113,16 @@ const Cart = () => {
                     >
                       <div className="flex gap-2">
                         <img
-                          src={product?.thumbnail || "N/A"}
-                          alt="product"
+                          src={
+                            product.thumbnail ?? "/images/placeholderImg.svg"
+                          }
+                          alt={product.title}
                           className="w-8 h-8 object-cover"
                         />
-                        <Typography size="body1/normal" className="text-start">
+                        <Typography
+                          size="body1/normal"
+                          className="text-start truncate w-44"
+                        >
                           {product?.title}
                         </Typography>
                       </div>
@@ -149,11 +154,16 @@ const Cart = () => {
                     >
                       <div className="flex gap-2">
                         <img
-                          src={product?.thumbnail || "N/A"}
-                          alt="product"
+                          src={
+                            product.thumbnail ?? "/images/placeholderImg.svg"
+                          }
+                          alt={product.title}
                           className="w-8 h-8 object-cover"
                         />
-                        <Typography size="body1/normal" className="text-start">
+                        <Typography
+                          size="body1/normal"
+                          className="text-start truncate w-44"
+                        >
                           {product?.title}
                         </Typography>
                       </div>
