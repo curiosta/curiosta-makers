@@ -89,7 +89,11 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
                 ? order?.email.charAt(0)
                 : returnVal?.order.email.charAt(0)}
             </Chip>
-            <Typography size="body2/normal" variant="secondary">
+            <Typography
+              size="body2/normal"
+              variant="secondary"
+              className="truncate w-36"
+            >
               {page !== "adminReturn" ? order?.email : returnVal?.order.email}
             </Typography>
           </div>
@@ -125,7 +129,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
                   <div class="ml-6 flex-1 text-sm">
                     <Typography
                       variant="secondary"
-                      className="my-2 truncate w-56"
+                      className="my-2 truncate w-40 "
                     >
                       {item.title}
                     </Typography>
