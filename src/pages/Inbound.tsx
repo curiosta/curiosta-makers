@@ -151,7 +151,7 @@ const Inbound = () => {
           ) : null}
         </form>
 
-        <div className="mt-8 flex flex-col items-center gap-4">
+        <div className="mb-28 flex flex-col items-center gap-4">
           <Button
             type="button"
             variant="secondary"
