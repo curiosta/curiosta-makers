@@ -106,7 +106,7 @@ const RequestItems = ({ id }: Props) => {
               >
                 <Link
                   href={`/product/${product?.id}`}
-                  className="flex gap-2 z-10"
+                  className="flex gap-2 w-1/2 z-10"
                 >
                   <img
                     src={product.thumbnail ?? "/images/placeholderImg.svg"}

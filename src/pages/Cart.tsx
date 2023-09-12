@@ -114,7 +114,7 @@ const Cart = () => {
                     >
                       <Link
                         href={`/product/${product?.variant?.product?.id}`}
-                        className="flex gap-2 z-10"
+                        className="flex gap-2 w-1/2 z-10"
                       >
                         <img
                           src={
@@ -158,7 +158,7 @@ const Cart = () => {
                     >
                       <Link
                         href={`/product/${product?.variant?.product?.id}`}
-                        className="flex gap-2 z-10"
+                        className="flex gap-2 w-1/2 z-10"
                       >
                         <img
                           src={
