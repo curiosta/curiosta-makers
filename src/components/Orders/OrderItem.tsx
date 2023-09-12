@@ -199,6 +199,8 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
             Status:{" "}
             {page !== "adminReturn"
               ? order?.fulfillment_status
+              : returnVal?.status === "received"
+              ? "returned"
               : returnVal?.status}
           </Typography>
         </div>
