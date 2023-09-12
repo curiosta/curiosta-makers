@@ -39,6 +39,9 @@
       ],
       "@SuccessAlert/*": [
         "src/components/SuccessAlert/*"
+      ],
+      "@ProductImage/*": [
+        "src/components/ProductImage/*"
       ]
     }
   },

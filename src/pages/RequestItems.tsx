@@ -13,6 +13,7 @@ import { ChangeEvent } from "preact/compat";
 import cart from "@/api/cart";
 import AddProduct from "@/components/AddProduct";
 import ViewCartLayer from "@/components/ViewCartLayer";
+import { Link } from "preact-router";
 
 interface Props {
   id: string;
@@ -103,7 +104,10 @@ const RequestItems = ({ id }: Props) => {
                 key={product?.id}
                 className="flex justify-between items-center gap-4 my-3 py-2 border-b last:border-none relative"
               >
-                <div className="flex gap-2">
+                <Link
+                  href={`/product/${product?.id}`}
+                  className="flex gap-2 z-10"
+                >
                   <img
                     src={product.thumbnail ?? "/images/placeholderImg.svg"}
                     alt={product.title}
@@ -115,7 +119,7 @@ const RequestItems = ({ id }: Props) => {
                   >
                     {product?.title}
                   </Typography>
-                </div>
+                </Link>
                 {product.variants[0]?.inventory_quantity > 0 ? (
                   <AddProduct
                     product={product}

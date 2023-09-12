@@ -12,6 +12,7 @@ import Typography from "@/components/Typography";
 import { isUser } from "@/store/userState";
 import { Order, Return } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
+import { Link } from "preact-router";
 import { useEffect } from "preact/hooks";
 
 type Props = {
@@ -104,7 +105,10 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
             <div className="w-full">
               {borrowItems?.map((item) => (
                 <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
-                  <div className="flex gap-2 items-center">
+                  <Link
+                    href={`/product/${item?.variant?.product_id}`}
+                    className="flex gap-2 items-center"
+                  >
                     <img
                       src={item.thumbnail ?? "/images/placeholderImg.svg"}
                       alt={item.title}
@@ -116,7 +120,7 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
                     >
                       {item.title}
                     </Typography>
-                  </div>
+                  </Link>
                   <Typography className="pr-8">x{item.quantity}</Typography>
                 </div>
               ))}
