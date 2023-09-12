@@ -3,7 +3,6 @@ import Typography from "@components/Typography";
 import Input from "@components/Input";
 import FormControl from "@components/FormControl";
 import { useSignal } from "@preact/signals";
-import { route } from "preact-router";
 import { Link } from "preact-router/match";
 import user from "@api/user";
 import { isUser } from "@store/userState";
@@ -26,9 +25,9 @@ const Login = () => {
         await admin.login(data);
       }
       if (path !== "/login") {
-        route(path);
+        window.location.href = path;
       } else {
-        route("/home");
+        window.location.href = "/home";
       }
     } catch (error) {
       const errorResponse = (error as any)?.toJSON?.();
