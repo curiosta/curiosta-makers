@@ -3,10 +3,8 @@ import Typography from "@components/Typography";
 import Input from "@components/Input";
 import FormControl from "@components/FormControl";
 import { useSignal } from "@preact/signals";
-import { route } from "preact-router";
 import Checkbox from "@components/Checkbox";
 import user from "@/api/user";
-import { useRef } from "preact/hooks";
 
 const Signup = () => {
   const errorMessage = useSignal<string>("");
@@ -26,7 +24,7 @@ const Signup = () => {
       }
       if (password === cpassword) {
         await user.register({ first_name, last_name, email, password });
-        route("/home");
+        window.location.href = "/home";
       } else {
         errorMessage.value = "Password and confirmation password do not match!";
       }

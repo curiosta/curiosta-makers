@@ -36,6 +36,12 @@
       ],
       "@Snapshot/*": [
         "src/components/Snapshot/*"
+      ],
+      "@SuccessAlert/*": [
+        "src/components/SuccessAlert/*"
+      ],
+      "@ProductImage/*": [
+        "src/components/ProductImage/*"
       ]
     }
   },
