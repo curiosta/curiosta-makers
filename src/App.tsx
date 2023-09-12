@@ -25,6 +25,7 @@ import ReturnItems from "@pages/ReturnItems";
 import Inbound from "@pages/Inbound";
 import Fulfill from "@pages/Fulfill";
 import Approve from "@pages/Approve";
+import ProductInfo from "@pages/ProductInfo";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
@@ -75,6 +76,7 @@ const App = () => {
       <Route path="/inbound" component={Inbound} />
       <Route path="/fulfill" component={Fulfill} />
       <Route path="/approve" component={Approve} />
+      <Route path="/product/:id" component={ProductInfo} />
     </Router>
   );
 };
