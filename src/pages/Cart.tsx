@@ -10,6 +10,7 @@ import ViewCartLayer from "@/components/ViewCartLayer";
 import { isPopup } from "@/store/popUpState";
 import PopUp from "@components/Popup";
 import { useSignal } from "@preact/signals";
+import { Link } from "preact-router";
 import { ChangeEvent } from "preact/compat";
 
 const Cart = () => {
@@ -111,7 +112,10 @@ const Cart = () => {
                       key={product?.id}
                       className="flex justify-between items-center gap-4 my-3 py-2 border-b last:border-none relative"
                     >
-                      <div className="flex gap-2">
+                      <Link
+                        href={`/product/${product?.variant?.product?.id}`}
+                        className="flex gap-2 z-10"
+                      >
                         <img
                           src={
                             product.thumbnail ?? "/images/placeholderImg.svg"
@@ -125,7 +129,7 @@ const Cart = () => {
                         >
                           {product?.title}
                         </Typography>
-                      </div>
+                      </Link>
                       <ManageQty productItem={product} page="cart" />
                     </div>
                   ))}
@@ -152,7 +156,10 @@ const Cart = () => {
                       key={product?.id}
                       className="flex justify-between items-center gap-4 my-3 py-2 border-b last:border-none last:mb-20 relative"
                     >
-                      <div className="flex gap-2">
+                      <Link
+                        href={`/product/${product?.variant?.product?.id}`}
+                        className="flex gap-2 z-10"
+                      >
                         <img
                           src={
                             product.thumbnail ?? "/images/placeholderImg.svg"
@@ -166,7 +173,7 @@ const Cart = () => {
                         >
                           {product?.title}
                         </Typography>
-                      </div>
+                      </Link>
                       <ManageQty productItem={product} page="cart" />
                     </div>
                   ))}
