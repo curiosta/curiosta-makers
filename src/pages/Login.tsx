@@ -140,7 +140,7 @@ const Login = () => {
             <div class="flex items-center justify-end">
               <div class="text-sm leading-6">
                 <Link
-                  href="#"
+                  href="/forgot-password"
                   class="font-semibold text-app-primary-600 hover:text-app-primary-500"
                 >
                   Forgot password?

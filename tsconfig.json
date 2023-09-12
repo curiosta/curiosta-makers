@@ -36,6 +36,9 @@
       ],
       "@Snapshot/*": [
         "src/components/Snapshot/*"
+      ],
+      "@SuccessAlert/*": [
+        "src/components/SuccessAlert/*"
       ]
     }
   },
