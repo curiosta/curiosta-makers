@@ -79,7 +79,7 @@ const App = () => {
       <Route path="/fulfill" component={Fulfill} />
       <Route path="/approve" component={Approve} />
       <Route path="/forgot-password" component={ForgotPassword} />
-      <Route path="/password-reset/:token/:email" component={PasswordReset} />
+      <Route path="/password-reset" component={PasswordReset} />
     </Router>
   );
 };

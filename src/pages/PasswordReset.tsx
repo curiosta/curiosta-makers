@@ -8,15 +8,14 @@ import user from "@/api/user";
 import { isUser } from "@/store/userState";
 import admin from "@/api/admin";
 
-interface Props {
-  token: string;
-  email: string;
-}
-
-const PasswordReset = ({ token, email }: Props) => {
+const PasswordReset = () => {
   const isLoading = useSignal<boolean>(false);
   const errorMessage = useSignal<string>("");
   const successMessage = useSignal<string>("");
+
+  const currentUrl = new URL(window.location.href);
+  const token = currentUrl.searchParams.get("token");
+  const email = currentUrl.searchParams.get("email");
 
   const handlePasswordReset = async (data: any) => {
     isLoading.value = true;
