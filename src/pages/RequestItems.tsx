@@ -13,6 +13,7 @@ import { ChangeEvent } from "preact/compat";
 import cart from "@/api/cart";
 import AddProduct from "@/components/AddProduct";
 import ViewCartLayer from "@/components/ViewCartLayer";
+import { Link } from "preact-router";
 
 interface Props {
   id: string;
@@ -52,7 +53,7 @@ const RequestItems = ({ id }: Props) => {
 
   // handle dialog
   const handleDialog = (index: number, product: PricedProduct) => {
-    dialogRef.current.map((val, i) => i != index && val.close());
+    dialogRef.current.map((val, i) => i != index && val?.close());
     if (dialogRef.current[index]?.open) {
       dialogRef.current[index]?.close();
     } else {
@@ -103,16 +104,22 @@ const RequestItems = ({ id }: Props) => {
                 key={product?.id}
                 className="flex justify-between items-center gap-4 my-3 py-2 border-b last:border-none relative"
               >
-                <div className="flex gap-2">
+                <Link
+                  href={`/product/${product?.id}`}
+                  className="flex gap-2 w-1/2 z-10"
+                >
                   <img
-                    src={product?.thumbnail || "N/A"}
-                    alt="product"
+                    src={product.thumbnail ?? "/images/placeholderImg.svg"}
+                    alt={product.title}
                     className="w-8 h-8 object-cover"
                   />
-                  <Typography size="body1/normal" className="text-start">
+                  <Typography
+                    size="body1/normal"
+                    className="text-start truncate w-44"
+                  >
                     {product?.title}
                   </Typography>
-                </div>
+                </Link>
                 {product.variants[0]?.inventory_quantity > 0 ? (
                   <AddProduct
                     product={product}

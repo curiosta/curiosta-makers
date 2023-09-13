@@ -15,6 +15,7 @@ import LoadingPopUp from "@components/Popup/LoadingPopUp";
 import { adminPaymentCapture } from "@/api/admin/orders/paymentCapture";
 import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
 import { ordersList } from "@/api/user/orders/ordersList";
+import { Link } from "preact-router";
 
 interface Props {
   id: string;
@@ -55,6 +56,10 @@ const OrderInfo = ({ id }: Props) => {
   const notFulfilledItem = order.value?.items.filter(
     (item) => !fulfilledItemId?.includes(item.id)
   );
+
+  const returnItemIds = order.value?.returns
+    ?.at(0)
+    ?.items?.flatMap((item) => item.item_id);
 
   const hanldeApprove = async () => {
     isLoading.value = "order:approve";
@@ -128,19 +133,34 @@ const OrderInfo = ({ id }: Props) => {
                 {fulfilledItem?.map((item) => (
                   <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
                     <div>
-                      <div className="flex gap-2 items-center">
+                      <Link
+                        href={`/product/${item?.variant?.product_id}`}
+                        className="flex gap-2 items-center"
+                      >
                         <img
-                          src={item.thumbnail || "N/A"}
+                          src={item.thumbnail ?? "/images/placeholderImg.svg"}
                           alt={item.title}
                           className="w-10 h-10 object-cover"
                         />
-                        <Typography size="body1/normal" className="text-start">
+                        <Typography
+                          size="body1/normal"
+                          className="text-start truncate w-56"
+                        >
                           {item.title}
                         </Typography>
-                      </div>
+                      </Link>
+
                       <Typography size="body2/normal">
                         fulfilled Qty: {item.fulfilled_quantity}
                       </Typography>
+                      {returnItemIds && returnItemIds.includes(item.id) ? (
+                        <Typography size="body2/normal">
+                          return_status:{" "}
+                          {order.value.returns?.at(0).status === "received"
+                            ? "returned"
+                            : order.value.returns?.at(0).status}
+                        </Typography>
+                      ) : null}
                     </div>
                     <Typography className="pr-8">x{item.quantity}</Typography>
                   </div>
@@ -149,15 +169,31 @@ const OrderInfo = ({ id }: Props) => {
             ) : (
               order.value?.items?.map((item) => (
                 <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
-                  <div className="flex gap-2 items-center">
-                    <img
-                      src={item.thumbnail || "N/A"}
-                      alt={item.title}
-                      className="w-10 h-10 object-cover"
-                    />
-                    <Typography size="body1/normal" className="text-start">
-                      {item.title}
-                    </Typography>
+                  <div>
+                    <Link
+                      href={`/product/${item?.variant?.product_id}`}
+                      className="flex gap-2 items-center"
+                    >
+                      <img
+                        src={item.thumbnail ?? "/images/placeholderImg.svg"}
+                        alt={item.title}
+                        className="w-10 h-10 object-cover"
+                      />
+                      <Typography
+                        size="body1/normal"
+                        className="text-start truncate w-56"
+                      >
+                        {item.title}
+                      </Typography>
+                    </Link>
+                    {returnItemIds && returnItemIds.includes(item.id) ? (
+                      <Typography size="body2/normal">
+                        return_status:{" "}
+                        {order.value.returns?.at(0).status === "received"
+                          ? "returned"
+                          : order.value.returns?.at(0).status}
+                      </Typography>
+                    ) : null}
                   </div>
                   <Typography className="pr-8">x{item.quantity}</Typography>
                 </div>
@@ -176,16 +212,22 @@ const OrderInfo = ({ id }: Props) => {
                 </Typography>
                 {notFulfilledItem?.map((item) => (
                   <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
-                    <div className="flex gap-2 items-center">
+                    <Link
+                      href={`/product/${item?.variant?.product_id}`}
+                      className="flex gap-2 items-center"
+                    >
                       <img
-                        src={item.thumbnail || "N/A"}
+                        src={item.thumbnail ?? "/images/placeholderImg.svg"}
                         alt={item.title}
                         className="w-10 h-10 object-cover"
                       />
-                      <Typography size="body1/normal" className="text-start">
+                      <Typography
+                        size="body1/normal"
+                        className="text-start truncate w-56"
+                      >
                         {item.title}
                       </Typography>
-                    </div>
+                    </Link>
                     <Typography className="pr-8">x{item.quantity}</Typography>
                   </div>
                 ))}

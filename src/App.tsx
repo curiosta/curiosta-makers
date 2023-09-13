@@ -22,14 +22,18 @@ import Orders from "@pages/Orders";
 import OrderInfo from "@components/Orders/OrderInfo";
 import Return from "@pages/Return";
 import ReturnItems from "@pages/ReturnItems";
+import Inbound from "@pages/Inbound";
 import Fulfill from "@pages/Fulfill";
 import Approve from "@pages/Approve";
 import Master from "@pages/Master";
 import CategoryMaster from "@pages/CategoryMaster";
+import ProductInfo from "@pages/ProductInfo";
+import ForgotPassword from "@pages/ForgotPassword";
+import PasswordReset from "@pages/PasswordReset";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
-  const publicRoute = ["/welcome", "/login", "/signup"];
+  const publicRoute = ["/welcome", "/login", "/signup", "/forgot-password"];
 
   const userState = isUser.value ? user.state.value : admin.state.value;
 
@@ -45,7 +49,8 @@ const App = () => {
   if (
     !publicRoute.includes(currentUrl.value) &&
     userState !== "authenticated" &&
-    currentUrl.value !== "/"
+    currentUrl.value !== "/" &&
+    !currentUrl.value.includes("/password-reset")
   ) {
     currentUrl.value = "/login";
   }
@@ -73,10 +78,14 @@ const App = () => {
       <Route path="/orders/:id" component={OrderInfo} />
       <Route path="/return" component={Return} />
       <Route path="/return/:order_id/:return_id?" component={ReturnItems} />
+      <Route path="/inbound" component={Inbound} />
       <Route path="/fulfill" component={Fulfill} />
       <Route path="/approve" component={Approve} />
       <Route path="/master" component={Master} />
       <Route path="/category-master" component={CategoryMaster} />
+      <Route path="/product/:id" component={ProductInfo} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/password-reset" component={PasswordReset} />
     </Router>
   );
 };

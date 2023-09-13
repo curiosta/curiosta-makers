@@ -10,40 +10,18 @@
     "jsxImportSource": "preact",
     "baseUrl": ".",
     "paths": {
-      "@assets/*": [
-        "src/assets/*"
-      ],
-      "@pages/*": [
-        "src/pages/*"
-      ],
-      "@/*": [
-        "src/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@api/*": [
-        "src/api/*"
-      ],
-      "@store/*": [
-        "src/store/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@UserReturnRequest/*": [
-        "src/components/UserReturnRequest/*"
-      ],
-      "@SelectInput/*": [
-        "src/components/SelectInput/*"
-      ],
-      "@Select/*": [
-        "src/components/Select/*"
-      ]
+      "@assets/*": ["src/assets/*"],
+      "@pages/*": ["src/pages/*"],
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@api/*": ["src/api/*"],
+      "@store/*": ["src/store/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@FileInput/*": ["src/components/FileInput/*"],
+      "@Snapshot/*": ["src/components/Snapshot/*"],
+      "@SuccessAlert/*": ["src/components/SuccessAlert/*"],
+      "@ProductImage/*": ["src/components/ProductImage/*"]
     }
   },
-  "include": [
-    "node_modules/vite/client.d.ts",
-    "**/*"
-  ]
+  "include": ["node_modules/vite/client.d.ts", "**/*"]
 }

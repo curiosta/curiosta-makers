@@ -10,6 +10,7 @@ import ViewCartLayer from "@/components/ViewCartLayer";
 import { isPopup } from "@/store/popUpState";
 import PopUp from "@components/Popup";
 import { useSignal } from "@preact/signals";
+import { Link } from "preact-router";
 import { ChangeEvent } from "preact/compat";
 
 const Cart = () => {
@@ -111,23 +112,31 @@ const Cart = () => {
                       key={product?.id}
                       className="flex justify-between items-center gap-4 my-3 py-2 border-b last:border-none relative"
                     >
-                      <div className="flex gap-2">
+                      <Link
+                        href={`/product/${product?.variant?.product?.id}`}
+                        className="flex gap-2 w-1/2 z-10"
+                      >
                         <img
-                          src={product?.thumbnail || "N/A"}
-                          alt="product"
+                          src={
+                            product.thumbnail ?? "/images/placeholderImg.svg"
+                          }
+                          alt={product.title}
                           className="w-8 h-8 object-cover"
                         />
-                        <Typography size="body1/normal" className="text-start">
+                        <Typography
+                          size="body1/normal"
+                          className="text-start truncate w-44"
+                        >
                           {product?.title}
                         </Typography>
-                      </div>
+                      </Link>
                       <ManageQty productItem={product} page="cart" />
                     </div>
                   ))}
                 </div>
               ) : null}
               {cartBorrowItem?.length ? (
-                <div>
+                <div className="mb-8">
                   <div className="flex justify-between items-center">
                     <Typography
                       size="body1/normal"
@@ -145,18 +154,26 @@ const Cart = () => {
                   {cartBorrowItem?.map((product, index) => (
                     <div
                       key={product?.id}
-                      className="flex justify-between items-center gap-4 my-3 py-2 border-b last:border-none relative"
+                      className="flex justify-between items-center gap-4 my-3 py-2 border-b last:border-none last:mb-20 relative"
                     >
-                      <div className="flex gap-2">
+                      <Link
+                        href={`/product/${product?.variant?.product?.id}`}
+                        className="flex gap-2 w-1/2 z-10"
+                      >
                         <img
-                          src={product?.thumbnail || "N/A"}
-                          alt="product"
+                          src={
+                            product.thumbnail ?? "/images/placeholderImg.svg"
+                          }
+                          alt={product.title}
                           className="w-8 h-8 object-cover"
                         />
-                        <Typography size="body1/normal" className="text-start">
+                        <Typography
+                          size="body1/normal"
+                          className="text-start truncate w-44"
+                        >
                           {product?.title}
                         </Typography>
-                      </div>
+                      </Link>
                       <ManageQty productItem={product} page="cart" />
                     </div>
                   ))}
@@ -172,7 +189,7 @@ const Cart = () => {
               />
             ) : (
               // confirm order or discard buttons
-              <div className="fixed bottom-16 left-0 p-4 w-full flex items-center justify-around">
+              <div className="fixed bottom-16 left-0 p-4 w-full flex items-center justify-around z-10 bg-secondray">
                 <Button
                   type="button"
                   variant="primary"

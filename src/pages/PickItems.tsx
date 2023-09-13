@@ -123,11 +123,14 @@ const PickItems = ({ id }: Props) => {
                   <Typography size="small/normal">Item {index + 1}</Typography>
                   <div className="flex gap-2 border-b">
                     <img
-                      src={item.thumbnail || "N/A"}
+                      src={item.thumbnail ?? "/images/placeholderImg.svg"}
                       alt={item.title}
                       className="w-8 object-cover"
                     />
-                    <Typography size="body1/normal" className="text-start">
+                    <Typography
+                      size="body1/normal"
+                      className="text-start truncate w-56"
+                    >
                       {item.title}
                     </Typography>
                   </div>

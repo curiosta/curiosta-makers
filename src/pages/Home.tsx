@@ -34,7 +34,6 @@ const Home = () => {
       <ActivityCard />
       {!isUser.value ? <MiddleContent /> : null}
       <IssuedItems />
-      {!isUser.value ? <UserReturnRequest /> : null}
       {!isUser.value ? <Snapshot /> : null}
       <BottomNavbar />
     </div>

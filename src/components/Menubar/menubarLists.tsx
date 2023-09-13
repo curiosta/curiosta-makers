@@ -54,7 +54,7 @@ export const menubarItems = [
     link: "#",
   },
   {
-    title: "Transations",
+    title: "Transactions",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -195,7 +195,7 @@ export const menubarAdminItems = [
   },
 
   {
-    title: "Transations",
+    title: "Transactions",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

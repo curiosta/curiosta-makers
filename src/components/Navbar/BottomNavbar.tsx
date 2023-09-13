@@ -125,7 +125,7 @@ const BottomNavbar = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 flex justify-center items-center w-full bg-primary-700 ">
+    <div className="fixed bottom-0 left-0 flex justify-center items-center w-full bg-primary-700 z-10 ">
       {isUser.value
         ? bottomNavbarItems.map((item, index) => (
             <Button

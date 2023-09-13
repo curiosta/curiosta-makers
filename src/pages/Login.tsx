@@ -3,7 +3,6 @@ import Typography from "@components/Typography";
 import Input from "@components/Input";
 import FormControl from "@components/FormControl";
 import { useSignal } from "@preact/signals";
-import { route } from "preact-router";
 import { Link } from "preact-router/match";
 import user from "@api/user";
 import { isUser } from "@store/userState";
@@ -18,14 +17,18 @@ const Login = () => {
     if (errorMessage.value) {
       errorMessage.value = "";
     }
+    const path = location.pathname;
     try {
       if (isUser.value) {
         await user.login(data);
       } else {
         await admin.login(data);
       }
-
-      route("/home");
+      if (path !== "/login") {
+        window.location.href = path;
+      } else {
+        window.location.href = "/home";
+      }
     } catch (error) {
       const errorResponse = (error as any)?.toJSON?.();
       if (errorResponse) {
@@ -136,7 +139,7 @@ const Login = () => {
             <div class="flex items-center justify-end">
               <div class="text-sm leading-6">
                 <Link
-                  href="#"
+                  href="/forgot-password"
                   class="font-semibold text-app-primary-600 hover:text-app-primary-500"
                 >
                   Forgot password?
