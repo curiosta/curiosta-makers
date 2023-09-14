@@ -30,6 +30,9 @@ import CategoryMaster from "@pages/CategoryMaster";
 import ProductInfo from "@pages/ProductInfo";
 import ForgotPassword from "@pages/ForgotPassword";
 import PasswordReset from "@pages/PasswordReset";
+import MaterialMaster from "@pages/MaterialMaster";
+import ProductEdit from "@pages/ProductEdit";
+import ProductAdd from "@pages/ProductAdd";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
@@ -86,6 +89,9 @@ const App = () => {
       <Route path="/product/:id" component={ProductInfo} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/password-reset" component={PasswordReset} />
+      <Route path="/material-master" component={MaterialMaster} />
+      <Route path="/material-master/edit/:id" component={ProductEdit} />
+      <Route path="/material-master/add" component={ProductAdd} />
     </Router>
   );
 };

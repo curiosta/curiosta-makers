@@ -6,7 +6,7 @@ import { Link } from "preact-router";
 const Master = () => {
   const masterOptions = [
     { title: "Category Master", link: "/category-master" },
-    { title: "Material Master", link: "#" },
+    { title: "Material Master", link: "/material-master" },
     { title: "Location Master", link: "#" },
     { title: "Access Master", link: "#" },
   ];
