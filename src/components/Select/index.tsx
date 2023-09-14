@@ -8,7 +8,13 @@ interface Props extends Omit<HTMLAttributes<HTMLSelectElement>, "class"> {
   options: string[];
 }
 
-const Select = ({ label, className, options, ...rest }: Props) => {
+const Select = ({
+  label,
+  className,
+  options,
+  defaultValue,
+  ...rest
+}: Props) => {
   const id = useId();
 
   return (
@@ -24,7 +30,12 @@ const Select = ({ label, className, options, ...rest }: Props) => {
         {...rest}
       >
         {options.map((opt) => (
-          <option value={opt.replaceAll(" ", "-").toLowerCase()}>{opt}</option>
+          <option
+            value={opt.replaceAll(" ", "-").toLowerCase()}
+            selected={opt === defaultValue}
+          >
+            {opt}
+          </option>
         ))}
       </select>
     </div>

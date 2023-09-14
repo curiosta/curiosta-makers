@@ -115,7 +115,7 @@ export const menubarAdminItems = [
         />
       </svg>
     ),
-    link: "#",
+    link: "/inbound",
   },
   {
     title: "Approve Requests",
