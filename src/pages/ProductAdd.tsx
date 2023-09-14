@@ -1,3 +1,4 @@
+import Button from "@/components/Button";
 import UpdateInput from "@/components/Input/UpdateInput";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
@@ -19,10 +20,18 @@ const ProductAdd = () => {
         <Typography size="h6/normal">Add New Product</Typography>
       </div>
 
-      <form className="w-full flex flex-col gap-4">
-        <UpdateInput type="text" label="Title" />
-        <UpdateInput type="text" label="Sub-title" />
-        <Textbox label="Description" />
+      <form className="w-full flex flex-col gap-4" required>
+        <UpdateInput type="text" label="Title" required />
+        <UpdateInput
+          type="text"
+          label="Handle"
+          pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          required
+        />
+        <UpdateInput type="text" label="Sub-title" required />
+        <Textbox label="Description" required />
+
+        <Button type="submit">Publish Product</Button>
       </form>
 
       <BottomNavbar />

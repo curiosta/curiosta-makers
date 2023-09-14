@@ -24,6 +24,7 @@ const UpdateInput = ({ label, className, ...rest }: Props) => {
       focus:ring-inset focus:ring-primary-600  sm:text-sm sm:leading-6 focus-visible:outline-none`,
           className
         )}
+        placeholder={label}
         {...rest}
       />
     </div>

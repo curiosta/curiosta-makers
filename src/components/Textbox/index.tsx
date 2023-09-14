@@ -26,6 +26,7 @@ const Textbox = ({ label, className, ...rest }: Props) => {
         )}
         rows={4}
         cols={50}
+        placeholder={label}
         {...rest}
       />
     </div>
