@@ -115,7 +115,7 @@ export const menubarAdminItems = [
         />
       </svg>
     ),
-    link: "#",
+    link: "/inbound",
   },
   {
     title: "Approve Requests",
@@ -169,7 +169,7 @@ export const menubarAdminItems = [
         />
       </svg>
     ),
-    link: "#",
+    link: "/master",
   },
   {
     title: "Inventory",

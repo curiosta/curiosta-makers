@@ -25,6 +25,8 @@ import ReturnItems from "@pages/ReturnItems";
 import Inbound from "@pages/Inbound";
 import Fulfill from "@pages/Fulfill";
 import Approve from "@pages/Approve";
+import Master from "@pages/Master";
+import CategoryMaster from "@pages/CategoryMaster";
 import ProductInfo from "@pages/ProductInfo";
 import ForgotPassword from "@pages/ForgotPassword";
 import PasswordReset from "@pages/PasswordReset";
@@ -79,6 +81,8 @@ const App = () => {
       <Route path="/inbound" component={Inbound} />
       <Route path="/fulfill" component={Fulfill} />
       <Route path="/approve" component={Approve} />
+      <Route path="/master" component={Master} />
+      <Route path="/category-master" component={CategoryMaster} />
       <Route path="/product/:id" component={ProductInfo} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/password-reset" component={PasswordReset} />

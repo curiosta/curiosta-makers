@@ -9,7 +9,7 @@ const MiddleContent = () => {
     {
       title: "Master",
       icon: master_icon,
-      link: "#",
+      link: "/master",
     },
     {
       title: "Inventory",
