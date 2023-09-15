@@ -62,7 +62,10 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
     try {
       const returnItems: TReturnItem[] = [];
       borrowItems?.map((item) =>
-        returnItems.push({ item_id: item.id, quantity: item.quantity })
+        returnItems.push({
+          item_id: item.id,
+          quantity: item.fulfilled_quantity,
+        })
       );
       const res = await createReturn(order_id, returnItems);
       returnItem.value = res?.return;
@@ -78,7 +81,10 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
     try {
       const returnItems: TReturnItem[] = [];
       borrowItems?.map((item) =>
-        returnItems.push({ item_id: item.id, quantity: item.quantity })
+        returnItems.push({
+          item_id: item.id,
+          quantity: item.fulfilled_quantity,
+        })
       );
       const res = await adminApproveReturn(return_id, returnItems);
       returnItem.value = res?.return;
@@ -121,7 +127,9 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
                       {item.title}
                     </Typography>
                   </Link>
-                  <Typography className="pr-8">x{item.quantity}</Typography>
+                  <Typography className="pr-8">
+                    x{item.fulfilled_quantity}
+                  </Typography>
                 </div>
               ))}
               <div className="flex items-center justify-center">

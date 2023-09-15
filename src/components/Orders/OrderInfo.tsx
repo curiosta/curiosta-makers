@@ -119,10 +119,12 @@ const OrderInfo = ({ id }: Props) => {
 
             <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondray">
               <Typography size="h6/normal">Items</Typography>
-              <Typography size="h6/normal">Quantity</Typography>
+              <Typography size="h6/normal">Requested Qty</Typography>
             </div>
 
-            {order.value?.fulfillment_status === "partially_fulfilled" ? (
+            {order.value?.fulfillment_status === "partially_fulfilled" ||
+            order.value?.fulfillment_status === "partially_returned" ||
+            order.value?.fulfillment_status === "returned" ? (
               <div className="my-4">
                 <Typography
                   size="body1/normal"
@@ -149,10 +151,18 @@ const OrderInfo = ({ id }: Props) => {
                           {item.title}
                         </Typography>
                       </Link>
-
-                      <Typography size="body2/normal">
-                        fulfilled Qty: {item.fulfilled_quantity}
+                      <Typography size="body2/normal" variant="secondary">
+                        order Type: {item.metadata?.cartType}
                       </Typography>
+                      {!item.returned_quantity ? (
+                        <Typography size="body2/normal">
+                          fulfilled Qty: {item.fulfilled_quantity}
+                        </Typography>
+                      ) : (
+                        <Typography size="body2/normal">
+                          returned Qty: {item.returned_quantity}
+                        </Typography>
+                      )}
                       {returnItemIds && returnItemIds.includes(item.id) ? (
                         <Typography size="body2/normal">
                           return_status:{" "}
@@ -186,6 +196,9 @@ const OrderInfo = ({ id }: Props) => {
                         {item.title}
                       </Typography>
                     </Link>
+                    <Typography size="body2/normal" variant="secondary">
+                      order Type: {item.metadata?.cartType}
+                    </Typography>
                     {returnItemIds && returnItemIds.includes(item.id) ? (
                       <Typography size="body2/normal">
                         return_status:{" "}
@@ -212,22 +225,27 @@ const OrderInfo = ({ id }: Props) => {
                 </Typography>
                 {notFulfilledItem?.map((item) => (
                   <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
-                    <Link
-                      href={`/product/${item?.variant?.product_id}`}
-                      className="flex gap-2 items-center"
-                    >
-                      <img
-                        src={item.thumbnail ?? "/images/placeholderImg.svg"}
-                        alt={item.title}
-                        className="w-10 h-10 object-cover"
-                      />
-                      <Typography
-                        size="body1/normal"
-                        className="text-start truncate w-56"
+                    <div>
+                      <Link
+                        href={`/product/${item?.variant?.product_id}`}
+                        className="flex gap-2 items-center"
                       >
-                        {item.title}
+                        <img
+                          src={item.thumbnail ?? "/images/placeholderImg.svg"}
+                          alt={item.title}
+                          className="w-10 h-10 object-cover"
+                        />
+                        <Typography
+                          size="body1/normal"
+                          className="text-start truncate w-56"
+                        >
+                          {item.title}
+                        </Typography>
+                      </Link>
+                      <Typography size="body2/normal" variant="secondary">
+                        order Type: {item.metadata?.cartType}
                       </Typography>
-                    </Link>
+                    </div>
                     <Typography className="pr-8">x{item.quantity}</Typography>
                   </div>
                 ))}
