@@ -1,14 +1,12 @@
 import { Signal, useSignal } from "@preact/signals";
 import Button from "../Button";
 import Typography from "../Typography";
-import Input from "../Input";
 import { ChangeEvent } from "preact/compat";
 import { MutableRef, useEffect } from "preact/hooks";
 import Select from "../Select";
-import FormControl from "../FormControl";
 import { adminGetCategory } from "@/api/admin/category/getCategory";
 import { ProductCategory } from "@medusajs/medusa";
-import UpdateInput from "../Input/UpdateInput";
+import NewInput from "../Input/NewInput";
 
 type PopUp = {
   isPopup: Signal<boolean>;
@@ -72,7 +70,7 @@ const CategoryPopup = ({
 
         <form onSubmit={handlePopupAction} ref={formRef} required>
           <div className="flex flex-col gap-4 items-center justify-center w-full my-4">
-            <UpdateInput
+            <NewInput
               id="category_Name"
               label="Name"
               type="text"
@@ -81,7 +79,7 @@ const CategoryPopup = ({
               defaultValue={type === "edit" ? category.value?.name : ""}
               required
             />
-            <UpdateInput
+            <NewInput
               id="category_Handle"
               type="text"
               label="Handle"
@@ -92,7 +90,7 @@ const CategoryPopup = ({
               defaultValue={type === "edit" ? category.value?.handle : ""}
             />
 
-            <UpdateInput
+            <NewInput
               id="category_Description"
               type="text"
               label="Description"

@@ -5,7 +5,7 @@ interface Props extends HTMLAttributes<HTMLInputElement> {
   label: string;
 }
 
-const UpdateInput = ({ label, className, ...rest }: Props) => {
+const NewInput = ({ label, className, ...rest }: Props) => {
   const id = label.replaceAll(" ", "-").toLowerCase();
 
   return (
@@ -31,4 +31,4 @@ const UpdateInput = ({ label, className, ...rest }: Props) => {
   );
 };
 
-export default UpdateInput;
+export default NewInput;
