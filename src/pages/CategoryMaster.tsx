@@ -37,6 +37,7 @@ const CategoryMaster = () => {
   const addCategory = useSignal<ProductCategory | null>(null);
   const dialogRef = useRef<HTMLDialogElement[]>([]);
   const selectedCategoryId = useSignal<string | undefined>(undefined);
+  const isDeletePopup = useSignal<boolean>(false);
 
   const getCategories = async () => {
     isLoading.value = "category:get";
@@ -159,6 +160,7 @@ const CategoryMaster = () => {
       await adminDeleteCategory({ productCategoryId: id });
       dialogRef.current[index]?.close();
       getCategories();
+      isDeletePopup.value = false;
     } catch (error) {
     } finally {
       isLoading.value = undefined;
@@ -287,6 +289,7 @@ const CategoryMaster = () => {
                     id={category.id}
                     handleDelete={handleDelete}
                     handleEdit={handleEdit}
+                    isPopup={isDeletePopup}
                   />
                 </div>
               ))}

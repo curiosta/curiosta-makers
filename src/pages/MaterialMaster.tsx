@@ -10,6 +10,7 @@ import Loading from "@/components/Loading";
 import Dialog from "@/components/Dialog";
 import { Link } from "preact-router";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
+import { adminDeleteProduct } from "@/api/admin/product/deleteProduct";
 
 type TLoadableOptions =
   | "product:get"
@@ -23,6 +24,7 @@ const MaterialMaster = () => {
   const limit = useSignal<number>(20);
   const offset = useSignal<number>(0);
   const dialogRef = useRef<HTMLDialogElement[]>([]);
+  const isPopup = useSignal<boolean>(false);
 
   const getProducts = async () => {
     isLoading.value = "product:get";
@@ -53,6 +55,19 @@ const MaterialMaster = () => {
     }
   };
 
+  const handleDelete = async (id: string, index: number) => {
+    isLoading.value = "product:delete";
+    try {
+      await adminDeleteProduct(id);
+      dialogRef.current[index]?.close();
+      getProducts();
+      isPopup.value = false;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
@@ -61,25 +76,6 @@ const MaterialMaster = () => {
       </div>
 
       <div className="text-center my-2 w-full mb-20">
-        <div className="flex justify-end">
-          <Button link={`/material-master/add`} className="gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6 stroke-secondray stroke-2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            Add
-          </Button>
-        </div>
         {isLoading.value !== "product:get" ? (
           <div className="w-full">
             <div className="flex flex-col  my-2 items-start gap-4">
@@ -146,6 +142,8 @@ const MaterialMaster = () => {
                     index={index}
                     id={product.id}
                     handleEditRedirect={`/material-master/edit/${product.id}`}
+                    handleDelete={handleDelete}
+                    isPopup={isPopup}
                   />
                 </div>
               ))}
