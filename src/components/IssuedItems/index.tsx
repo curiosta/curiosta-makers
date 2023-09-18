@@ -90,9 +90,9 @@ const IssuedItems = () => {
     <div className="w-full my-4">
       <div className="flex justify-between items-center">
         {isUser.value ? (
-          <Typography>Recently Issued Items</Typography>
+          <Typography>Recently Requested</Typography>
         ) : (
-          <Typography>User Issue Requests</Typography>
+          <Typography>Recently User's Requests</Typography>
         )}
         <Link href="/orders" className="text-app-primary-600">
           View All

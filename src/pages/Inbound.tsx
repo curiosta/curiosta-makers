@@ -127,7 +127,7 @@ const Inbound = () => {
           <FileInput selectedFile={selectedFile} acceptFileType=".csv" />
           <a
             className="flex gap-2 items-center text-app-primary-800 underline"
-            href="https://curiosta-assets.s3.ap-south-1.amazonaws.com/Makers-product-template-1694177923301.csv"
+            href="https://curiosta-assets.s3.ap-south-1.amazonaws.com/Makers-product-template-1694698296432.csv"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
