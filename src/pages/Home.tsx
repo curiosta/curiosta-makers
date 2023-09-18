@@ -30,11 +30,11 @@ const Home = () => {
           Let’s find you something to make
         </Typography>
       </div>
-      <SearchInput />
+      {/* <SearchInput /> */}
       <ActivityCard />
       {!isUser.value ? <MiddleContent /> : null}
       <IssuedItems />
-      {!isUser.value ? <Snapshot /> : null}
+      {/* {!isUser.value ? <Snapshot /> : null} */}
       <BottomNavbar />
     </div>
   );

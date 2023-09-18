@@ -5,12 +5,16 @@ import Chip from "@components/Chip";
 import { isUser } from "@/store/userState";
 import user from "@/api/user";
 import admin from "@/api/admin";
+import cart from "@/api/cart";
 
 const TopNavbar = () => {
   const isMenuOpen = useSignal<boolean>(false);
   const currentUser = isUser.value
     ? user.customer.value
     : admin.adminData.value;
+
+  const totalCartItems = isUser.value ? cart.store.value?.items?.length : null;
+
   return (
     <div className="flex justify-between items-center w-full">
       <Button
@@ -37,7 +41,11 @@ const TopNavbar = () => {
 
       <div className="flex items-center gap-2">
         {isUser.value ? (
-          <Button link="/cart" variant="icon">
+          <Button
+            link="/cart"
+            variant="icon"
+            className="!text-lg gap-1 items-center"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -62,6 +70,7 @@ const TopNavbar = () => {
                 </clipPath>
               </defs>
             </svg>
+            {totalCartItems ?? 0}
           </Button>
         ) : null}
         <div className="w-9 h-9 flex">

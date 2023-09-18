@@ -102,6 +102,8 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
             link={
               page !== "adminReturn"
                 ? `/orders/${order.id}`
+                : returnVal?.status === "received"
+                ? `/orders/${returnVal?.order?.id}`
                 : `/return/${returnVal?.order.id}/${returnVal?.id}`
             }
           >
@@ -143,30 +145,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
                 </div>
               </li>
             ))
-          : returnVal?.items.map((returnItem) => (
-              <li class="p-4 sm:p-6">
-                <div class="flex items-center sm:items-start">
-                  <div class="h-10 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 sm:h-40 sm:w-40">
-                    <img
-                      src={"/images/placeholderImg.svg"}
-                      alt={"product"}
-                      class="h-full w-full object-cover object-center"
-                    />
-                  </div>
-                  <div class="ml-6 flex-1 text-sm">
-                    <Typography variant="secondary" className="my-2 break-all">
-                      item_id: {returnItem.item_id}
-                    </Typography>
-                    <Typography variant="secondary">
-                      Qty: {returnItem.requested_quantity}
-                    </Typography>
-                    <Typography variant="secondary">
-                      order Type: {returnItem.metadata?.cartType}
-                    </Typography>
-                  </div>
-                </div>
-              </li>
-            ))}
+          : null}
       </ul>
 
       <div class={`p-4 ${order?.items?.length - 3 > 0 ? "block" : "hidden"}`}>
@@ -194,15 +173,29 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
           ) : null}
         </div>
       ) : (
-        <div className="flex items-center  gap-4 p-4 border-t">
+        <div className="flex items-center  gap-2 p-4 border-t">
           <Typography size="body1/normal" variant="secondary" className="ml-2 ">
             Status:{" "}
             {page !== "adminReturn"
               ? order?.fulfillment_status
               : returnVal?.status === "received"
-              ? "returned"
+              ? "return completed"
               : returnVal?.status}
           </Typography>
+          {page === "adminReturn" && returnVal?.status === "received" ? (
+            <svg
+              class="h-5 w-5 text-app-primary-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          ) : null}
         </div>
       )}
     </div>

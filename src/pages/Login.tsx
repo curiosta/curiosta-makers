@@ -157,32 +157,6 @@ const Login = () => {
             </Button>
             <Typography variant="error">{errorMessage}</Typography>
           </FormControl>
-          <div className="text-center my-4">
-            <Typography>or</Typography>
-            <div className="p-1.5 rounded-lg border flex justify-center items-center my-2 shadow-sm">
-              <div className="justify-start items-center gap-1 inline-flex">
-                <img
-                  className="w-9 h-8"
-                  src="/images/google_logo.svg"
-                  alt="google-logo"
-                />
-                <Typography size="body2/normal">Sign in with google</Typography>
-              </div>
-            </div>
-            <Typography
-              size="body1/normal"
-              variant={"secondary"}
-              className="text-center"
-            >
-              Don't have an account?{" "}
-              <a
-                href="/signup"
-                class="font-semibold leading-6 text-app-primary-600 hover:text-app-primary-500"
-              >
-                Sign up
-              </a>
-            </Typography>
-          </div>
         </div>
       </div>
     </div>

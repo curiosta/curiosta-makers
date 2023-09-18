@@ -4,7 +4,6 @@ import Home from "@pages/Home";
 import Login from "@pages/Login";
 import Request from "@pages/Request";
 import RequestItems from "@pages/RequestItems";
-import Signup from "@pages/Signup";
 import Welcome from "@pages/Welcome";
 import { useSignal } from "@preact/signals";
 import Router, {
@@ -35,7 +34,7 @@ import ProductEdit from "@pages/ProductEdit";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
-  const publicRoute = ["/welcome", "/login", "/signup", "/forgot-password"];
+  const publicRoute = ["/welcome", "/login", "/forgot-password"];
 
   const userState = isUser.value ? user.state.value : admin.state.value;
 
@@ -69,7 +68,6 @@ const App = () => {
       <Route path="/" component={Guide} />
       <Route path="/welcome" component={Welcome} />
       <Route path="/login" component={Login} />
-      <Route path="/signup" component={Signup} />
       <Route path="/home" component={Home} />
       <Route path="/account" component={Account} />
       <Route path="/create-requests" component={Request} />

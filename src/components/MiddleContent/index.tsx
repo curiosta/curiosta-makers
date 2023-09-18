@@ -11,16 +11,16 @@ const MiddleContent = () => {
       icon: master_icon,
       link: "/master",
     },
-    {
-      title: "Inventory",
-      icon: inventory_icon,
-      link: "#",
-    },
-    {
-      title: "Report",
-      icon: report_icon,
-      link: "#",
-    },
+    // {
+    //   title: "Inventory",
+    //   icon: inventory_icon,
+    //   link: "#",
+    // },
+    // {
+    //   title: "Report",
+    //   icon: report_icon,
+    //   link: "#",
+    // },
   ];
 
   return (
