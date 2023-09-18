@@ -42,6 +42,15 @@
       ],
       "@ProductImage/*": [
         "src/components/ProductImage/*"
+      ],
+      "@Dialog/*": [
+        "src/components/Dialog/*"
+      ],
+      "@Textbox/*": [
+        "src/components/Textbox/*"
+      ],
+      "@MultiSelectCheckbox/*": [
+        "src/components/MultiSelectCheckbox/*"
       ]
     }
   },

@@ -4,9 +4,10 @@ import { useId } from "preact/hooks";
 
 interface Props extends Omit<HTMLAttributes<HTMLInputElement>, "class"> {
   label?: string;
+  labelClassName?: string;
 }
 
-const Checkbox = ({ label, className, ...rest }: Props) => {
+const Checkbox = ({ label, labelClassName, className, ...rest }: Props) => {
   const id = useId();
 
   return (
@@ -23,7 +24,10 @@ const Checkbox = ({ label, className, ...rest }: Props) => {
       {label ? (
         <label
           for={id}
-          class="ml-3 block text-sm leading-6 text-gray-900 cursor-pointer"
+          class={cx(
+            "ml-3 block text-sm leading-6 text-gray-900 cursor-pointer",
+            labelClassName
+          )}
         >
           {label}
         </label>

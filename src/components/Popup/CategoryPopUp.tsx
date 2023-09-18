@@ -1,13 +1,12 @@
 import { Signal, useSignal } from "@preact/signals";
 import Button from "../Button";
 import Typography from "../Typography";
-import Input from "../Input";
 import { ChangeEvent } from "preact/compat";
 import { MutableRef, useEffect } from "preact/hooks";
 import Select from "../Select";
-import FormControl from "../FormControl";
 import { adminGetCategory } from "@/api/admin/category/getCategory";
 import { ProductCategory } from "@medusajs/medusa";
+import NewInput from "../Input/NewInput";
 
 type PopUp = {
   isPopup: Signal<boolean>;
@@ -71,62 +70,33 @@ const CategoryPopup = ({
 
         <form onSubmit={handlePopupAction} ref={formRef} required>
           <div className="flex flex-col gap-4 items-center justify-center w-full my-4">
-            <div className="w-full">
-              <label
-                htmlFor="category_Name"
-                className="text-sm font-medium leading-6 text-gray-900 flex gap-1 mb-1"
-              >
-                Name
-              </label>
-              <input
-                id="category_Name"
-                type="text"
-                className="block w-full rounded-md border-0 p-1.5 px-3 text-gray-900 shadow-sm
-                ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2
-                focus:ring-inset focus:ring-primary-600  sm:text-sm sm:leading-6 focus-visible:outline-none"
-                name="categoryName"
-                placeholder="category Name"
-                defaultValue={type === "edit" ? category.value?.name : ""}
-                required
-              />
-            </div>
-            <div className="w-full">
-              <label
-                htmlFor="category_Handle"
-                className="text-sm font-medium leading-6 text-gray-900 flex gap-1 mb-1"
-              >
-                Handle
-              </label>
-              <input
-                id="category_Handle"
-                type="text"
-                className="block w-full rounded-md border-0 p-1.5 px-3 text-gray-900 shadow-sm
-                ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2
-                focus:ring-inset focus:ring-primary-600  sm:text-sm sm:leading-6 focus-visible:outline-none"
-                name="categoryHanlde"
-                placeholder="category Hanlde"
-                pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
-                required
-                defaultValue={type === "edit" ? category.value?.handle : ""}
-              />
-            </div>
-            <div className="w-full">
-              <label
-                htmlFor="category_Description"
-                className="text-sm font-medium leading-6 text-gray-900 flex gap-1 mb-1"
-              >
-                Description
-              </label>
-              <input
-                id="category_Description"
-                type="text"
-                className="block w-full rounded-md border-0 p-1.5 px-3 text-gray-900 shadow-sm
-                ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2
-                focus:ring-inset focus:ring-primary-600  sm:text-sm sm:leading-6 focus-visible:outline-none"
-                name="categoryDescription"
-                placeholder="category Description"
-              />
-            </div>
+            <NewInput
+              id="category_Name"
+              label="Name"
+              type="text"
+              name="categoryName"
+              placeholder="category Name"
+              defaultValue={type === "edit" ? category.value?.name : ""}
+              required
+            />
+            <NewInput
+              id="category_Handle"
+              type="text"
+              label="Handle"
+              name="categoryHanlde"
+              placeholder="category Hanlde"
+              pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              required
+              defaultValue={type === "edit" ? category.value?.handle : ""}
+            />
+
+            <NewInput
+              id="category_Description"
+              type="text"
+              label="Description"
+              name="categoryDescription"
+              placeholder="category Description"
+            />
             <div className="w-full flex items-center justify-between ">
               <Select
                 name="status"
