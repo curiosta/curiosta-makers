@@ -79,16 +79,6 @@ const CategoryPopup = ({
               defaultValue={type === "edit" ? category.value?.name : ""}
               required
             />
-            <NewInput
-              id="category_Handle"
-              type="text"
-              label="Handle"
-              name="categoryHanlde"
-              placeholder="category Hanlde"
-              pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
-              required
-              defaultValue={type === "edit" ? category.value?.handle : ""}
-            />
 
             <NewInput
               id="category_Description"

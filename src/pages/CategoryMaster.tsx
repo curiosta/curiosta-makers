@@ -69,19 +69,13 @@ const CategoryMaster = () => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const {
-          categoryName,
-          categoryHanlde,
-          categoryDescription,
-          status,
-          visibility,
-        } = formDataObj;
+        const { categoryName, categoryDescription, status, visibility } =
+          formDataObj;
 
         const isActive = status === "active" ? true : false;
         const isInternal = visibility === "private" ? true : false;
         const addCategoryRes = await adminAddCategory({
           categoryName: categoryName.toString(),
-          handle: categoryHanlde.toString(),
           categoryDescription: categoryDescription.toString(),
           isActive,
           isInternal,
@@ -122,13 +116,8 @@ const CategoryMaster = () => {
     }
     const formData = new FormData(formRef.current);
     const formDataObj = Object.fromEntries(formData.entries());
-    const {
-      categoryName,
-      categoryHanlde,
-      categoryDescription,
-      status,
-      visibility,
-    } = formDataObj;
+    const { categoryName, categoryDescription, status, visibility } =
+      formDataObj;
 
     try {
       const isActive = status === "active" ? true : false;
@@ -137,7 +126,6 @@ const CategoryMaster = () => {
       const updateCategoryRes = await adminUpdateCategory({
         productCategoryId: selectedCategoryId.value,
         categoryName: categoryName.toString(),
-        handle: categoryHanlde.toString(),
         categoryDescription: categoryDescription.toString(),
         isActive,
         isInternal,

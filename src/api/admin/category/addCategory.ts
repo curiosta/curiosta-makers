@@ -5,12 +5,10 @@ type TAddCategory = {
   categoryDescription: string;
   isActive: boolean;
   isInternal: boolean;
-  handle: string;
 };
 export const adminAddCategory = async ({
   categoryName,
   categoryDescription,
-  handle,
   isActive,
   isInternal,
 }: TAddCategory) => {
@@ -19,6 +17,5 @@ export const adminAddCategory = async ({
     description: categoryDescription,
     is_active: isActive,
     is_internal: isInternal,
-    handle,
   });
 };
