@@ -148,7 +148,7 @@ const AdminUserAccess = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">User Access Master</Typography>
+        <Typography size="h6/normal">Admin User Access Master</Typography>
       </div>
 
       <div className="text-center my-2 w-full mb-20">
