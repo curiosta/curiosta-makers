@@ -24,21 +24,28 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
       class={`border-b border-t border-gray-200 ${
         returnVal?.status === "received" ||
         (page === "return" && !borrowItems.length)
-          ? "bg-gray-200/50"
+          ? "bg-gray-200/80"
           : "bg-secondray"
       } shadow-sm rounded-lg border`}
     >
-      <div class="flex items-center border-b border-gray-200 p-4 sm:grid sm:grid-cols-4 sm:gap-x-6 sm:p-6">
+      <div
+        class={`flex items-center border-b ${
+          returnVal?.status === "received" ||
+          (page === "return" && !borrowItems.length)
+            ? "border-gray-400"
+            : "border-gray-200"
+        }  p-4 sm:grid sm:grid-cols-4 sm:gap-x-6 sm:p-6`}
+      >
         <dl class="grid flex-1 grid-cols-2 gap-x-6 text-sm sm:col-span-3 sm:grid-cols-3 lg:col-span-2">
           {page !== "adminReturn" && page !== "return" ? (
             <div>
               <dt class="font-medium text-gray-900">Order number</dt>
-              <dd class="mt-1 text-gray-500 truncate">{order.id}</dd>
+              <dd class="mt-1 text-gray-700 truncate">{order.id}</dd>
             </div>
           ) : (
             <div>
               <dt class="font-medium text-gray-900">Return number</dt>
-              <dd class="mt-1 text-gray-500 truncate">
+              <dd class="mt-1 text-gray-700 truncate">
                 {page === "adminReturn"
                   ? returnVal?.id
                   : order.returns?.length
@@ -49,7 +56,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
           )}
           <div class="block">
             <dt class="font-medium text-gray-900">Requested date</dt>
-            <dd class="mt-1 text-gray-500">
+            <dd class="mt-1 text-gray-700">
               <time dateTime="2021-07-06">
                 {page !== "adminReturn" && page !== "return"
                   ? new Date(order.created_at).toLocaleDateString("default", {
@@ -82,18 +89,20 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
       </div>
 
       {!isUser.value ? (
-        <div className="flex justify-between items-center px-4 py-2 border-b">
+        <div
+          className={`flex justify-between items-center px-4 py-2 border-b ${
+            returnVal?.status === "received"
+              ? "border-gray-400"
+              : "border-gray-200"
+          }`}
+        >
           <div className="flex items-center gap-3">
             <Chip className="!bg-primary-700 uppercase text-white">
               {page !== "adminReturn"
                 ? order?.email.charAt(0)
                 : returnVal?.order.email.charAt(0)}
             </Chip>
-            <Typography
-              size="body2/normal"
-              variant="secondary"
-              className="truncate w-36"
-            >
+            <Typography size="body2/normal" className="truncate w-36">
               {page !== "adminReturn" ? order?.email : returnVal?.order.email}
             </Typography>
           </div>
@@ -159,7 +168,13 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
         </Typography>
       ) : null}
       {isUser.value ? (
-        <div className="flex justify-center items-center  gap-4 p-4 border-t">
+        <div
+          className={`flex justify-center items-center  gap-4 p-4 border-t ${
+            page === "return" && !borrowItems.length
+              ? "border-gray-400"
+              : "border-gray-200"
+          }`}
+        >
           <Button link={`/orders/${order?.id}`}>View Details</Button>
           {page === "return" && borrowItems.length ? (
             <Button
@@ -174,12 +189,24 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
         </div>
       ) : (
         <div className="flex items-center  gap-2 p-4 border-t">
-          <Typography size="body1/normal" variant="secondary" className="ml-2 ">
+          <Typography size="body1/normal" className="ml-2 capitalize ">
             Status:{" "}
             {page !== "adminReturn"
-              ? order?.fulfillment_status
+              ? order?.payment_status === "captured"
+                ? order?.returns?.length
+                  ? order?.returns?.at(0).status === "received"
+                    ? "return completed"
+                    : order?.returns?.at(0).status === "requested"
+                    ? "return requested"
+                    : order?.returns?.at(0).status
+                  : order?.fulfillment_status
+                : order?.payment_status === "awaiting"
+                ? "Pending Approval"
+                : order?.payment_status
               : returnVal?.status === "received"
               ? "return completed"
+              : returnVal?.status === "requested"
+              ? "return requested"
               : returnVal?.status}
           </Typography>
           {page === "adminReturn" && returnVal?.status === "received" ? (
