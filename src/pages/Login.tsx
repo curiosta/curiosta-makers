@@ -24,7 +24,7 @@ const Login = () => {
       } else {
         await admin.login(data);
       }
-      if (path !== "/login") {
+      if (!path.includes("/login")) {
         window.location.href = path;
       } else {
         window.location.href = "/home";
