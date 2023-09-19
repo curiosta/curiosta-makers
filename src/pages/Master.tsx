@@ -7,7 +7,7 @@ const Master = () => {
   const masterOptions = [
     { title: "Category Master", link: "/category-master" },
     { title: "Material Master", link: "/material-master" },
-    // { title: "Location Master", link: "#" },
+    { title: "Location Master", link: "/location-master" },
     // { title: "Access Master", link: "#" },
   ];
 
