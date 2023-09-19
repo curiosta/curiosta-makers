@@ -29,7 +29,7 @@ const Dialog = ({
     <>
       {/* close on outside click */}
       <div
-        className={`w-1/2 h-full absolute right-0`}
+        className={`w-1/3 h-full absolute right-0`}
         onClick={() => {
           dialogRef.current[index]?.close();
         }}

@@ -84,17 +84,14 @@ const MaterialMaster = () => {
                   <div className="flex items-center gap-4 w-10/12">
                     <Link
                       href={`/product/${product?.id}`}
-                      className="flex gap-2 w-1/2 z-10"
+                      className="flex gap-2"
                     >
                       <img
                         src={product.thumbnail ?? "/images/placeholderImg.svg"}
                         alt={product.title}
-                        className="w-8 h-8 object-cover"
+                        className="w-12 h-12 object-cover"
                       />
-                      <Typography
-                        size="body1/normal"
-                        className="text-start truncate w-2/3"
-                      >
+                      <Typography size="body1/normal" className="text-start  ">
                         {product.title}
                       </Typography>
                     </Link>
