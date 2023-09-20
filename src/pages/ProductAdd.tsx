@@ -1,6 +1,5 @@
 import { adminListCategory } from "@/api/admin/category/listCategory";
-import { adminGetProduct } from "@/api/admin/product/getProduct";
-import { adminUpdateProduct } from "@/api/admin/product/updateProduct";
+import { adminAddProduct } from "@/api/admin/product/addProduct";
 import { adminUploadFile } from "@/api/admin/product/uploadFile";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
@@ -15,21 +14,13 @@ import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
 
-type Props = {
-  id: string;
-};
+type TLoadableOptions = "category:get" | "product:add" | "product:image:upload";
 
-type TLoadableOptions =
-  | "category:get"
-  | "product:get"
-  | "product:update"
-  | "product:image:upload";
-
-type TProductImages = {
+export type TProductImages = {
   url: string;
 };
 
-const ProductEdit = ({ id }: Props) => {
+const ProductAdd = () => {
   const product = useSignal<PricedProduct | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const categories = useSignal<ProductCategory[]>([]);
@@ -47,23 +38,6 @@ const ProductEdit = ({ id }: Props) => {
   const productImages = useSignal<TProductImages[]>([]);
   const isImagesUpload = useSignal<boolean>(false);
 
-  const getProduct = async () => {
-    isLoading.value = "product:get";
-    try {
-      const productRes = await adminGetProduct({ productId: id });
-      product.value = productRes?.product;
-      thumbnail.value = productRes?.product?.thumbnail;
-      productImages.value = productRes?.product?.images;
-      const categoryIds = productRes?.product?.categories.map(
-        (category) => category?.id
-      );
-
-      selectedCategoryIds.value = categoryIds;
-    } catch (error) {
-    } finally {
-      isLoading.value = undefined;
-    }
-  };
   const getCategories = async () => {
     isLoading.value = "category:get";
     try {
@@ -81,7 +55,6 @@ const ProductEdit = ({ id }: Props) => {
 
   useEffect(() => {
     getCategories();
-    getProduct();
   }, [offset.value]);
 
   const handleUpload = async (e: ChangeEvent<HTMLFormElement>) => {
@@ -118,9 +91,9 @@ const ProductEdit = ({ id }: Props) => {
     }
   };
 
-  const handleUpdateProduct = async (e: ChangeEvent<HTMLFormElement>) => {
+  const handleAddProduct = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    isLoading.value = "product:update";
+    isLoading.value = "product:add";
     if (errorMessage.value) {
       errorMessage.value = null;
     }
@@ -135,8 +108,7 @@ const ProductEdit = ({ id }: Props) => {
           selectedCategoryIds.value?.map((val) => categories.push({ id: val }));
         }
 
-        const updateProductRes = await adminUpdateProduct({
-          productId: id,
+        const updateProductRes = await adminAddProduct({
           title: title.toString(),
           description: description.toString(),
           status: status.toString(),
@@ -163,14 +135,13 @@ const ProductEdit = ({ id }: Props) => {
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Edit Product</Typography>
+        <Typography size="h6/normal">Add Product</Typography>
       </div>
-
       <ProductAddEditForm
         formRef={formRef}
         categories={categories}
         errorMessage={errorMessage}
-        handleSubmit={handleUpdateProduct}
+        handleSubmit={handleAddProduct}
         isImagesUpload={isImagesUpload}
         productImages={productImages}
         isLoading={isLoading.value === "category:get" ? true : false}
@@ -179,6 +150,7 @@ const ProductEdit = ({ id }: Props) => {
         uploadPopup={uploadPopup}
         product={product}
       />
+
       {isLoading.value === "product:image:upload" ? (
         <LoadingPopUp loadingText="Please wait" />
       ) : (
@@ -193,12 +165,12 @@ const ProductEdit = ({ id }: Props) => {
         />
       )}
 
-      {isLoading.value === "product:update" ? (
+      {isLoading.value === "product:add" ? (
         <LoadingPopUp loadingText="Please wait" />
       ) : (
         <PopUp
           isPopup={isPopUp}
-          title={`Product update successfully `}
+          title={`Product added successfully `}
           subtitle={`Product ID: ${product.value?.id} `}
           actionLink={`/product/${product.value?.id}`}
           actionText="Check product"
@@ -209,4 +181,4 @@ const ProductEdit = ({ id }: Props) => {
   );
 };
 
-export default ProductEdit;
+export default ProductAdd;

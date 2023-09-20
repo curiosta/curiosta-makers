@@ -34,6 +34,7 @@ import ProductEdit from "@pages/ProductEdit";
 import AccessMaster from "@pages/AccessMaster";
 import UserAccess from "@pages/UserAccess";
 import AdminUserAccess from "@pages/AdminUserAccess";
+import ProductAdd from "@pages/ProductAdd";
 
 const App = () => {
   const currentUrl = useSignal<string>(getCurrentUrl());
@@ -90,6 +91,7 @@ const App = () => {
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/password-reset" component={PasswordReset} />
       <Route path="/material-master" component={MaterialMaster} />
+      <Route path="/material-master/add" component={ProductAdd} />
       <Route path="/material-master/edit/:id" component={ProductEdit} />
       <Route path="/access-master" component={AccessMaster} />
       <Route path="/access-master/user-access" component={UserAccess} />
