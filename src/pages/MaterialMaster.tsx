@@ -76,6 +76,25 @@ const MaterialMaster = () => {
       </div>
 
       <div className="text-center my-2 w-full mb-20">
+        <div className="flex justify-end">
+          <Button link="/material-master/add" className="gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-6 h-6 stroke-secondray stroke-2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
+            Add
+          </Button>
+        </div>
         {isLoading.value !== "product:get" ? (
           <div className="w-full">
             <div className="flex flex-col  my-2 items-start gap-4">

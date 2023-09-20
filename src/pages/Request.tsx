@@ -44,7 +44,7 @@ const Request = () => {
       <div className="my-2">
         <Typography size="h6/normal">Request Items</Typography>
       </div>
-      <SearchInput />
+      {/* <SearchInput /> */}
 
       <div className="text-center my-2 w-full mb-12">
         <Typography size="h6/normal">Choose Category</Typography>

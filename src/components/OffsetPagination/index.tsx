@@ -8,7 +8,7 @@ type TOffsetPagination = {
   offset: Signal<number>;
 };
 
-const index: FunctionComponent<TOffsetPagination> = ({
+const OffsetPagination: FunctionComponent<TOffsetPagination> = ({
   limit,
   offset,
   count,
@@ -77,4 +77,4 @@ const index: FunctionComponent<TOffsetPagination> = ({
   );
 };
 
-export default index;
+export default OffsetPagination;
