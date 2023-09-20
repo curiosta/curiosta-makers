@@ -301,6 +301,7 @@ const CategoryMaster = () => {
           type="add"
           formRef={formRef}
           errorMessage={errorMessage}
+          variant="category-master"
         />
       ) : null}
       {isLoading.value === "category:edit" ? (
@@ -318,6 +319,7 @@ const CategoryMaster = () => {
           }
           formRef={formRef}
           errorMessage={errorMessage}
+          variant="category-master"
         />
       ) : null}
       <PopUp
