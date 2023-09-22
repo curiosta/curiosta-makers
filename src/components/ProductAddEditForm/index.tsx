@@ -24,6 +24,7 @@ type TProductAddEditForm = {
   selectedCategoryIds: Signal<string[]>;
   isLoading: boolean;
   product: Signal<PricedProduct | null>;
+  variant: "add" | "edit";
 };
 
 const ProductAddEditForm = ({
@@ -38,6 +39,7 @@ const ProductAddEditForm = ({
   selectedCategoryIds,
   isLoading,
   product,
+  variant,
 }: TProductAddEditForm) => {
   return (
     <form
@@ -166,7 +168,7 @@ const ProductAddEditForm = ({
         />
       )}
       <Button type="submit" className="!w-full my-3">
-        Add Product
+        {variant === "add" ? "Add" : "Update"} Product
       </Button>
       {errorMessage.value ? (
         <Typography variant="error" className="text-center mt-2">

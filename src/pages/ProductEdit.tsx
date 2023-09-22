@@ -178,6 +178,7 @@ const ProductEdit = ({ id }: Props) => {
         thumbnail={thumbnail}
         uploadPopup={uploadPopup}
         product={product}
+        variant="edit"
       />
       {isLoading.value === "product:image:upload" ? (
         <LoadingPopUp loadingText="Please wait" />

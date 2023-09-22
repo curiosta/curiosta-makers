@@ -149,6 +149,7 @@ const ProductAdd = () => {
         thumbnail={thumbnail}
         uploadPopup={uploadPopup}
         product={product}
+        variant="add"
       />
 
       {isLoading.value === "product:image:upload" ? (
