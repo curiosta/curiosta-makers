@@ -24,7 +24,7 @@ interface Props {
   isCategoryEditPopUp: Signal<boolean>;
   isCategoryPopUp: Signal<boolean>;
   errorMessage: Signal<string | null>;
-  getLocationCategory: () => Promise<void>;
+  getCategory: () => Promise<void>;
 }
 
 const Category = ({
@@ -36,7 +36,7 @@ const Category = ({
   errorMessage,
   parentCategory,
   isCategoryPopUp,
-  getLocationCategory,
+  getCategory,
 }: Props) => {
   const activeCategory = useSignal<string | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
@@ -70,7 +70,7 @@ const Category = ({
     try {
       await adminDeleteCategory({ productCategoryId: id });
       dialogRef.current[index]?.close();
-      getLocationCategory();
+      getCategory();
       isDeletePopup.value = false;
     } catch (error) {
     } finally {
@@ -83,8 +83,7 @@ const Category = ({
       (isCategoryEditPopUp.value = true),
       dialogRef.current[index]?.close();
   };
-  console.log(category);
-  console.log(activeCategory.value);
+
   return (
     <ul className="w-full">
       <li className="w-full flex flex-col gap-2">
@@ -92,17 +91,21 @@ const Category = ({
           <div className="flex items-center gap-4 w-10/12">
             <div
               className="flex gap-2 items-center w-full "
-              style={`padding-left:   ${
-                category.category_children?.length ? depth : depth + 2
+              style={`padding-left: ${
+                category.category_children?.length
+                  ? depth
+                  : !category.parent_category_id
+                  ? "0"
+                  : depth + 2
               }rem`}
             >
-              {category.category_children?.length ? (
-                <Button
-                  type="button"
-                  variant="icon"
-                  className="gap-2 items-center "
-                  onClick={handleAccordion}
-                >
+              <Button
+                type="button"
+                variant="icon"
+                className="gap-2 items-center "
+                onClick={handleAccordion}
+              >
+                {category.category_children?.length ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="6"
@@ -117,20 +120,21 @@ const Category = ({
                   >
                     <path d="M0 12L6 6L0 0L0 12Z" fill="black" />
                   </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="14"
-                    viewBox="0 0 16 14"
-                    fill="none"
-                  >
-                    <path
-                      d="M5.736 2.125L7.336 3.75H14.4V11.875H1.6V2.125H5.736ZM6.4 0.5H1.6C0.72 0.5 0.00799999 1.23125 0.00799999 2.125L0 11.875C0 12.7688 0.72 13.5 1.6 13.5H14.4C15.28 13.5 16 12.7688 16 11.875V3.75C16 2.85625 15.28 2.125 14.4 2.125H8L6.4 0.5Z"
-                      fill="black"
-                    />
-                  </svg>
-                </Button>
-              ) : null}
+                ) : null}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="14"
+                  viewBox="0 0 16 14"
+                  fill="none"
+                >
+                  <path
+                    d="M5.736 2.125L7.336 3.75H14.4V11.875H1.6V2.125H5.736ZM6.4 0.5H1.6C0.72 0.5 0.00799999 1.23125 0.00799999 2.125L0 11.875C0 12.7688 0.72 13.5 1.6 13.5H14.4C15.28 13.5 16 12.7688 16 11.875V3.75C16 2.85625 15.28 2.125 14.4 2.125H8L6.4 0.5Z"
+                    fill="black"
+                  />
+                </svg>
+              </Button>
+
               <Typography
                 size="body1/normal"
                 className="text-start truncate w-2/3"
@@ -219,8 +223,8 @@ const Category = ({
           />
         </div>
         <div
-          className={`${
-            activeCategory.value !== category.id ? "hidden" : "block"
+          className={`flex-col gap-2 ${
+            activeCategory.value !== category.id ? "hidden" : "flex"
           }`}
         >
           {category.category_children.length
@@ -234,7 +238,7 @@ const Category = ({
                   errorMessage={errorMessage}
                   parentCategory={parentCategory}
                   isCategoryPopUp={isCategoryPopUp}
-                  getLocationCategory={getLocationCategory}
+                  getCategory={getCategory}
                 />
               ))
             : ""}

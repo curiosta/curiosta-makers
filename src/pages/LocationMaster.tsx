@@ -34,8 +34,6 @@ const LocationMaster = () => {
   const locationCategory = useSignal<ProductCategory | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const count = useSignal<null | number>(null);
-  const limit = useSignal<number>(20);
-  const offset = useSignal<number>(0);
   const isCategoryPopUp = useSignal<boolean>(false);
   const isCategoryEditPopUp = useSignal<boolean>(false);
   const isPopUp = useSignal<boolean>(false);
@@ -49,12 +47,11 @@ const LocationMaster = () => {
     isLoading.value = "locationCategory:get";
     try {
       const categoryRes = await adminListCategory({
-        q: "location",
+        q: "location-master",
         limit: 0,
         offset: 0,
       });
       locationCategory.value = categoryRes?.product_categories?.at(0);
-      // categories.value = categoryRes?.product_categories?.at(0)?.id;
       count.value = categoryRes?.count;
     } catch (error) {
     } finally {
@@ -147,57 +144,67 @@ const LocationMaster = () => {
       </div>
 
       <div className="text-center my-2 w-full mb-20">
-        <div className="flex justify-end">
-          <Button
-            type="button"
-            className="gap-2"
-            onClick={() => {
-              (isCategoryPopUp.value = true),
-                (selectedCategory.value = undefined),
-                (errorMessage.value = null);
-              parentCategory.value = {
-                id: locationCategory.value?.id,
-                name: locationCategory.value?.name,
-              };
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6 stroke-secondray stroke-2"
+        {locationCategory.value ? (
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              className="gap-2"
+              onClick={() => {
+                (isCategoryPopUp.value = true),
+                  (selectedCategory.value = undefined),
+                  (errorMessage.value = null);
+                parentCategory.value = {
+                  id: locationCategory.value?.id,
+                  name: locationCategory.value?.name,
+                };
+              }}
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            Add
-          </Button>
-        </div>
-        {isLoading.value !== "category:get" ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6 stroke-secondray stroke-2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+              Add
+            </Button>
+          </div>
+        ) : null}
+        {isLoading.value !== "locationCategory:get" ? (
           <div className="w-full">
             <div className="flex flex-col  my-2 items-start gap-4">
-              {locationCategory.value?.category_children?.map(
-                (category, index) => (
-                  <Category
-                    category={category}
-                    depth={0}
-                    index={index}
-                    selectedCategory={selectedCategory}
-                    isCategoryEditPopUp={isCategoryEditPopUp}
-                    errorMessage={errorMessage}
-                    parentCategory={parentCategory}
-                    isCategoryPopUp={isCategoryPopUp}
-                    getLocationCategory={getLocationCategory}
-                  />
+              {locationCategory.value ? (
+                locationCategory.value?.category_children?.map(
+                  (category, index) => (
+                    <Category
+                      category={category}
+                      depth={0}
+                      index={index}
+                      selectedCategory={selectedCategory}
+                      isCategoryEditPopUp={isCategoryEditPopUp}
+                      errorMessage={errorMessage}
+                      parentCategory={parentCategory}
+                      isCategoryPopUp={isCategoryPopUp}
+                      getCategory={getLocationCategory}
+                    />
+                  )
                 )
+              ) : (
+                <div className="flex flex-col gap-4 items-center w-full">
+                  <Typography>'Location master' Not found</Typography>
+                  <Button link="/category-master">
+                    Create 'Location master'
+                  </Button>
+                </div>
               )}
             </div>
-            <OffsetPagination limit={limit} offset={offset} count={count} />
           </div>
         ) : (
           <div className="h-40">
