@@ -8,6 +8,7 @@ import { useEffect } from "preact/hooks";
 import OffsetPagination from "@components/OffsetPagination";
 import TopNavbar from "@/components/Navbar/TopNavbar";
 import OrderItem from "@/components/Orders/OrderItem";
+import SearchInput from "@/components/SearchInput";
 
 const Approve = () => {
   const orders = useSignal<Order[]>([]);
@@ -15,11 +16,13 @@ const Approve = () => {
   const count = useSignal<null | number>(null);
   const limit = useSignal<number>(9);
   const offset = useSignal<number>(0);
+  const searchTerm = useSignal<string | undefined>(undefined);
 
   const getOrdersList = async () => {
     isLoading.value = true;
     try {
       const res = await adminOrdersList({
+        q: searchTerm.value ? searchTerm.value : undefined,
         payment_status: ["awaiting"],
         fulfillment_status: ["not_fulfilled"],
         limit: limit.value,
@@ -34,8 +37,14 @@ const Approve = () => {
   };
 
   useEffect(() => {
+    if (searchTerm.value) {
+      const getData = setTimeout(() => {
+        getOrdersList();
+      }, 500);
+      return () => clearTimeout(getData);
+    }
     getOrdersList();
-  }, [offset.value]);
+  }, [offset.value, searchTerm.value]);
 
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
@@ -43,7 +52,7 @@ const Approve = () => {
       <div className="my-2">
         <Typography size="h6/normal">Approve request</Typography>
       </div>
-
+      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
       {!isLoading.value ? (
         orders.value?.length ? (
           <div className="w-full flex flex-col gap-4 mb-12 ">
