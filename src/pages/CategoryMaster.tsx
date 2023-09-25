@@ -16,6 +16,7 @@ import PopUp from "@/components/Popup";
 import { adminUpdateCategory } from "@/api/admin/category/updateCategory";
 import { adminDeleteCategory } from "@/api/admin/category/deleteCategory";
 import Dialog from "@/components/Dialog";
+import SearchInput, { TSortOptions } from "@/components/SearchInput";
 
 type TLoadableOptions =
   | "category:get"
@@ -38,11 +39,20 @@ const CategoryMaster = () => {
   const dialogRef = useRef<HTMLDialogElement[]>([]);
   const selectedCategoryId = useSignal<string | undefined>(undefined);
   const isDeletePopup = useSignal<boolean>(false);
+  const searchTerm = useSignal<string | undefined>(undefined);
+  const selectedSort = useSignal<string[]>([]);
+  const sortOptions = useSignal<TSortOptions[]>([
+    { option: "Active", value: ["active"] },
+    { option: "Inactive", value: ["inactive"] },
+    { option: "Public", value: ["public"] },
+    { option: "Private", value: ["private"] },
+  ]);
 
   const getCategories = async () => {
     isLoading.value = "category:get";
     try {
       const categoryRes = await adminListCategory({
+        q: searchTerm.value ? searchTerm.value : undefined,
         limit: limit.value,
         offset: offset.value,
       });
@@ -55,9 +65,22 @@ const CategoryMaster = () => {
   };
 
   useEffect(() => {
+    if (searchTerm.value) {
+      const getData = setTimeout(() => {
+        getCategories();
+      }, 500);
+      return () => clearTimeout(getData);
+    }
     getCategories();
-  }, [offset.value, addCategory.value]);
+  }, [offset.value, searchTerm.value, addCategory.value]);
 
+  const handleSortToggle = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.currentTarget;
+    if (checked) {
+      selectedSort.value = value.split(",");
+    }
+  };
+  console.log(selectedSort.value);
   const handleAddCategory = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     isLoading.value = "category:add";
@@ -167,7 +190,12 @@ const CategoryMaster = () => {
       <div className="my-2">
         <Typography size="h6/normal">Category Master</Typography>
       </div>
-
+      <SearchInput
+        searchTerm={searchTerm}
+        sortOptions={sortOptions}
+        isSearchSort={true}
+        handleSortToggle={handleSortToggle}
+      />
       <div className="text-center my-2 w-full mb-20">
         <div className="flex justify-end">
           <Button
