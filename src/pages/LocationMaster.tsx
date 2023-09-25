@@ -1,14 +1,11 @@
 import { adminAddCategory } from "@/api/admin/category/addCategory";
-import { adminDeleteCategory } from "@/api/admin/category/deleteCategory";
 import { adminListCategory } from "@/api/admin/category/listCategory";
 import { adminUpdateCategory } from "@/api/admin/category/updateCategory";
 import Category from "@/components/Accordion/Category";
 import Button from "@/components/Button";
-import Dialog from "@/components/Dialog";
 import Loading from "@/components/Loading";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
-import OffsetPagination from "@/components/OffsetPagination";
 import PopUp from "@/components/Popup";
 import CategoryPopup from "@/components/Popup/CategoryPopUp";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
@@ -17,6 +14,7 @@ import { ProductCategory } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
+import { useId } from "preact/hooks";
 
 type TLoadableOptions =
   | "locationCategory:get"
@@ -63,6 +61,19 @@ const LocationMaster = () => {
     getLocationCategory();
   }, [addCategory.value]);
 
+  // generate random characters
+  function randomChar(length: number) {
+    let result = "";
+    const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+  }
+
   const handleAddCategory = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     isLoading.value = "category:add";
@@ -75,11 +86,17 @@ const LocationMaster = () => {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
         const { categoryName, categoryDescription } = formDataObj;
+        const handle =
+          categoryName.toString().toLowerCase().replaceAll(" ", "-") +
+          "-" +
+          randomChar(2);
+
         const addCategoryRes = await adminAddCategory({
           categoryName: categoryName.toString(),
           categoryDescription: categoryDescription.toString(),
           isActive: false,
           isInternal: true,
+          handle: handle,
           parentCategoryId: parentCategory.value
             ? parentCategory.value?.id
             : null,

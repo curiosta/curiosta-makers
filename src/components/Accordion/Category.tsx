@@ -217,7 +217,9 @@ const Category = ({
             isLoading={isLoading.value === "category:delete" ? true : false}
             index={index}
             id={category.id}
-            handleDelete={handleDelete}
+            handleDelete={
+              category.category_children?.length ? undefined : handleDelete
+            }
             handleEdit={handleEdit}
             isPopup={isDeletePopup}
           />

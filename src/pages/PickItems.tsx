@@ -1,6 +1,7 @@
 import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { adminFulfillment } from "@/api/admin/orders/orderFulfil";
 import { TShortItem } from "@/api/admin/orders/updateItemsQty";
+import { adminGetProduct } from "@/api/admin/product/getProduct";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
 import Loading from "@/components/Loading";
@@ -10,7 +11,7 @@ import PopUp from "@/components/Popup";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import ShortClosePopup from "@/components/Popup/ShortClosePopup";
 import Typography from "@/components/Typography";
-import { LineItem, Order } from "@medusajs/medusa";
+import { LineItem, Order, ProductCategory } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
@@ -26,6 +27,10 @@ type PickedItem = {
 
 type TLoadableOptions = "order:get" | "order:update" | "order:fulfill";
 
+type TProductCategories = ProductCategory & {
+  productId: string;
+};
+
 const PickItems = ({ id }: Props) => {
   const order = useSignal<Order | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
@@ -37,17 +42,53 @@ const PickItems = ({ id }: Props) => {
   const pickedItems = useSignal<PickedItem[]>([]);
   const shortItems = useSignal<TShortItem[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
+  const productCategories = useSignal<TProductCategories[]>([]);
 
   const getOrderInfo = async () => {
     isLoading.value = "order:get";
     try {
       const res = await adminGetOrders(id);
       order.value = res?.order;
+      getProductInfo();
     } catch (error) {
     } finally {
       isLoading.value = undefined;
     }
   };
+  const getProductInfo = () => {
+    const productIds = order.value?.items?.map(
+      (item) => item.variant?.product_id
+    );
+    console.log(productIds);
+    if (!productIds) return;
+    productIds.map(async (productId) => {
+      try {
+        const res = await adminGetProduct({ productId: productId });
+        const categoriesRes = res?.product?.categories;
+
+        productCategories.value = categoriesRes
+          ?.filter(
+            (category: ProductCategory) => category.parent_category_id !== null
+          )
+          ?.flatMap((category: ProductCategory) => [
+            {
+              productId: productId,
+              name: category.name,
+              created_at: category.created_at,
+            },
+          ]);
+
+        productCategories.value = productCategories.value.sort(
+          (a, b) =>
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+      } catch (error) {
+      } finally {
+        // isLoading.value = undefined;
+      }
+    });
+  };
+  // console.log(productCategories.value);
 
   useEffect(() => {
     getOrderInfo();
@@ -149,12 +190,15 @@ const PickItems = ({ id }: Props) => {
                         />
                       </svg>
                     </Button>
-                    <Typography>Zone A</Typography>
-                    <Typography>Aisle 1</Typography>
-                    <Typography>Rack 1</Typography>
-                    <Typography className="whitespace-nowrap">
-                      Bin CA01
-                    </Typography>
+                    {productCategories.value?.length ? (
+                      productCategories.value?.map((category) => (
+                        <Typography>{category.name}</Typography>
+                      ))
+                    ) : (
+                      <Typography variant="error" className="whitespace-nowrap">
+                        No Location found
+                      </Typography>
+                    )}
                   </div>
                   <div className="flex items-center w-full justify-between gap-2 ">
                     <div className="flex items-center gap-2">

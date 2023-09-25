@@ -6,12 +6,14 @@ type TAddCategory = {
   isActive: boolean;
   isInternal: boolean;
   parentCategoryId?: string;
+  handle?: string;
 };
 export const adminAddCategory = async ({
   categoryName,
   categoryDescription,
   isActive,
   isInternal,
+  handle,
   parentCategoryId,
 }: TAddCategory) => {
   return medusa.admin.productCategories.create({
@@ -20,5 +22,6 @@ export const adminAddCategory = async ({
     is_active: isActive,
     is_internal: isInternal,
     parent_category_id: parentCategoryId,
+    handle,
   });
 };

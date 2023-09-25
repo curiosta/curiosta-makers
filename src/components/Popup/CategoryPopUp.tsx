@@ -81,9 +81,16 @@ const CategoryPopup = ({
             </Typography>
           </div>
         ) : (
-          <Typography className="capitalize">
-            {type === "add" ? "Add" : "Update"} Category
-          </Typography>
+          <div>
+            <Typography size="body1/semi-bold" className="capitalize">
+              {type === "add" ? "Add" : "Update"} Category
+            </Typography>
+            {type === "edit" ? (
+              <Typography className="my-2">
+                handle: {category.value?.handle}
+              </Typography>
+            ) : null}
+          </div>
         )}
 
         <form onSubmit={handlePopupAction} ref={formRef} required>
