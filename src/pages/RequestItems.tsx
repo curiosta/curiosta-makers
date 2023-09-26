@@ -2,7 +2,6 @@ import { listProducts } from "@/api/product/listProducts";
 import Loading from "@/components/Loading";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
-import SearchInput from "@/components/SearchInput";
 import Typography from "@/components/Typography";
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 import { useSignal } from "@preact/signals";
@@ -90,7 +89,7 @@ const RequestItems = ({ id }: Props) => {
       <div className="my-2">
         <Typography size="h6/normal">Request Items</Typography>
       </div>
-      <SearchInput />
+      {/* <SearchInput /> */}
 
       <div className="text-center my-2 w-full mb-12">
         <Typography size="h6/normal" className="capitalize">

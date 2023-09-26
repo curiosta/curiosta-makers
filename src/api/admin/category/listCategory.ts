@@ -1,11 +1,20 @@
 import medusa from "@api/medusa";
-import { RequestQueryFields } from "@medusajs/medusa";
+import {
+  RequestQueryFields,
+  AdminGetProductCategoriesParams,
+} from "@medusajs/medusa";
 
 export const adminListCategory = async ({
+  q,
+  is_active,
+  is_internal,
   limit,
   offset,
-}: RequestQueryFields) => {
+}: AdminGetProductCategoriesParams) => {
   return medusa.admin.productCategories.list({
+    q,
+    is_active,
+    is_internal,
     limit,
     offset,
     include_descendants_tree: true,
