@@ -40,13 +40,6 @@ const CategoryMaster = () => {
   const selectedCategoryId = useSignal<string | undefined>(undefined);
   const isDeletePopup = useSignal<boolean>(false);
   const searchTerm = useSignal<string | undefined>(undefined);
-  const selectedSort = useSignal<string[]>([]);
-  const sortOptions = useSignal<TSortOptions[]>([
-    { option: "Active", value: ["active"] },
-    { option: "Inactive", value: ["inactive"] },
-    { option: "Public", value: ["public"] },
-    { option: "Private", value: ["private"] },
-  ]);
 
   const getCategories = async () => {
     isLoading.value = "category:get";
@@ -74,13 +67,6 @@ const CategoryMaster = () => {
     getCategories();
   }, [offset.value, searchTerm.value, addCategory.value]);
 
-  const handleSortToggle = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.currentTarget;
-    if (checked) {
-      selectedSort.value = value.split(",");
-    }
-  };
-  console.log(selectedSort.value);
   const handleAddCategory = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     isLoading.value = "category:add";
@@ -190,12 +176,7 @@ const CategoryMaster = () => {
       <div className="my-2">
         <Typography size="h6/normal">Category Master</Typography>
       </div>
-      <SearchInput
-        searchTerm={searchTerm}
-        sortOptions={sortOptions}
-        isSearchSort={true}
-        handleSortToggle={handleSortToggle}
-      />
+      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
       <div className="text-center my-2 w-full mb-20">
         <div className="flex justify-end">
           <Button

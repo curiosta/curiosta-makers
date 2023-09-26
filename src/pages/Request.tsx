@@ -18,11 +18,13 @@ const Request = () => {
   const count = useSignal<null | number>(null);
   const limit = useSignal<number>(9);
   const offset = useSignal<number>(0);
+  const searchTerm = useSignal<string | undefined>(undefined);
 
   const getCategories = async () => {
     isLoading.value = true;
     try {
       const categoryRes = await categoriesList({
+        q: searchTerm.value ? searchTerm.value : undefined,
         limit: limit.value,
         offset: offset.value,
       });
@@ -35,8 +37,14 @@ const Request = () => {
   };
 
   useEffect(() => {
+    if (searchTerm.value) {
+      const getData = setTimeout(() => {
+        getCategories();
+      }, 500);
+      return () => clearTimeout(getData);
+    }
     getCategories();
-  }, [offset.value]);
+  }, [offset.value, searchTerm.value]);
 
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
@@ -44,7 +52,7 @@ const Request = () => {
       <div className="my-2">
         <Typography size="h6/normal">Request Items</Typography>
       </div>
-      {/* <SearchInput /> */}
+      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
       <div className="text-center my-2 w-full mb-12">
         <Typography size="h6/normal">Choose Category</Typography>
