@@ -124,6 +124,10 @@ const ProductAdd = () => {
     } catch (error) {
       console.log(error);
       if (error instanceof Error) {
+        if (error.message.includes("422")) {
+          return (errorMessage.value =
+            "Product already exists with this title");
+        }
         errorMessage.value = error.message;
       }
     } finally {
