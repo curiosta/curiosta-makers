@@ -9,6 +9,14 @@ type TAddProduct = {
   }[];
   images?: string[];
   thumbnail?: string;
+  variants?: {
+    title: string;
+    manage_inventory: boolean;
+    prices: {
+      amount: number;
+      currency_code: string;
+    };
+  }[];
 };
 
 export const adminAddProduct = async ({
@@ -26,5 +34,12 @@ export const adminAddProduct = async ({
     categories,
     images,
     thumbnail,
+    variants: [
+      {
+        title: "one size",
+        manage_inventory: true,
+        prices: [{ amount: 10000, currency_code: "usd" }],
+      },
+    ],
   });
 };

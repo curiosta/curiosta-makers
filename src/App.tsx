@@ -31,6 +31,7 @@ import ForgotPassword from "@pages/ForgotPassword";
 import PasswordReset from "@pages/PasswordReset";
 import MaterialMaster from "@pages/MaterialMaster";
 import ProductEdit from "@pages/ProductEdit";
+import LocationMaster from "@pages/LocationMaster";
 import AccessMaster from "@pages/AccessMaster";
 import UserAccess from "@pages/UserAccess";
 import AdminUserAccess from "@pages/AdminUserAccess";
@@ -94,6 +95,7 @@ const App = () => {
       <Route path="/material-master" component={MaterialMaster} />
       <Route path="/material-master/add" component={ProductAdd} />
       <Route path="/material-master/edit/:id" component={ProductEdit} />
+      <Route path="/location-master" component={LocationMaster} />
       <Route path="/access-master" component={AccessMaster} />
       <Route path="/access-master/user-access" component={UserAccess} />
       <Route path="/access-master/admin-access" component={AdminUserAccess} />

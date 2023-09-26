@@ -1,6 +1,7 @@
 import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { adminFulfillment } from "@/api/admin/orders/orderFulfil";
 import { TShortItem } from "@/api/admin/orders/updateItemsQty";
+import { adminGetProduct } from "@/api/admin/product/getProduct";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
 import Loading from "@/components/Loading";
@@ -10,7 +11,13 @@ import PopUp from "@/components/Popup";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import ShortClosePopup from "@/components/Popup/ShortClosePopup";
 import Typography from "@/components/Typography";
-import { LineItem, Order } from "@medusajs/medusa";
+import {
+  LineItem,
+  Order,
+  PriceList,
+  ProductCategory,
+  Product,
+} from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
@@ -24,7 +31,11 @@ type PickedItem = {
   quantity: number;
 };
 
-type TLoadableOptions = "order:get" | "order:update" | "order:fulfill";
+type TLoadableOptions =
+  | "order:get"
+  | "order:update"
+  | "order:fulfill"
+  | "category:get";
 
 const PickItems = ({ id }: Props) => {
   const order = useSignal<Order | null>(null);
@@ -32,21 +43,65 @@ const PickItems = ({ id }: Props) => {
   const isPopup = useSignal<boolean>(false);
   const isFulfillComplete = useSignal<boolean>(false);
   const errorMessage = useSignal<string>("");
-  const selectedItem = useSignal<LineItem | null>(null);
+  const selectedItem = useSignal<
+    | (Omit<LineItem, "beforeInsert"> & {
+        categories?: ProductCategory[];
+      })
+    | null
+  >(null);
 
   const pickedItems = useSignal<PickedItem[]>([]);
   const shortItems = useSignal<TShortItem[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
+  const productsList = useSignal<
+    (Product & { locations?: ProductCategory[] })[]
+  >([]);
 
   const getOrderInfo = async () => {
     isLoading.value = "order:get";
     try {
       const res = await adminGetOrders(id);
       order.value = res?.order;
+      getProductInfo();
     } catch (error) {
     } finally {
       isLoading.value = undefined;
     }
+  };
+
+  const getProductInfo = async () => {
+    const productIds = order.value?.items?.map(
+      (item) => item.variant?.product_id
+    );
+
+    if (!productIds) return;
+    const productPromises = productIds.map((productId) =>
+      adminGetProduct({ productId: productId })
+    );
+
+    const res = await Promise.allSettled(productPromises);
+
+    const products = res
+      .filter((response) => response.status === "fulfilled")
+      ?.map<Product & { locations?: ProductCategory[] }>(
+        (response: any) => response.value.product
+      );
+
+    productsList.value = products?.map((product) => {
+      // location categories
+      product.locations = product.categories
+        .filter((c) => c.handle.startsWith("loc:"))
+        .sort(
+          (a, b) =>
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+
+      // actual categories
+      product.categories = product.categories.filter(
+        (c) => !c.handle.startsWith("loc:")
+      );
+      return product;
+    });
   };
 
   useEffect(() => {
@@ -58,14 +113,29 @@ const PickItems = ({ id }: Props) => {
     fulfill.items.map((item) => item.item_id)
   );
 
-  const notFulfilledItem = order.value?.items.filter(
+  let notFulfilledItem: (LineItem & {
+    categories?: ProductCategory[];
+  })[] = order.value?.items.filter(
     (item) => !fulfilledItemId.includes(item.id)
   );
 
-  const handlePick = (item: LineItem) => {
+  const ordersWithCategory = notFulfilledItem?.map((item) => {
+    const filteredProductList = productsList.value.filter(
+      (product) => product?.id === item.variant?.product_id
+    );
+    const product = filteredProductList[0];
+
+    return {
+      ...item,
+      categories: product?.categories,
+      locations: product?.locations,
+    };
+  });
+
+  const handlePick = ({ id, quantity }: { id: string; quantity: number }) => {
     pickedItems.value = [
       ...pickedItems.value,
-      { item_id: item.id, quantity: item.quantity },
+      { item_id: id, quantity: quantity },
     ];
   };
 
@@ -116,9 +186,9 @@ const PickItems = ({ id }: Props) => {
       </Typography>
       {isLoading.value !== "order:get" ? (
         <div className="w-full">
-          {notFulfilledItem?.length ? (
+          {ordersWithCategory?.length ? (
             <div className="flex flex-col gap-4 my-2 mb-12">
-              {notFulfilledItem?.map((item, index) => (
+              {ordersWithCategory?.map((item, index) => (
                 <div className="w-full bg-secondray shadow-lg rounded-2xl p-4">
                   <Typography size="small/normal">Item {index + 1}</Typography>
                   <div className="flex gap-2 border-b">
@@ -134,7 +204,7 @@ const PickItems = ({ id }: Props) => {
                       {item.title}
                     </Typography>
                   </div>
-                  <div className="grid grid-cols-5 w-full items-center my-2">
+                  <div className="grid grid-cols-5 gap-2 w-full items-center my-2">
                     <Button type="button" variant="icon">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -149,12 +219,20 @@ const PickItems = ({ id }: Props) => {
                         />
                       </svg>
                     </Button>
-                    <Typography>Zone A</Typography>
-                    <Typography>Aisle 1</Typography>
-                    <Typography>Rack 1</Typography>
-                    <Typography className="whitespace-nowrap">
-                      Bin CA01
-                    </Typography>
+                    {item?.locations ? (
+                      item?.locations?.length ? (
+                        item.locations?.map((location) => (
+                          <Typography>{location.name}</Typography>
+                        ))
+                      ) : (
+                        <Typography
+                          variant="error"
+                          className="whitespace-nowrap"
+                        >
+                          No Location found
+                        </Typography>
+                      )
+                    ) : null}
                   </div>
                   <div className="flex items-center w-full justify-between gap-2 ">
                     <div className="flex items-center gap-2">
@@ -248,7 +326,8 @@ const PickItems = ({ id }: Props) => {
                           type="button"
                           variant="danger"
                           onClick={() => {
-                            (isPopup.value = true), (selectedItem.value = item);
+                            isPopup.value = true;
+                            selectedItem.value = item;
                           }}
                           disabled={item.quantity <= 1}
                         >

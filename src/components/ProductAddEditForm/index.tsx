@@ -14,7 +14,7 @@ import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 
 type TProductAddEditForm = {
   formRef: MutableRef<HTMLFormElement>;
-  handleSubmit: (e: ChangeEvent<HTMLFormElement>) => Promise<void>;
+  handleSubmit: (e: ChangeEvent<HTMLFormElement>) => Promise<void | string>;
   thumbnail: Signal<string | null>;
   uploadPopup: Signal<boolean>;
   isImagesUpload: Signal<boolean>;
@@ -167,14 +167,15 @@ const ProductAddEditForm = ({
           selectedValues={selectedCategoryIds}
         />
       )}
-      <Button type="submit" className="!w-full my-3">
-        {variant === "add" ? "Add" : "Update"} Product
-      </Button>
+
       {errorMessage.value ? (
         <Typography variant="error" className="text-center mt-2">
           {errorMessage.value}
         </Typography>
       ) : null}
+      <Button type="submit" className="!w-full my-2">
+        {variant === "add" ? "Add" : "Update"} Product
+      </Button>
     </form>
   );
 };

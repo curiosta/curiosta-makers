@@ -1,8 +1,5 @@
 import medusa from "@api/medusa";
-import {
-  RequestQueryFields,
-  AdminGetProductCategoriesParams,
-} from "@medusajs/medusa";
+import { AdminGetProductCategoriesParams } from "@medusajs/medusa";
 
 export const adminListCategory = async ({
   q,
@@ -10,6 +7,7 @@ export const adminListCategory = async ({
   is_internal,
   limit,
   offset,
+  parent_category_id,
 }: AdminGetProductCategoriesParams) => {
   return medusa.admin.productCategories.list({
     q,
@@ -18,5 +16,6 @@ export const adminListCategory = async ({
     limit,
     offset,
     include_descendants_tree: true,
+    parent_category_id,
   });
 };

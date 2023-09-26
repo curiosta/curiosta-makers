@@ -7,6 +7,7 @@ import Select from "../Select";
 import { adminGetCategory } from "@/api/admin/category/getCategory";
 import { ProductCategory } from "@medusajs/medusa";
 import NewInput from "../Input/NewInput";
+import { TParantCategory } from "@pages/LocationMaster";
 
 type PopUp = {
   isPopup: Signal<boolean>;
@@ -16,6 +17,8 @@ type PopUp = {
   errorMessage: Signal<string | null>;
   type: "add" | "edit";
   selectedCategoryId?: string;
+  parentCategory?: Signal<TParantCategory>;
+  variant: "location-master" | "category-master";
 };
 
 const CategoryPopup = ({
@@ -26,9 +29,12 @@ const CategoryPopup = ({
   errorMessage,
   selectedCategoryId,
   type,
+  parentCategory,
+  variant,
 }: PopUp) => {
   const isLoading = useSignal<boolean>(false);
   const category = useSignal<ProductCategory | null>(null);
+  const copyText = useSignal<string>("copy handle");
 
   const getCategories = async () => {
     isLoading.value = true;
@@ -52,7 +58,7 @@ const CategoryPopup = ({
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-full backdrop-brightness-75 items-center justify-center ${
+      className={`fixed top-0 left-0 w-full h-full backdrop-brightness-75 items-center justify-center z-10 ${
         isPopup.value ? "flex " : "hidden"
       }`}
     >
@@ -64,9 +70,55 @@ const CategoryPopup = ({
       <div
         className={`absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6`}
       >
-        <Typography className="capitalize">
-          {type === "add" ? "Add" : "Update"} Category
-        </Typography>
+        {parentCategory.value && type === "add" ? (
+          <div className="flex flex-col gap-2 ">
+            <Typography className="capitalize">
+              {type === "add" ? "Add" : "Update"} Category to{" "}
+              {parentCategory.value?.name}
+            </Typography>
+            <Typography className="capitalize">
+              {parentCategory.value?.name} /{" "}
+              <span className="text-gray-400">new</span>
+            </Typography>
+          </div>
+        ) : (
+          <div>
+            <Typography size="body1/semi-bold" className="capitalize">
+              {type === "add" ? "Add" : "Update"} Category
+            </Typography>
+            {type === "edit" ? (
+              <div className="flex flex-wrap gap-2 justify-between items-center my-2">
+                <Typography>handle: {category.value?.handle}</Typography>
+                <Button
+                  variant="secondary"
+                  className="rounded-2xl !px-3 !py-1 gap-2 items-center"
+                  onClick={() => {
+                    navigator.clipboard.writeText(category.value?.handle);
+                    copyText.value = "copied";
+                  }}
+                >
+                  {copyText.value}
+                  {copyText.value === "copied" ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  ) : null}
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        )}
 
         <form onSubmit={handlePopupAction} ref={formRef} required>
           <div className="flex flex-col gap-4 items-center justify-center w-full my-4">
@@ -87,22 +139,26 @@ const CategoryPopup = ({
               name="categoryDescription"
               placeholder="category Description"
             />
-            <div className="w-full flex items-center justify-between ">
-              <Select
-                name="status"
-                options={["Active", "Inactive"]}
-                label="Status"
-                defaultValue={category.value?.is_active ? "Active" : "Inactive"}
-              />
-              <Select
-                name="visibility"
-                options={["Public", "Private"]}
-                label="Visibility"
-                defaultValue={
-                  category.value?.is_internal ? "Private" : "Public"
-                }
-              />
-            </div>
+            {variant === "category-master" ? (
+              <div className="w-full flex items-center justify-between ">
+                <Select
+                  name="status"
+                  options={["Active", "Inactive"]}
+                  label="Status"
+                  defaultValue={
+                    category.value?.is_active ? "Active" : "Inactive"
+                  }
+                />
+                <Select
+                  name="visibility"
+                  options={["Public", "Private"]}
+                  label="Visibility"
+                  defaultValue={
+                    category.value?.is_internal ? "Private" : "Public"
+                  }
+                />
+              </div>
+            ) : null}
           </div>
           <div className="w-full flex items-center justify-evenly">
             <Button

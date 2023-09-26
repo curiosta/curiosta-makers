@@ -1,38 +1,37 @@
+import { adminAddCategory } from "@/api/admin/category/addCategory";
 import { adminListCategory } from "@/api/admin/category/listCategory";
+import { adminUpdateCategory } from "@/api/admin/category/updateCategory";
+import Category from "@/components/Accordion/Category";
 import Button from "@/components/Button";
+import Loading from "@/components/Loading";
+import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
+import PopUp from "@/components/Popup";
+import CategoryPopup from "@/components/Popup/CategoryPopUp";
+import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import Typography from "@/components/Typography";
 import { ProductCategory } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
-import { useEffect, useRef } from "preact/hooks";
-import OffsetPagination from "@components/OffsetPagination";
-import Loading from "@/components/Loading";
-import BottomNavbar from "@/components/Navbar/BottomNavbar";
-import CategoryPopup from "@/components/Popup/CategoryPopUp";
 import { ChangeEvent } from "preact/compat";
-import { adminAddCategory } from "@/api/admin/category/addCategory";
-import LoadingPopUp from "@/components/Popup/LoadingPopUp";
-import PopUp from "@/components/Popup";
-import { adminUpdateCategory } from "@/api/admin/category/updateCategory";
-import Category from "@/components/Accordion/Category";
-import SearchInput, { TSortOptions } from "@/components/SearchInput";
+import { useEffect, useRef } from "preact/hooks";
+import { nanoid } from "nanoid";
 
 type TLoadableOptions =
+  | "locationCategory:get"
   | "category:get"
   | "category:add"
   | "category:edit"
   | "category:delete";
 
-type TParantCategory = {
+export type TParantCategory = {
   id: string;
   name?: string;
 };
-const CategoryMaster = () => {
-  const categories = useSignal<ProductCategory[]>([]);
+
+const LocationMaster = () => {
+  const locationCategory = useSignal<ProductCategory | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const count = useSignal<null | number>(null);
-  const limit = useSignal<number>(20);
-  const offset = useSignal<number>(0);
   const isCategoryPopUp = useSignal<boolean>(false);
   const isCategoryEditPopUp = useSignal<boolean>(false);
   const isPopUp = useSignal<boolean>(false);
@@ -41,20 +40,16 @@ const CategoryMaster = () => {
   const addCategory = useSignal<ProductCategory | null>(null);
   const selectedCategory = useSignal<TParantCategory | null>(null);
   const parentCategory = useSignal<TParantCategory | null>(null);
-  const dialogRef = useRef<HTMLDialogElement[]>([]);
-  const selectedCategoryId = useSignal<string | undefined>(undefined);
-  const isDeletePopup = useSignal<boolean>(false);
-  const searchTerm = useSignal<string | undefined>(undefined);
 
-  const getCategories = async () => {
-    isLoading.value = "category:get";
+  const getLocationCategory = async () => {
+    isLoading.value = "locationCategory:get";
     try {
       const categoryRes = await adminListCategory({
-        q: searchTerm.value ? searchTerm.value : undefined,
-        limit: limit.value,
-        offset: offset.value,
+        q: "location-master",
+        limit: 0,
+        offset: 0,
       });
-      categories.value = categoryRes?.product_categories;
+      locationCategory.value = categoryRes?.product_categories?.at(0);
       count.value = categoryRes?.count;
     } catch (error) {
     } finally {
@@ -63,18 +58,21 @@ const CategoryMaster = () => {
   };
 
   useEffect(() => {
-    if (searchTerm.value) {
-      const getData = setTimeout(() => {
-        getCategories();
-      }, 500);
-      return () => clearTimeout(getData);
-    }
-    getCategories();
-  }, [offset.value, searchTerm.value, addCategory.value]);
+    getLocationCategory();
+  }, [addCategory.value]);
 
-  const topParanetCategory = categories.value?.filter(
-    (category) => category.parent_category_id === null
-  );
+  // generate random characters
+  function randomChar(length: number) {
+    let result = "";
+    const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+  }
 
   const handleAddCategory = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,16 +85,20 @@ const CategoryMaster = () => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { categoryName, categoryDescription, status, visibility } =
-          formDataObj;
+        const { categoryName, categoryDescription } = formDataObj;
+        const handle =
+          "loc" +
+          ":" +
+          categoryName.toString().toLowerCase().replaceAll(" ", "-") +
+          "-" +
+          nanoid();
 
-        const isActive = status === "active" ? true : false;
-        const isInternal = visibility === "private" ? true : false;
         const addCategoryRes = await adminAddCategory({
           categoryName: categoryName.toString(),
           categoryDescription: categoryDescription.toString(),
-          isActive,
-          isInternal,
+          isActive: false,
+          isInternal: true,
+          handle: handle,
           parentCategoryId: parentCategory.value
             ? parentCategory.value?.id
             : null,
@@ -157,56 +159,71 @@ const CategoryMaster = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Category Master</Typography>
+        <Typography size="h6/normal">Location Master</Typography>
       </div>
-      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
+
       <div className="text-center my-2 w-full mb-20">
-        <div className="flex justify-end">
-          <Button
-            type="button"
-            className="gap-2"
-            onClick={() => {
-              (isCategoryPopUp.value = true),
-                (selectedCategory.value = undefined),
-                (parentCategory.value = undefined);
-              errorMessage.value = null;
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6 stroke-secondray stroke-2"
+        {locationCategory.value ? (
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              className="gap-2"
+              onClick={() => {
+                (isCategoryPopUp.value = true),
+                  (selectedCategory.value = undefined),
+                  (errorMessage.value = null);
+                parentCategory.value = {
+                  id: locationCategory.value?.id,
+                  name: locationCategory.value?.name,
+                };
+              }}
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            Add
-          </Button>
-        </div>
-        {isLoading.value !== "category:get" ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6 stroke-secondray stroke-2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+              Add
+            </Button>
+          </div>
+        ) : null}
+        {isLoading.value !== "locationCategory:get" ? (
           <div className="w-full">
             <div className="flex flex-col  my-2 items-start gap-4">
-              {topParanetCategory?.map((category, index) => (
-                <Category
-                  category={category}
-                  depth={0}
-                  index={index}
-                  selectedCategory={selectedCategory}
-                  isCategoryEditPopUp={isCategoryEditPopUp}
-                  errorMessage={errorMessage}
-                  parentCategory={parentCategory}
-                  isCategoryPopUp={isCategoryPopUp}
-                  getCategory={getCategories}
-                />
-              ))}
+              {locationCategory.value ? (
+                locationCategory.value?.category_children?.map(
+                  (category, index) => (
+                    <Category
+                      category={category}
+                      depth={0}
+                      index={index}
+                      selectedCategory={selectedCategory}
+                      isCategoryEditPopUp={isCategoryEditPopUp}
+                      errorMessage={errorMessage}
+                      parentCategory={parentCategory}
+                      isCategoryPopUp={isCategoryPopUp}
+                      getCategory={getLocationCategory}
+                    />
+                  )
+                )
+              ) : (
+                <div className="flex flex-col gap-4 items-center w-full">
+                  <Typography>'Location master' Not found</Typography>
+                  <Button link="/category-master">
+                    Create 'Location master'
+                  </Button>
+                </div>
+              )}
             </div>
-            <OffsetPagination limit={limit} offset={offset} count={count} />
           </div>
         ) : (
           <div className="h-40">
@@ -226,7 +243,7 @@ const CategoryMaster = () => {
           formRef={formRef}
           errorMessage={errorMessage}
           parentCategory={parentCategory}
-          variant="category-master"
+          variant="location-master"
         />
       ) : null}
       {isLoading.value === "category:edit" ? (
@@ -243,7 +260,7 @@ const CategoryMaster = () => {
           formRef={formRef}
           errorMessage={errorMessage}
           parentCategory={parentCategory}
-          variant="category-master"
+          variant="location-master"
         />
       ) : null}
       <PopUp
@@ -253,9 +270,10 @@ const CategoryMaster = () => {
         } successfully `}
         subtitle={`Category ID: ${addCategory.value?.id} `}
       />
+
       <BottomNavbar />
     </div>
   );
 };
 
-export default CategoryMaster;
+export default LocationMaster;
