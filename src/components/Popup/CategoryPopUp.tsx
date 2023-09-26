@@ -34,6 +34,7 @@ const CategoryPopup = ({
 }: PopUp) => {
   const isLoading = useSignal<boolean>(false);
   const category = useSignal<ProductCategory | null>(null);
+  const copyText = useSignal<string>("copy handle");
 
   const getCategories = async () => {
     isLoading.value = true;
@@ -86,9 +87,35 @@ const CategoryPopup = ({
               {type === "add" ? "Add" : "Update"} Category
             </Typography>
             {type === "edit" ? (
-              <Typography className="my-2">
-                handle: {category.value?.handle}
-              </Typography>
+              <div className="flex flex-wrap gap-2 justify-between items-center my-2">
+                <Typography>handle: {category.value?.handle}</Typography>
+                <Button
+                  variant="secondary"
+                  className="rounded-2xl !px-3 !py-1 gap-2 items-center"
+                  onClick={() => {
+                    navigator.clipboard.writeText(category.value?.handle);
+                    copyText.value = "copied";
+                  }}
+                >
+                  {copyText.value}
+                  {copyText.value === "copied" ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  ) : null}
+                </Button>
+              </div>
             ) : null}
           </div>
         )}

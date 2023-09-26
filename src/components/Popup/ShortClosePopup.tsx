@@ -8,7 +8,7 @@ import { MutableRef } from "preact/hooks";
 
 type PopUp = {
   isPopup: Signal<boolean>;
-  selectedItem: Signal<LineItem>;
+  selectedItem: Signal<Omit<LineItem, "beforeInsert">>;
   actionText: string;
   formRef: MutableRef<HTMLFormElement>;
   handlePopupAction?: (e: ChangeEvent<HTMLFormElement>) => void;

@@ -14,7 +14,7 @@ import { ProductCategory } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
-import { useId } from "preact/hooks";
+import { nanoid } from "nanoid";
 
 type TLoadableOptions =
   | "locationCategory:get"
@@ -87,9 +87,11 @@ const LocationMaster = () => {
         const formDataObj = Object.fromEntries(formData.entries());
         const { categoryName, categoryDescription } = formDataObj;
         const handle =
+          "loc" +
+          ":" +
           categoryName.toString().toLowerCase().replaceAll(" ", "-") +
           "-" +
-          randomChar(2);
+          nanoid();
 
         const addCategoryRes = await adminAddCategory({
           categoryName: categoryName.toString(),
