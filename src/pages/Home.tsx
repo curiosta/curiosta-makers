@@ -10,8 +10,14 @@ import admin from "@/api/admin";
 import MiddleContent from "@/components/MiddleContent";
 import Snapshot from "@/components/Snapshot";
 import UserReturnRequest from "@/components/UserReturnRequest";
+import { route } from "preact-router";
 
 const Home = () => {
+  const handleSubmit = (data: { searchText: string }) => {
+    const { searchText } = data;
+    route(`/search?q=${searchText}`);
+  };
+
   const currentUser = isUser.value
     ? user.customer.value
     : admin.adminData.value;
@@ -30,7 +36,11 @@ const Home = () => {
           Let’s find you something to make
         </Typography>
       </div>
-      {/* <SearchInput /> */}
+      <SearchInput
+        handleSubmit={handleSubmit}
+        placeholder="Search products..."
+        isSearchSort={false}
+      />
       <ActivityCard />
       {!isUser.value ? <MiddleContent /> : null}
       <IssuedItems />

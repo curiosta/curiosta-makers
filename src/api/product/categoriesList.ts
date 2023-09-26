@@ -1,8 +1,13 @@
 import medusa from "@api/medusa";
-import { RequestQueryFields } from "@medusajs/medusa";
+import { StoreGetProductCategoriesParams } from "@medusajs/medusa";
 
-export const categoriesList = async ({ limit, offset }: RequestQueryFields) => {
+export const categoriesList = async ({
+  q,
+  limit,
+  offset,
+}: StoreGetProductCategoriesParams) => {
   return medusa.productCategories.list({
+    q,
     limit,
     offset,
     expand: "products",

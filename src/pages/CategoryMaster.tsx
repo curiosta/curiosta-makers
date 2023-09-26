@@ -15,6 +15,7 @@ import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import PopUp from "@/components/Popup";
 import { adminUpdateCategory } from "@/api/admin/category/updateCategory";
 import Category from "@/components/Accordion/Category";
+import SearchInput, { TSortOptions } from "@/components/SearchInput";
 
 type TLoadableOptions =
   | "category:get"
@@ -40,11 +41,16 @@ const CategoryMaster = () => {
   const addCategory = useSignal<ProductCategory | null>(null);
   const selectedCategory = useSignal<TParantCategory | null>(null);
   const parentCategory = useSignal<TParantCategory | null>(null);
+  const dialogRef = useRef<HTMLDialogElement[]>([]);
+  const selectedCategoryId = useSignal<string | undefined>(undefined);
+  const isDeletePopup = useSignal<boolean>(false);
+  const searchTerm = useSignal<string | undefined>(undefined);
 
   const getCategories = async () => {
     isLoading.value = "category:get";
     try {
       const categoryRes = await adminListCategory({
+        q: searchTerm.value ? searchTerm.value : undefined,
         limit: limit.value,
         offset: offset.value,
       });
@@ -57,8 +63,14 @@ const CategoryMaster = () => {
   };
 
   useEffect(() => {
+    if (searchTerm.value) {
+      const getData = setTimeout(() => {
+        getCategories();
+      }, 500);
+      return () => clearTimeout(getData);
+    }
     getCategories();
-  }, [offset.value, addCategory.value]);
+  }, [offset.value, searchTerm.value, addCategory.value]);
 
   const topParanetCategory = categories.value?.filter(
     (category) => category.parent_category_id === null
@@ -147,7 +159,7 @@ const CategoryMaster = () => {
       <div className="my-2">
         <Typography size="h6/normal">Category Master</Typography>
       </div>
-
+      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
       <div className="text-center my-2 w-full mb-20">
         <div className="flex justify-end">
           <Button

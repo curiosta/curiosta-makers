@@ -11,6 +11,7 @@ import Dialog from "@/components/Dialog";
 import { Link } from "preact-router";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import { adminDeleteProduct } from "@/api/admin/product/deleteProduct";
+import SearchInput from "@/components/SearchInput";
 
 type TLoadableOptions =
   | "product:get"
@@ -25,11 +26,13 @@ const MaterialMaster = () => {
   const offset = useSignal<number>(0);
   const dialogRef = useRef<HTMLDialogElement[]>([]);
   const isPopup = useSignal<boolean>(false);
+  const searchTerm = useSignal<string | undefined>(undefined);
 
   const getProducts = async () => {
     isLoading.value = "product:get";
     try {
       const productRes = await adminProductList({
+        q: searchTerm.value ? searchTerm.value : undefined,
         limit: limit.value,
         offset: offset.value,
       });
@@ -42,8 +45,15 @@ const MaterialMaster = () => {
   };
 
   useEffect(() => {
+    if (searchTerm.value) {
+      const getData = setTimeout(() => {
+        getProducts();
+      }, 500);
+      return () => clearTimeout(getData);
+    }
+
     getProducts();
-  }, [offset.value]);
+  }, [offset.value, searchTerm.value]);
 
   // handle dialog
   const handleDialog = (index: number) => {
@@ -74,6 +84,7 @@ const MaterialMaster = () => {
       <div className="my-2">
         <Typography size="h6/normal">Material Master</Typography>
       </div>
+      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
       <div className="text-center my-2 w-full mb-20">
         <div className="flex justify-end">
@@ -103,14 +114,17 @@ const MaterialMaster = () => {
                   <div className="flex items-center gap-4 w-10/12">
                     <Link
                       href={`/product/${product?.id}`}
-                      className="flex gap-2"
+                      className="flex items-center gap-2 w-full"
                     >
                       <img
                         src={product.thumbnail ?? "/images/placeholderImg.svg"}
                         alt={product.title}
                         className="w-12 h-12 object-cover"
                       />
-                      <Typography size="body1/normal" className="text-start  ">
+                      <Typography
+                        size="body1/normal"
+                        className="text-start truncate  "
+                      >
                         {product.title}
                       </Typography>
                     </Link>

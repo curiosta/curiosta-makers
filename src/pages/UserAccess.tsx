@@ -11,6 +11,7 @@ import OffsetPagination from "@/components/OffsetPagination";
 import PopUp from "@/components/Popup";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import UserPopUp from "@/components/Popup/UserPopUp";
+import SearchInput from "@/components/SearchInput";
 import Typography from "@/components/Typography";
 import { Customer } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
@@ -33,11 +34,13 @@ const UserAccess = () => {
   const dialogRef = useRef<HTMLDialogElement[]>([]);
   const selectedId = useSignal<string | undefined>(undefined);
   const isDeletePopup = useSignal<boolean>(false);
+  const searchTerm = useSignal<string | undefined>(undefined);
 
   const getUsers = async () => {
     isLoading.value = "user:get";
     try {
       const usersRes = await adminCustomersList({
+        q: searchTerm.value ? searchTerm.value : undefined,
         limit: limit.value,
         offset: offset.value,
       });
@@ -51,8 +54,14 @@ const UserAccess = () => {
   };
 
   useEffect(() => {
+    if (searchTerm.value) {
+      const getData = setTimeout(() => {
+        getUsers();
+      }, 500);
+      return () => clearTimeout(getData);
+    }
     getUsers();
-  }, [offset.value]);
+  }, [offset.value, searchTerm.value]);
 
   // handle dialog
   const handleDialog = (index: number) => {
@@ -139,6 +148,7 @@ const UserAccess = () => {
       <div className="my-2">
         <Typography size="h6/normal">User Access Master</Typography>
       </div>
+      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
       <div className="text-center my-2 w-full mb-20">
         <div className="flex justify-end">

@@ -1,9 +1,7 @@
-import Checkbox from "@components/Checkbox";
 import Typography from "@components/Typography";
 import type { ProductCategory } from "@medusajs/medusa";
 import { Signal, useSignal } from "@preact/signals";
-import { cx } from "class-variance-authority";
-import { useRef, type ChangeEvent } from "preact/compat";
+import { useRef } from "preact/compat";
 import Button from "../Button";
 import Dialog from "../Dialog";
 import { adminDeleteCategory } from "@/api/admin/category/deleteCategory";
@@ -90,7 +88,7 @@ const Category = ({
         <div className="w-full flex justify-between items-center relative">
           <div className="flex items-center gap-4 w-10/12">
             <div
-              className="flex gap-2 items-center w-full "
+              className="flex gap-2 items-center  w-10/12"
               style={`padding-left: ${
                 category.category_children?.length
                   ? depth
@@ -135,10 +133,7 @@ const Category = ({
                 </svg>
               </Button>
 
-              <Typography
-                size="body1/normal"
-                className="text-start truncate w-2/3"
-              >
+              <Typography size="body1/normal" className="text-start truncate ">
                 {category.name}
               </Typography>
               <div className="flex gap-2 items-center">

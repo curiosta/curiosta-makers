@@ -31,26 +31,8 @@
       "@hooks/*": [
         "src/hooks/*"
       ],
-      "@FileInput/*": [
-        "src/components/FileInput/*"
-      ],
-      "@Snapshot/*": [
-        "src/components/Snapshot/*"
-      ],
-      "@SuccessAlert/*": [
-        "src/components/SuccessAlert/*"
-      ],
-      "@ProductImage/*": [
-        "src/components/ProductImage/*"
-      ],
-      "@Dialog/*": [
-        "src/components/Dialog/*"
-      ],
-      "@Textbox/*": [
-        "src/components/Textbox/*"
-      ],
-      "@MultiSelectCheckbox/*": [
-        "src/components/MultiSelectCheckbox/*"
+      "@utils/*": [
+        "src/utils/*"
       ]
     }
   },

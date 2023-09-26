@@ -5,6 +5,7 @@ type TOrderList = {
   id?: string;
   payment_status?: string[];
   fulfillment_status?: string[];
+  q?: string;
 };
 
 export const ordersList = async ({
@@ -13,8 +14,10 @@ export const ordersList = async ({
   id,
   payment_status,
   fulfillment_status,
+  q,
 }: TOrderList) => {
   return medusa.customers.listOrders({
+    q,
     id,
     limit,
     offset,
