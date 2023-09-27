@@ -14,7 +14,6 @@ import { ProductCategory } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
-import { nanoid } from "nanoid";
 
 type TLoadableOptions =
   | "locationCategory:get"
@@ -91,7 +90,7 @@ const LocationMaster = () => {
           ":" +
           categoryName.toString().toLowerCase().replaceAll(" ", "-") +
           "-" +
-          nanoid();
+          randomChar(5);
 
         const addCategoryRes = await adminAddCategory({
           categoryName: categoryName.toString(),
@@ -265,10 +264,10 @@ const LocationMaster = () => {
       ) : null}
       <PopUp
         isPopup={isPopUp}
-        title={`Category is ${
+        title={`Location is ${
           selectedCategory.value ? "updated" : "created"
         } successfully `}
-        subtitle={`Category ID: ${addCategory.value?.id} `}
+        subtitle={`Location ID: ${addCategory.value?.id} `}
       />
 
       <BottomNavbar />

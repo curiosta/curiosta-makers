@@ -73,7 +73,9 @@ const CategoryMaster = () => {
   }, [offset.value, searchTerm.value, addCategory.value]);
 
   const topParanetCategory = categories.value?.filter(
-    (category) => category.parent_category_id === null
+    (category) =>
+      category.parent_category_id === null &&
+      category.handle !== "location-master"
   );
 
   const handleAddCategory = async (e: ChangeEvent<HTMLFormElement>) => {
@@ -192,19 +194,23 @@ const CategoryMaster = () => {
         {isLoading.value !== "category:get" ? (
           <div className="w-full">
             <div className="flex flex-col  my-2 items-start gap-4">
-              {topParanetCategory?.map((category, index) => (
-                <Category
-                  category={category}
-                  depth={0}
-                  index={index}
-                  selectedCategory={selectedCategory}
-                  isCategoryEditPopUp={isCategoryEditPopUp}
-                  errorMessage={errorMessage}
-                  parentCategory={parentCategory}
-                  isCategoryPopUp={isCategoryPopUp}
-                  getCategory={getCategories}
-                />
-              ))}
+              {topParanetCategory?.length ? (
+                topParanetCategory?.map((category, index) => (
+                  <Category
+                    category={category}
+                    depth={0}
+                    index={index}
+                    selectedCategory={selectedCategory}
+                    isCategoryEditPopUp={isCategoryEditPopUp}
+                    errorMessage={errorMessage}
+                    parentCategory={parentCategory}
+                    isCategoryPopUp={isCategoryPopUp}
+                    getCategory={getCategories}
+                  />
+                ))
+              ) : (
+                <Typography>No category found</Typography>
+              )}
             </div>
             <OffsetPagination limit={limit} offset={offset} count={count} />
           </div>
