@@ -1,5 +1,4 @@
 import { listProducts } from "@/api/product/listProducts";
-import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
@@ -13,7 +12,7 @@ import { useEffect } from "preact/hooks";
 
 const SearchResult = () => {
   const products = useSignal<PricedProduct[]>([]);
-  const isLoading = useSignal<boolean>(false);
+  const isLoading = useSignal<boolean | undefined>(undefined);
   const count = useSignal<null | number>(null);
   const limit = useSignal<number>(20);
   const offset = useSignal<number>(0);
@@ -59,29 +58,38 @@ const SearchResult = () => {
       <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
       <div className="text-center my-2 w-full mb-20">
+        {searchTerm.value ? (
+          <Typography size="body2/normal" className="mb-4 text-start">
+            Search Result for '{searchTerm.value}'
+          </Typography>
+        ) : null}
         {!isLoading.value ? (
           <div className="w-full">
             <div className="flex flex-col  my-2 items-start gap-4">
-              {products.value.map((product) => (
-                <div className="w-full flex justify-between items-center relative pb-2 border-b last:border-none">
-                  <Link
-                    href={`/product/${product?.id}`}
-                    className="flex items-center gap-2 w-full "
-                  >
-                    <img
-                      src={product.thumbnail ?? "/images/placeholderImg.svg"}
-                      alt={product.title}
-                      className="w-12 h-12 object-cover"
-                    />
-                    <Typography
-                      size="body1/normal"
-                      className="text-start truncate "
+              {products.value?.length ? (
+                products.value.map((product) => (
+                  <div className="w-full flex justify-between items-center relative pb-2 border-b last:border-none">
+                    <Link
+                      href={`/product/${product?.id}`}
+                      className="flex items-center gap-2 w-full "
                     >
-                      {product.title}
-                    </Typography>
-                  </Link>
-                </div>
-              ))}
+                      <img
+                        src={product.thumbnail ?? "/images/placeholderImg.svg"}
+                        alt={product.title}
+                        className="w-12 h-12 object-cover"
+                      />
+                      <Typography
+                        size="body1/normal"
+                        className="text-start truncate "
+                      >
+                        {product.title}
+                      </Typography>
+                    </Link>
+                  </div>
+                ))
+              ) : isLoading.value === undefined ? null : (
+                <Typography>Search result not found</Typography>
+              )}
             </div>
             <OffsetPagination limit={limit} offset={offset} count={count} />
           </div>
