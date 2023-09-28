@@ -1,7 +1,6 @@
 import { adminGetProduct } from "@/api/admin/product/getProduct";
 import cart from "@/api/cart";
 import { getProductInfo } from "@/api/product/getProductInfo";
-import AddProduct from "@/components/AddProduct";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import ManageQty from "@/components/ManageQty";
@@ -69,6 +68,16 @@ const ProductInfo = ({ id }: Props) => {
     (item) => item?.variant.product_id === product.value?.id
   );
 
+  const categories = product.value?.categories.filter(
+    (cate) => !cate.handle.startsWith("loc:")
+  );
+  const locations = product.value?.categories
+    .filter((cate) => cate.handle.startsWith("loc:"))
+    .sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
       <TopNavbar />
@@ -107,21 +116,44 @@ const ProductInfo = ({ id }: Props) => {
           ) : null}
           <Typography>{product.value?.description}</Typography>
           {product.value?.categories?.length ? (
-            <>
+            <div className="flex flex-col gap-3">
               <Typography size="h6/semi-bold" className="text-start w-full">
                 Category
               </Typography>
-              <div className="w-full grid grid-cols-2 gap-2">
-                {product.value?.categories?.map((category) => (
-                  <div className="flex items-center  gap-2">
-                    <span className="w-2 h-2 rounded-full bg-black"></span>{" "}
-                    <Typography className="text-base capitalize truncate w-10/12">
-                      {category.name}
-                    </Typography>
-                  </div>
-                ))}
-              </div>
-            </>
+              <ul className="w-full grid grid-cols-2 gap-2 ml-4">
+                {categories?.length ? (
+                  categories?.map((category) => (
+                    <li className="list-disc">
+                      <Typography className="text-base capitalize truncate w-10/12">
+                        {category.name}
+                      </Typography>
+                    </li>
+                  ))
+                ) : (
+                  <Typography size="body2/normal" variant="error">
+                    category not found
+                  </Typography>
+                )}
+              </ul>
+              <Typography size="h6/semi-bold" className="text-start w-full">
+                Location
+              </Typography>
+              <ul className="w-full ml-4">
+                {locations?.length ? (
+                  locations?.map((category) => (
+                    <li className="list-disc">
+                      <Typography className="text-base capitalize ">
+                        {category.name}
+                      </Typography>
+                    </li>
+                  ))
+                ) : (
+                  <Typography size="body2/normal" variant="error">
+                    location not found
+                  </Typography>
+                )}
+              </ul>
+            </div>
           ) : null}
 
           {isUser.value ? (

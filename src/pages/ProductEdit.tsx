@@ -23,7 +23,8 @@ type TLoadableOptions =
   | "category:get"
   | "product:get"
   | "product:update"
-  | "product:image:upload";
+  | "product:image:upload"
+  | "locationCategory:get";
 
 type TProductImages = {
   url: string;
@@ -33,9 +34,6 @@ const ProductEdit = ({ id }: Props) => {
   const product = useSignal<PricedProduct | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const categories = useSignal<ProductCategory[]>([]);
-  const count = useSignal<null | number>(null);
-  const limit = useSignal<number>(0);
-  const offset = useSignal<number>(0);
   const selectedCategoryIds = useSignal<string[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
   const isPopUp = useSignal<boolean>(false);
@@ -46,6 +44,8 @@ const ProductEdit = ({ id }: Props) => {
   const thumbnail = useSignal<string | null>(null);
   const productImages = useSignal<TProductImages[]>([]);
   const isImagesUpload = useSignal<boolean>(false);
+  const locationCategory = useSignal<ProductCategory[]>([]);
+  const flattenLocations = useSignal<ProductCategory[]>([]);
 
   const getProduct = async () => {
     isLoading.value = "product:get";
@@ -54,10 +54,11 @@ const ProductEdit = ({ id }: Props) => {
       product.value = productRes?.product;
       thumbnail.value = productRes?.product?.thumbnail;
       productImages.value = productRes?.product?.images;
-      const categoryIds = productRes?.product?.categories.map(
-        (category) => category?.id
-      );
-
+      const categoryIds = productRes?.product?.categories
+        ?.filter(
+          (category: ProductCategory) => !category.handle.startsWith("loc:")
+        )
+        .map((cate: PricedProduct) => cate.id);
       selectedCategoryIds.value = categoryIds;
     } catch (error) {
     } finally {
@@ -68,21 +69,53 @@ const ProductEdit = ({ id }: Props) => {
     isLoading.value = "category:get";
     try {
       const categoryRes = await adminListCategory({
-        limit: limit.value,
-        offset: offset.value,
+        limit: 0,
+        offset: 0,
       });
       categories.value = categoryRes?.product_categories;
-      count.value = categoryRes?.count;
     } catch (error) {
     } finally {
       isLoading.value = undefined;
     }
   };
 
+  const getLocationCategory = async () => {
+    isLoading.value = "locationCategory:get";
+    try {
+      const categoryRes = await adminListCategory({
+        q: "location-master",
+        limit: 0,
+        offset: 0,
+      });
+      locationCategory.value =
+        categoryRes?.product_categories?.at(0)?.category_children;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
+  const flatten = (routes: ProductCategory[]) => {
+    routes.map((r) => {
+      if (r.category_children && r.category_children.length) {
+        flatten(r.category_children);
+        return (flattenLocations.value = [...flattenLocations.value, r]);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (flattenLocations.value?.length) {
+      flattenLocations.value = [];
+    }
+    flatten(locationCategory.value);
+  }, [locationCategory.value]);
+
   useEffect(() => {
     getCategories();
+    getLocationCategory();
     getProduct();
-  }, [offset.value]);
+  }, []);
 
   const handleUpload = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -128,9 +161,26 @@ const ProductEdit = ({ id }: Props) => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { title, description, status } = formDataObj;
+        const { title, description, status, location } = formDataObj;
 
-        const categories: { id: string }[] = [];
+        const categories: { id: string }[] = [{ id: location.toString() }];
+
+        let parentLocations: ProductCategory[] = [];
+
+        const getParentLocations = (categoryId: string) => {
+          flattenLocations.value?.map((cate) => {
+            if (cate.category_children.some((cate) => cate.id === categoryId)) {
+              getParentLocations(cate.id);
+              return (parentLocations = [...parentLocations, cate]);
+            }
+          });
+        };
+        getParentLocations(location.toString());
+
+        if (parentLocations?.length) {
+          parentLocations?.map((cate) => categories.push({ id: cate.id }));
+        }
+
         if (selectedCategoryIds.value?.length) {
           selectedCategoryIds.value?.map((val) => categories.push({ id: val }));
         }
@@ -140,7 +190,10 @@ const ProductEdit = ({ id }: Props) => {
           title: title.toString(),
           description: description.toString(),
           status: status.toString(),
-          categories: selectedCategoryIds.value?.length ? categories : null,
+          categories:
+            selectedCategoryIds.value?.length || parentLocations?.length
+              ? categories
+              : null,
           thumbnail: thumbnail.value ? thumbnail.value : null,
           images: productImages.value?.length
             ? productImages.value.map((val) => val.url)
@@ -169,6 +222,7 @@ const ProductEdit = ({ id }: Props) => {
       <ProductAddEditForm
         formRef={formRef}
         categories={categories}
+        locationCategory={locationCategory}
         errorMessage={errorMessage}
         handleSubmit={handleUpdateProduct}
         isImagesUpload={isImagesUpload}

@@ -1,4 +1,4 @@
-import { MutableRef } from "preact/hooks";
+import { MutableRef, useEffect } from "preact/hooks";
 import Button from "@components/Button";
 import NewInput from "@components/Input/NewInput";
 import Loading from "@components/Loading";
@@ -7,7 +7,7 @@ import Select from "@components/Select";
 import Textbox from "@components/Textbox";
 import Typography from "@components/Typography";
 import { ChangeEvent } from "preact/compat";
-import { Signal } from "@preact/signals";
+import { Signal, useSignal } from "@preact/signals";
 import { TProductImages } from "@pages/ProductAdd";
 import { ProductCategory } from "@medusajs/medusa";
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
@@ -25,6 +25,7 @@ type TProductAddEditForm = {
   isLoading: boolean;
   product: Signal<PricedProduct | null>;
   variant: "add" | "edit";
+  locationCategory: Signal<ProductCategory[]>;
 };
 
 const ProductAddEditForm = ({
@@ -40,7 +41,33 @@ const ProductAddEditForm = ({
   isLoading,
   product,
   variant,
+  locationCategory,
 }: TProductAddEditForm) => {
+  const binLocations = useSignal<ProductCategory[]>([]);
+
+  const getLowesetLocation = (category: ProductCategory[]) => {
+    category.map((cate) => {
+      if (!cate.category_children.length) {
+        return (binLocations.value = [...binLocations.value, cate]);
+      } else {
+        getLowesetLocation(cate.category_children);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (binLocations.value?.length) {
+      binLocations.value = [];
+    }
+    getLowesetLocation(locationCategory.value);
+  }, [locationCategory.value]);
+
+  const categoriesWithoutLocations = categories.value?.filter(
+    (category) =>
+      category.handle !== "location-master" &&
+      !category.handle.startsWith("loc:")
+  );
+
   return (
     <form
       className="w-full flex flex-col gap-4 mb-16"
@@ -65,6 +92,19 @@ const ProductAddEditForm = ({
         defaultValue={product.value?.status}
         label="Status"
         options={["draft", "published"]}
+      />
+      <Select
+        name="location"
+        defaultValue={
+          product.value?.categories?.find((cate) =>
+            cate.handle.startsWith("loc:bin")
+          )?.id
+        }
+        label="Location"
+        options={binLocations.value?.map((bin) => ({
+          label: bin.name,
+          value: bin.id,
+        }))}
       />
       <Typography size="body1/medium">Product images</Typography>
       <Typography size="body2/medium">Product thumbnail</Typography>
@@ -163,7 +203,7 @@ const ProductAddEditForm = ({
       ) : (
         <MultiSelectCheckbox
           placeholder="Search category..."
-          options={categories.value}
+          options={categoriesWithoutLocations}
           selectedValues={selectedCategoryIds}
         />
       )}
