@@ -68,11 +68,11 @@ const ProductInfo = ({ id }: Props) => {
     (item) => item?.variant.product_id === product.value?.id
   );
 
-  const categories = product.value?.categories.filter(
+  const categories = product.value?.categories?.filter(
     (cate) => !cate.handle.startsWith("loc:")
   );
   const locations = product.value?.categories
-    .filter((cate) => cate.handle.startsWith("loc:"))
+    ?.filter((cate) => cate.handle.startsWith("loc:"))
     .sort(
       (a, b) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
