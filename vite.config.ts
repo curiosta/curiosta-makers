@@ -18,7 +18,8 @@ export default defineConfig({
       manifest: {
         name: "Curiosta makers",
         short_name: "curiosta makers",
-        description: "Curiosta makers description",
+        description:
+          "Curiosta makers is a comprehensive platform for managing makerspaces",
         theme_color: "#ffffff",
         icons: [
           {
