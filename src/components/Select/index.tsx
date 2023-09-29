@@ -5,7 +5,7 @@ import { useId } from "preact/hooks";
 
 interface Props extends Omit<HTMLAttributes<HTMLSelectElement>, "class"> {
   label?: string;
-  options: string[];
+  options: (string | { value: string; label: string })[];
 }
 
 const Select = ({
@@ -31,10 +31,18 @@ const Select = ({
       >
         {options.map((opt) => (
           <option
-            value={opt.replaceAll(" ", "-").toLowerCase()}
-            selected={opt === defaultValue}
+            value={
+              typeof opt === "string"
+                ? opt.replaceAll(" ", "-").toLowerCase()
+                : opt.value
+            }
+            selected={
+              typeof opt === "string"
+                ? opt === defaultValue
+                : opt.value === defaultValue
+            }
           >
-            {opt}
+            {typeof opt === "string" ? opt : opt.label}
           </option>
         ))}
       </select>

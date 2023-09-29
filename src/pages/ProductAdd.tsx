@@ -14,7 +14,11 @@ import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
 
-type TLoadableOptions = "category:get" | "product:add" | "product:image:upload";
+type TLoadableOptions =
+  | "category:get"
+  | "product:add"
+  | "product:image:upload"
+  | "locationCategory:get";
 
 export type TProductImages = {
   url: string;
@@ -24,9 +28,6 @@ const ProductAdd = () => {
   const product = useSignal<PricedProduct | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const categories = useSignal<ProductCategory[]>([]);
-  const count = useSignal<null | number>(null);
-  const limit = useSignal<number>(0);
-  const offset = useSignal<number>(0);
   const selectedCategoryIds = useSignal<string[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
   const isPopUp = useSignal<boolean>(false);
@@ -37,25 +38,60 @@ const ProductAdd = () => {
   const thumbnail = useSignal<string | null>(null);
   const productImages = useSignal<TProductImages[]>([]);
   const isImagesUpload = useSignal<boolean>(false);
+  const locationCategory = useSignal<ProductCategory[]>([]);
+  const flattenLocations = useSignal<ProductCategory[]>([]);
 
   const getCategories = async () => {
     isLoading.value = "category:get";
     try {
       const categoryRes = await adminListCategory({
-        limit: limit.value,
-        offset: offset.value,
+        limit: 0,
+        offset: 0,
       });
       categories.value = categoryRes?.product_categories;
-      count.value = categoryRes?.count;
     } catch (error) {
     } finally {
       isLoading.value = undefined;
     }
   };
 
+  const getLocationCategory = async () => {
+    isLoading.value = "locationCategory:get";
+    try {
+      const categoryRes = await adminListCategory({
+        q: "location-master",
+        limit: 0,
+        offset: 0,
+      });
+      locationCategory.value =
+        categoryRes?.product_categories?.at(0)?.category_children;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
+  const flatten = (routes: ProductCategory[]) => {
+    routes.map((r) => {
+      if (r.category_children && r.category_children.length) {
+        flatten(r.category_children);
+        return (flattenLocations.value = [...flattenLocations.value, r]);
+      }
+    });
+  };
+  console.log(locationCategory.value);
+
+  useEffect(() => {
+    if (flattenLocations.value?.length) {
+      flattenLocations.value = [];
+    }
+    flatten(locationCategory.value);
+  }, [locationCategory.value]);
+
   useEffect(() => {
     getCategories();
-  }, [offset.value]);
+    getLocationCategory();
+  }, []);
 
   const handleUpload = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -101,9 +137,26 @@ const ProductAdd = () => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { title, description, status } = formDataObj;
+        const { title, description, status, location } = formDataObj;
 
-        const categories: { id: string }[] = [];
+        const categories: { id: string }[] = [{ id: location.toString() }];
+
+        let parentLocations: ProductCategory[] = [];
+
+        const getParentLocations = (categoryId: string) => {
+          flattenLocations.value?.map((cate) => {
+            if (cate.category_children.some((cate) => cate.id === categoryId)) {
+              getParentLocations(cate.id);
+              return (parentLocations = [...parentLocations, cate]);
+            }
+          });
+        };
+        getParentLocations(location.toString());
+
+        if (parentLocations?.length) {
+          parentLocations?.map((cate) => categories.push({ id: cate.id }));
+        }
+
         if (selectedCategoryIds.value?.length) {
           selectedCategoryIds.value?.map((val) => categories.push({ id: val }));
         }
@@ -112,7 +165,10 @@ const ProductAdd = () => {
           title: title.toString(),
           description: description.toString(),
           status: status.toString(),
-          categories: selectedCategoryIds.value?.length ? categories : null,
+          categories:
+            selectedCategoryIds.value?.length || parentLocations?.length
+              ? categories
+              : null,
           thumbnail: thumbnail.value ? thumbnail.value : null,
           images: productImages.value?.length
             ? productImages.value.map((val) => val.url)
@@ -154,6 +210,7 @@ const ProductAdd = () => {
         uploadPopup={uploadPopup}
         product={product}
         variant="add"
+        locationCategory={locationCategory}
       />
 
       {isLoading.value === "product:image:upload" ? (
