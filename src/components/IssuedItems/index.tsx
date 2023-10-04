@@ -1,14 +1,14 @@
 import { Link } from "preact-router/match";
-import Button from "../Button";
-import Typography from "../Typography";
+import Typography from "@components/Typography";
 import { useSignal } from "@preact/signals";
 import { isUser } from "@/store/userState";
 import { ordersList } from "@/api/user/orders/ordersList";
-import { FulfillmentStatus, Order, PaymentStatus } from "@medusajs/medusa";
+import { Order } from "@medusajs/medusa";
 import { useEffect } from "preact/hooks";
-import OrderItem from "../Orders/OrderItem";
-import Loading from "../Loading";
+import OrderItem from "@components/Orders/OrderItem";
+import Loading from "@components/Loading";
 import { adminOrdersList } from "@/api/admin/orders/ordersList";
+import OrderStatusToggle from "@components/Orders/OrderStatusToggle";
 
 const IssuedItems = () => {
   const activeToggle = useSignal<string[]>(["awaiting"]);
@@ -29,7 +29,13 @@ const IssuedItems = () => {
               ? activeToggle.value
               : [],
             fulfillment_status: activeToggle.value.some((active) =>
-              ["fulfilled", "partially_fulfilled"].includes(active)
+              [
+                "fulfilled",
+                "partially_fulfilled",
+                "partially_returned",
+                "returned",
+                "canceled",
+              ].includes(active)
             )
               ? activeToggle.value
               : activeToggle.value.some((active) =>
@@ -47,7 +53,13 @@ const IssuedItems = () => {
               ? activeToggle.value
               : [],
             fulfillment_status: activeToggle.value.some((active) =>
-              ["fulfilled", "partially_fulfilled"].includes(active)
+              [
+                "fulfilled",
+                "partially_fulfilled",
+                "partially_returned",
+                "returned",
+                "canceled",
+              ].includes(active)
             )
               ? activeToggle.value
               : activeToggle.value.some((active) =>
@@ -71,21 +83,6 @@ const IssuedItems = () => {
     getOrdersList();
   }, [activeToggle.value]);
 
-  const toggleItems = [
-    {
-      title: "Pending",
-      fulfillStatus: ["awaiting"],
-    },
-    {
-      title: "Active",
-      fulfillStatus: ["captured"],
-    },
-    {
-      title: "Closed",
-      fulfillStatus: ["fulfilled", "partially_fulfilled"],
-    },
-  ];
-
   return (
     <div className="w-full my-4">
       <div className="flex justify-between items-center">
@@ -98,37 +95,11 @@ const IssuedItems = () => {
           View All
         </Link>
       </div>
-      <div className="flex justify-evenly items-center w-full my-2 bg-white p-2 shadow-lg rounded-2xl">
-        {toggleItems.map((item) => (
-          <Button
-            type="button"
-            variant="icon"
-            onClick={() => (activeToggle.value = item.fulfillStatus)}
-            className={`!rounded-2xl items-center capitalize ${
-              JSON.stringify(activeToggle.value) ===
-              JSON.stringify(item.fulfillStatus)
-                ? "!bg-primary-700 text-white"
-                : ""
-            }`}
-          >
-            <span class="text-sm font-normal">{item.title}</span>
-            <Typography
-              size="body2/normal"
-              variant="app-primary"
-              className={`bg-primary-600/10 w-6 h-6 mx-1 items-center  justify-center rounded-full 
-               ${
-                 JSON.stringify(activeToggle.value) ===
-                 JSON.stringify(item.fulfillStatus)
-                   ? "!bg-white flex"
-                   : "hidden"
-               }
-            `}
-            >
-              {isLoading.value ? "-" : orders.value?.length}
-            </Typography>
-          </Button>
-        ))}
-      </div>
+      <OrderStatusToggle
+        activeToggle={activeToggle}
+        orders={orders}
+        isLoading={isLoading.value ? true : false}
+      />
 
       {!isLoading.value ? (
         <div className="w-full flex flex-col gap-4 mb-12">

@@ -24,7 +24,16 @@ const Orders = () => {
   const sortOptions = useSignal<TSortOptions[]>([
     { option: "Pending", value: ["awaiting"] },
     { option: "Active", value: ["captured"] },
-    { option: "Closed", value: ["fulfilled", "partially_fulfilled"] },
+    {
+      option: "Closed",
+      value: [
+        "fulfilled",
+        "partially_fulfilled",
+        "partially_returned",
+        "returned",
+        "canceled",
+      ],
+    },
   ]);
 
   const getOrdersList = async () => {
@@ -58,7 +67,13 @@ const Orders = () => {
               ? selectedSort.value
               : [],
             fulfillment_status: selectedSort.value.some((active) =>
-              ["fulfilled", "partially_fulfilled"].includes(active)
+              [
+                "fulfilled",
+                "partially_fulfilled",
+                "partially_returned",
+                "returned",
+                "canceled",
+              ].includes(active)
             )
               ? selectedSort.value
               : selectedSort.value.some((active) =>
