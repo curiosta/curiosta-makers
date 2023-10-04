@@ -41,9 +41,6 @@ const CategoryMaster = () => {
   const addCategory = useSignal<ProductCategory | null>(null);
   const selectedCategory = useSignal<TParantCategory | null>(null);
   const parentCategory = useSignal<TParantCategory | null>(null);
-  const dialogRef = useRef<HTMLDialogElement[]>([]);
-  const selectedCategoryId = useSignal<string | undefined>(undefined);
-  const isDeletePopup = useSignal<boolean>(false);
   const searchTerm = useSignal<string | undefined>(undefined);
 
   const getCategories = async () => {
@@ -53,7 +50,11 @@ const CategoryMaster = () => {
         q: searchTerm.value ? searchTerm.value : undefined,
         limit: limit.value,
         offset: offset.value,
+        parent_category_id: "null",
       });
+      if (!categoryRes?.product_categories?.length && categoryRes?.count) {
+        offset.value = 0;
+      }
       categories.value = categoryRes?.product_categories;
       count.value = categoryRes?.count;
     } catch (error) {
@@ -73,9 +74,7 @@ const CategoryMaster = () => {
   }, [offset.value, searchTerm.value, addCategory.value]);
 
   const topParanetCategory = categories.value?.filter(
-    (category) =>
-      category.parent_category_id === null &&
-      category.handle !== "location-master"
+    (category) => category.handle !== "location-master"
   );
 
   const handleAddCategory = async (e: ChangeEvent<HTMLFormElement>) => {
@@ -192,28 +191,30 @@ const CategoryMaster = () => {
           </Button>
         </div>
         {isLoading.value !== "category:get" ? (
-          <div className="w-full">
-            <div className="flex flex-col  my-2 items-start gap-4">
-              {topParanetCategory?.length ? (
-                topParanetCategory?.map((category, index) => (
-                  <Category
-                    category={category}
-                    depth={0}
-                    index={index}
-                    selectedCategory={selectedCategory}
-                    isCategoryEditPopUp={isCategoryEditPopUp}
-                    errorMessage={errorMessage}
-                    parentCategory={parentCategory}
-                    isCategoryPopUp={isCategoryPopUp}
-                    getCategory={getCategories}
-                  />
-                ))
-              ) : (
-                <Typography>No category found</Typography>
-              )}
+          topParanetCategory?.length ? (
+            <div className="w-full flex flex-col  my-2  gap-4">
+              {topParanetCategory?.map((category, index) => (
+                <Category
+                  category={category}
+                  depth={0}
+                  index={index}
+                  selectedCategory={selectedCategory}
+                  isCategoryEditPopUp={isCategoryEditPopUp}
+                  errorMessage={errorMessage}
+                  parentCategory={parentCategory}
+                  isCategoryPopUp={isCategoryPopUp}
+                  getCategory={getCategories}
+                />
+              ))}
+              <OffsetPagination limit={limit} offset={offset} count={count} />
             </div>
-            <OffsetPagination limit={limit} offset={offset} count={count} />
-          </div>
+          ) : !categories.value?.length && count.value ? (
+            <div className="w-full h-40 ">
+              <Loading loadingText="loading" />
+            </div>
+          ) : (
+            <Typography>No category found</Typography>
+          )
         ) : (
           <div className="h-40">
             <Loading loadingText="loading" />

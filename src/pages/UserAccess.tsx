@@ -44,6 +44,9 @@ const UserAccess = () => {
         limit: limit.value,
         offset: offset.value,
       });
+      if (!usersRes?.customers?.length && usersRes?.count) {
+        offset.value = 0;
+      }
       users.value = usersRes?.customers;
       count.value = usersRes?.count;
     } catch (error) {
@@ -179,8 +182,8 @@ const UserAccess = () => {
           </Button>
         </div>
         {isLoading.value !== "user:get" ? (
-          <div className="w-full">
-            <div className="flex flex-col  my-2 items-start gap-4">
+          users.value?.length ? (
+            <div className="w-full flex flex-col  my-2 gap-4">
               {users.value.map((user, index) => (
                 <div className="w-full flex justify-between items-center relative">
                   <div className="flex items-center gap-4 w-10/12">
@@ -231,9 +234,15 @@ const UserAccess = () => {
                   />
                 </div>
               ))}
+              <OffsetPagination limit={limit} offset={offset} count={count} />
             </div>
-            <OffsetPagination limit={limit} offset={offset} count={count} />
-          </div>
+          ) : !users.value?.length && count.value ? (
+            <div className="w-full h-40 ">
+              <Loading loadingText="loading" />
+            </div>
+          ) : (
+            <Typography className="w-full">User not found</Typography>
+          )
         ) : (
           <div className="h-40">
             <Loading loadingText="loading" />

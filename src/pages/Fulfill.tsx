@@ -28,6 +28,9 @@ const Fulfill = () => {
         limit: limit.value,
         offset: offset.value,
       });
+      if (!res?.orders?.length && res?.count) {
+        offset.value = 0;
+      }
       count.value = res?.count;
       orders.value = res?.orders;
     } catch (error) {
@@ -61,6 +64,10 @@ const Fulfill = () => {
               <OrderItem order={order} page="orders" />
             ))}
             <OffsetPagination limit={limit} offset={offset} count={count} />
+          </div>
+        ) : !orders.value?.length && count.value ? (
+          <div className="w-full h-40 ">
+            <Loading loadingText="loading" />
           </div>
         ) : (
           <Typography>No order found</Typography>

@@ -36,6 +36,9 @@ const MaterialMaster = () => {
         limit: limit.value,
         offset: offset.value,
       });
+      if (!productRes?.products?.length && productRes?.count) {
+        offset.value = 0;
+      }
       products.value = productRes?.products;
       count.value = productRes?.count;
     } catch (error) {
@@ -107,8 +110,8 @@ const MaterialMaster = () => {
           </Button>
         </div>
         {isLoading.value !== "product:get" ? (
-          <div className="w-full">
-            <div className="flex flex-col  my-2 items-start gap-4">
+          products.value?.length ? (
+            <div className="w-full flex flex-col  my-2 gap-4">
               {products.value.map((product, index) => (
                 <div className="w-full flex justify-between items-center relative">
                   <div className="flex items-center gap-4 w-10/12">
@@ -177,9 +180,15 @@ const MaterialMaster = () => {
                   />
                 </div>
               ))}
+              <OffsetPagination limit={limit} offset={offset} count={count} />
             </div>
-            <OffsetPagination limit={limit} offset={offset} count={count} />
-          </div>
+          ) : !products.value?.length && count.value ? (
+            <div className="w-full h-40 ">
+              <Loading loadingText="loading" />
+            </div>
+          ) : (
+            <Typography className="w-full">Product not found</Typography>
+          )
         ) : (
           <div className="h-40">
             <Loading loadingText="loading" />

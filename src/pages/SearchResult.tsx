@@ -30,6 +30,9 @@ const SearchResult = () => {
         limit: limit.value,
         offset: offset.value,
       });
+      if (!productRes?.products?.length && productRes?.count) {
+        offset.value = 0;
+      }
       products.value = productRes?.products;
       count.value = productRes?.count;
     } catch (error) {
@@ -64,35 +67,37 @@ const SearchResult = () => {
           </Typography>
         ) : null}
         {!isLoading.value ? (
-          <div className="w-full">
-            <div className="flex flex-col  my-2 items-start gap-4">
-              {products.value?.length ? (
-                products.value.map((product) => (
-                  <div className="w-full flex justify-between items-center relative pb-2 border-b last:border-none">
-                    <Link
-                      href={`/product/${product?.id}`}
-                      className="flex items-center gap-2 w-full "
+          products.value?.length ? (
+            <div className=" w-full flex flex-col  my-2 gap-4">
+              {products.value.map((product) => (
+                <div className="w-full flex justify-between items-center relative pb-2 border-b last:border-none">
+                  <Link
+                    href={`/product/${product?.id}`}
+                    className="flex items-center gap-2 w-full "
+                  >
+                    <img
+                      src={product.thumbnail ?? "/images/placeholderImg.svg"}
+                      alt={product.title}
+                      className="w-12 h-12 object-cover"
+                    />
+                    <Typography
+                      size="body1/normal"
+                      className="text-start truncate "
                     >
-                      <img
-                        src={product.thumbnail ?? "/images/placeholderImg.svg"}
-                        alt={product.title}
-                        className="w-12 h-12 object-cover"
-                      />
-                      <Typography
-                        size="body1/normal"
-                        className="text-start truncate "
-                      >
-                        {product.title}
-                      </Typography>
-                    </Link>
-                  </div>
-                ))
-              ) : isLoading.value === undefined ? null : (
-                <Typography>Search result not found</Typography>
-              )}
+                      {product.title}
+                    </Typography>
+                  </Link>
+                </div>
+              ))}
+              <OffsetPagination limit={limit} offset={offset} count={count} />
             </div>
-            <OffsetPagination limit={limit} offset={offset} count={count} />
-          </div>
+          ) : !products.value?.length && count.value ? (
+            <div className="w-full h-40 ">
+              <Loading loadingText="loading" />
+            </div>
+          ) : isLoading.value === undefined ? null : (
+            <Typography className="w-full">Search result not found</Typography>
+          )
         ) : (
           <div className="h-40">
             <Loading loadingText="loading" />
