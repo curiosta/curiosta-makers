@@ -7,12 +7,14 @@ type TOrderStatusToggle = {
   activeToggle: Signal<string[]>;
   isLoading: boolean;
   orders: Signal<Order[]>;
+  count?: number;
 };
 
 const OrderStatusToggle = ({
   activeToggle,
   isLoading,
   orders,
+  count,
 }: TOrderStatusToggle) => {
   const toggleItems = [
     {
@@ -63,7 +65,7 @@ const OrderStatusToggle = ({
        }
     `}
           >
-            {isLoading ? "-" : orders.value?.length}
+            {isLoading ? "-" : count ? count : orders.value?.length}
           </Typography>
         </Button>
       ))}

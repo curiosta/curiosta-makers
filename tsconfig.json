@@ -31,8 +31,11 @@
       "@hooks/*": [
         "src/hooks/*"
       ],
-      "@utils/*": [
-        "src/utils/*"
+      "@Address/*": [
+        "src/components/Address/*"
+      ],
+      "@AddressList/*": [
+        "src/components/AddressList/*"
       ]
     }
   },

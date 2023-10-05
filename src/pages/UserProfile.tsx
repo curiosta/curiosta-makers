@@ -14,10 +14,14 @@ import PopUp from "@/components/Popup";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import UserPopUp from "@/components/Popup/UserPopUp";
 import Typography from "@/components/Typography";
-import { Customer, Order } from "@medusajs/medusa";
+import { isUser } from "@/store/userState";
+import { Address, Customer, Order } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
+import user, { TCustomer } from "@api/user";
+import { ordersList } from "@/api/user/orders/ordersList";
+import AddressList from "@/components/AddressList";
 
 type Props = {
   id: string;
@@ -26,7 +30,7 @@ type TLoadableOptions = "user:get" | "user:edit" | "user:oders:get";
 
 const UserProfile = ({ id }: Props) => {
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
-  const user = useSignal<Customer | null>(null);
+  const userData = useSignal<Customer | TCustomer | null>(null);
   const dialogRef = useRef<HTMLDialogElement[]>([]);
   const isUserEditPopUp = useSignal<boolean>(false);
   const isPopUp = useSignal<boolean>(false);
@@ -38,15 +42,20 @@ const UserProfile = ({ id }: Props) => {
   const limit = useSignal<number>(10);
   const offset = useSignal<number>(0);
   const activeToggle = useSignal<string[]>(["awaiting"]);
+  const address = useSignal<Address[]>([]);
 
   const getUser = async () => {
     isLoading.value = "user:get";
     try {
-      const userRes = await adminGetCustomer({
-        customerId: id,
-      });
-
-      user.value = userRes?.customer;
+      if (isUser.value) {
+        userData.value = user.customer.value;
+      } else {
+        const userRes = await adminGetCustomer({
+          customerId: id,
+        });
+        userData.value = userRes?.customer;
+      }
+      address.value = userData.value?.shipping_addresses;
     } catch (error) {
     } finally {
       isLoading.value = undefined;
@@ -56,7 +65,6 @@ const UserProfile = ({ id }: Props) => {
   const getOrdersList = async () => {
     isLoading.value = "user:oders:get";
     try {
-      if (!id) return;
       const res = await adminOrdersList({
         customer_id: id,
         payment_status: activeToggle.value.some((active) =>
@@ -87,14 +95,16 @@ const UserProfile = ({ id }: Props) => {
       isLoading.value = undefined;
     }
   };
-  console.log(activeToggle.value);
+
   useEffect(() => {
-    getOrdersList();
+    if (!isUser.value) {
+      getOrdersList();
+    }
   }, [offset.value, activeToggle.value]);
 
   useEffect(() => {
     getUser();
-  }, [user.value]);
+  }, []);
 
   // handle dialog
   const handleDialog = (index: number) => {
@@ -115,13 +125,22 @@ const UserProfile = ({ id }: Props) => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { first_name, last_name } = formDataObj;
-        const updateRes = await adminUpdateCustomer({
-          customerId: id,
-          first_name: first_name.toString(),
-          last_name: last_name.toString(),
-        });
-        user.value = updateRes?.customer;
+        const { first_name, last_name, phone } = formDataObj;
+        if (isUser.value) {
+          await user.updateUser({
+            first_name: first_name.toString(),
+            last_name: last_name.toString(),
+            phone: phone.toString(),
+          });
+        } else {
+          const updateRes = await adminUpdateCustomer({
+            customerId: id,
+            first_name: first_name.toString(),
+            last_name: last_name.toString(),
+            phone: phone.toString(),
+          });
+          userData.value = updateRes?.customer;
+        }
         isUserEditPopUp.value = false;
         isPopUp.value = true;
       }
@@ -148,27 +167,27 @@ const UserProfile = ({ id }: Props) => {
         <div className="w-full flex flex-col gap-2 ">
           <div className="w-full bg-secondray shadow-sm rounded-lg border p-4">
             <div className="flex justify-between items-center w-full relative">
-              <div className="flex items-center gap-4">
-                <div className="w-20 h-20 flex">
+              <div className=" w-full flex items-center gap-4">
+                <div className="w-full max-w-[5rem] h-20 flex">
                   <Chip className="!bg-primary-700 uppercase text-4xl w-full flex justify-center items-center text-white">
-                    {user.value?.first_name
-                      ? user.value?.first_name.charAt(0)
-                      : user.value?.email.charAt(0)}
+                    {userData.value?.first_name
+                      ? userData.value?.first_name.charAt(0)
+                      : userData.value?.email.charAt(0)}
                   </Chip>
                 </div>
                 <div>
-                  {user.value?.first_name ? (
+                  {userData.value?.first_name ? (
                     <Typography
                       size="h6/bold"
                       className="capitalize"
-                    >{`${user.value?.first_name} ${user.value?.last_name}`}</Typography>
+                    >{`${userData.value?.first_name} ${userData.value?.last_name}`}</Typography>
                   ) : (
                     <Typography variant="secondary" className="capitalize">
-                      {user.value?.email}
+                      {userData.value?.email}
                     </Typography>
                   )}
-                  <Typography variant="secondary">
-                    {user.value?.email}
+                  <Typography variant="secondary" className="break-all">
+                    {userData.value?.email}
                   </Typography>
                 </div>
               </div>
@@ -202,44 +221,56 @@ const UserProfile = ({ id }: Props) => {
             </div>
             <div className="flex items-center justify-around gap-4 mt-4">
               <Typography>
-                Phone: {user.value?.phone ? user.value?.phone : "N/A"}
+                Phone: {userData.value?.phone ? userData.value?.phone : "N/A"}
               </Typography>
               <Typography>
                 Orders:{" "}
-                {user.value?.orders?.length
-                  ? user.value?.orders?.length
+                {userData.value?.orders?.length
+                  ? userData.value?.orders?.length
                   : "N/A"}
               </Typography>
             </div>
           </div>
-          <div className="p-2">
-            <Typography size="h6/medium">Orders</Typography>
-            <Typography size="body2/normal">
-              An overview of user Orders
-            </Typography>
-          </div>
-          <OrderStatusToggle
-            activeToggle={activeToggle}
-            orders={orders}
-            isLoading={isLoading.value === "user:oders:get" ? true : false}
-          />
 
-          {isLoading.value !== "user:oders:get" ? (
-            orders.value?.length ? (
-              <div className="w-full flex flex-col gap-4 mb-12 ">
-                {orders.value?.map((order) => (
-                  <OrderItem order={order} page="orders" />
-                ))}
-                <OffsetPagination limit={limit} offset={offset} count={count} />
+          <AddressList address={address} />
+
+          {!isUser.value ? (
+            <div className="w-full mb-20">
+              <div className="p-2">
+                <Typography size="h6/medium">Orders</Typography>
+                <Typography size="body2/normal">
+                  An overview of user Orders
+                </Typography>
               </div>
-            ) : (
-              <Typography>No order found</Typography>
-            )
-          ) : (
-            <div className="h-40">
-              <Loading loadingText="loading" />
+              <OrderStatusToggle
+                activeToggle={activeToggle}
+                orders={orders}
+                isLoading={isLoading.value === "user:oders:get" ? true : false}
+                count={count.value}
+              />
+
+              {isLoading.value !== "user:oders:get" ? (
+                orders.value?.length ? (
+                  <div className="w-full flex flex-col gap-4 mb-12 ">
+                    {orders.value?.map((order) => (
+                      <OrderItem order={order} page="orders" />
+                    ))}
+                    <OffsetPagination
+                      limit={limit}
+                      offset={offset}
+                      count={count}
+                    />
+                  </div>
+                ) : (
+                  <Typography>No order found</Typography>
+                )
+              ) : (
+                <div className="h-40">
+                  <Loading loadingText="loading" />
+                </div>
+              )}
             </div>
-          )}
+          ) : null}
         </div>
       ) : (
         <div className="h-40">
@@ -265,7 +296,7 @@ const UserProfile = ({ id }: Props) => {
         isPopup={isPopUp}
         title={`User is updated
          successfully `}
-        subtitle={`User ID: ${user.value?.id} `}
+        subtitle={`User ID: ${userData.value?.id} `}
       />
 
       <BottomNavbar />

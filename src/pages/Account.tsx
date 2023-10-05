@@ -8,6 +8,7 @@ import { isUser } from "@/store/userState";
 import user from "@/api/user";
 import admin from "@/api/admin";
 import Chip from "@/components/Chip";
+import { Link } from "preact-router";
 
 const Account = () => {
   const nightMode = useSignal<boolean>(false);
@@ -17,7 +18,7 @@ const Account = () => {
 
   const accountSettings = [
     {
-      title: "Edit Account",
+      title: "Edit Profile",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -42,6 +43,7 @@ const Account = () => {
           />
         </svg>
       ),
+      link: `/user/${currentUser.id}`,
     },
     {
       title: "Change Password",
@@ -69,6 +71,7 @@ const Account = () => {
           />
         </svg>
       ),
+      link: "/forgot-password",
     },
   ];
   const prefrenceList = [
@@ -178,7 +181,10 @@ const Account = () => {
   return (
     <div className="flex flex-col justify-center items-center  bg-neutral-50 p-4 w-full sm:w-1/4 ">
       <TopNavbar />
-      <div className="flex items-center gap-4 w-full rounded-2xl bg-secondray p-4 my-4">
+      <Link
+        href={`/user/${currentUser.id}`}
+        className="flex items-center gap-4 w-full rounded-2xl bg-secondray p-4 my-4"
+      >
         <div className="w-9 h-9 flex">
           <Chip className="!bg-primary-700 uppercase text-white">
             {currentUser.first_name
@@ -196,7 +202,7 @@ const Account = () => {
             {currentUser?.email}
           </Typography>
         )}
-      </div>
+      </Link>
 
       <div className="w-full my-4">
         <Typography size="h6/normal" variant="secondary" className="uppercase">
@@ -206,7 +212,7 @@ const Account = () => {
           {accountSettings.map((item, index) => (
             <div className="flex justify-between items-center w-full p-3 border-b last:border-none">
               <Button
-                type="button"
+                link={item.link}
                 key={index}
                 variant="icon"
                 className="w-full !justify-start gap-4"
@@ -233,7 +239,7 @@ const Account = () => {
           ))}
         </div>
       </div>
-      <div className="w-full my-4 mb-12">
+      {/* <div className="w-full my-4 mb-12">
         <Typography size="h6/normal" variant="secondary" className="uppercase">
           PREFERENCES
         </Typography>
@@ -285,7 +291,7 @@ const Account = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
       <BottomNavbar />
     </div>
   );
