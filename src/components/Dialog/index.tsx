@@ -8,10 +8,11 @@ type TDialog = {
   dialogRef: MutableRef<HTMLDialogElement[]>;
   isLoading: boolean;
   id: string;
-  handleDelete?: (id: string, index: number) => Promise<void>;
+  handleDelete?: (id: string, index: number, email?: string) => Promise<void>;
   handleEdit?: (id: string, index: number) => Promise<void>;
   handleEditRedirect?: string;
   isPopup: Signal<boolean>;
+  email?: string;
 };
 
 const Dialog = ({
@@ -23,6 +24,7 @@ const Dialog = ({
   handleEdit,
   handleEditRedirect,
   isPopup,
+  email,
 }: TDialog) => {
   const isDeletePopup = useSignal<boolean>(false);
 
@@ -98,6 +100,7 @@ const Dialog = ({
           index={index}
           isPopup={isDeletePopup}
           isLoading={isLoading}
+          email={email}
           title={`Are you sure you want to delete this?`}
           subtitle="This will delete this permanently. You cannot undo this action"
           handlePopupAction={handleDelete}

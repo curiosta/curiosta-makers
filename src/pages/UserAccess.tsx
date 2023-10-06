@@ -1,4 +1,5 @@
 import { adminCreateCustomer } from "@/api/admin/customers/createCustomer";
+import { adminDeleteCustomer } from "@/api/admin/customers/deleteCustomer";
 import { adminCustomersList } from "@/api/admin/customers/listCustomers";
 import { adminUpdateCustomer } from "@/api/admin/customers/updateCustomer";
 import Button from "@/components/Button";
@@ -139,6 +140,19 @@ const UserAccess = () => {
     }
   };
 
+  const handleDelete = async (id: string, index: number, email: string) => {
+    isLoading.value = "user:delete";
+    try {
+      await adminDeleteCustomer({ email });
+      dialogRef.current[index]?.close();
+      getUsers();
+      isDeletePopup.value = false;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
   const handleEdit = async (id: string, index: number) => {
     (selectedId.value = id),
       (isUserEditPopUp.value = true),
@@ -229,8 +243,10 @@ const UserAccess = () => {
                     isLoading={isLoading.value === "user:delete" ? true : false}
                     index={index}
                     id={user.id}
+                    email={user.email}
                     handleEdit={handleEdit}
                     isPopup={isDeletePopup}
+                    handleDelete={handleDelete}
                   />
                 </div>
               ))}
