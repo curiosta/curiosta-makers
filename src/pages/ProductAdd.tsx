@@ -79,7 +79,6 @@ const ProductAdd = () => {
       }
     });
   };
-  console.log(locationCategory.value);
 
   useEffect(() => {
     if (flattenLocations.value?.length) {

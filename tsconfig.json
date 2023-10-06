@@ -36,6 +36,9 @@
       ],
       "@AddressList/*": [
         "src/components/AddressList/*"
+      ],
+      "@ProfileImageEdit/*": [
+        "src/components/ProfileImageEdit/*"
       ]
     }
   },
