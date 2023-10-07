@@ -79,7 +79,6 @@ const ProductAdd = () => {
       }
     });
   };
-  console.log(locationCategory.value);
 
   useEffect(() => {
     if (flattenLocations.value?.length) {
@@ -137,7 +136,7 @@ const ProductAdd = () => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { title, description, status, location } = formDataObj;
+        const { title, description, status, location, quantity } = formDataObj;
 
         const categories: { id: string }[] = [{ id: location.toString() }];
 
@@ -165,6 +164,7 @@ const ProductAdd = () => {
           title: title.toString(),
           description: description.toString(),
           status: status.toString(),
+          inventory_quantity: parseInt(quantity.toString()),
           categories:
             selectedCategoryIds.value?.length || parentLocations?.length
               ? categories

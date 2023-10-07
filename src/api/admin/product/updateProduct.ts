@@ -10,6 +10,7 @@ type TAddProduct = {
   }[];
   images?: string[];
   thumbnail?: string;
+  inventory_quantity?: number;
 };
 
 export const adminUpdateProduct = async ({
@@ -20,6 +21,7 @@ export const adminUpdateProduct = async ({
   categories,
   images,
   thumbnail,
+  inventory_quantity,
 }: TAddProduct) => {
   return medusa.admin.products.update(productId, {
     title,
@@ -28,5 +30,13 @@ export const adminUpdateProduct = async ({
     categories,
     images,
     thumbnail,
+    variants: [
+      {
+        title: "one size",
+        inventory_quantity,
+        manage_inventory: true,
+        prices: [{ amount: 10000, currency_code: "usd" }],
+      },
+    ],
   });
 };
