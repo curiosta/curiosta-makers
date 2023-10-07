@@ -1,6 +1,8 @@
+import { adminActivateCustomer } from "@/api/admin/customers/activateCustomer";
 import { adminCreateCustomer } from "@/api/admin/customers/createCustomer";
-import { adminDeleteCustomer } from "@/api/admin/customers/deleteCustomer";
+import { adminDeactivateCustomer } from "@/api/admin/customers/deactivateCustomer";
 import { adminCustomersList } from "@/api/admin/customers/listCustomers";
+import { adminListDeactivateCustomers } from "@/api/admin/customers/listDeactivateCustomers";
 import { adminUpdateCustomer } from "@/api/admin/customers/updateCustomer";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
@@ -13,13 +15,19 @@ import PopUp from "@/components/Popup";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import UserPopUp from "@/components/Popup/UserPopUp";
 import SearchInput from "@/components/SearchInput";
+import Toggle from "@/components/Toggle";
 import Typography from "@/components/Typography";
 import { Customer } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
 
-type TLoadableOptions = "user:get" | "user:add" | "user:edit" | "user:delete";
+type TLoadableOptions =
+  | "user:get"
+  | "user:add"
+  | "user:edit"
+  | "user:deactivate"
+  | "user:activate";
 const UserAccess = () => {
   const users = useSignal<Customer[]>([]);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
@@ -36,20 +44,28 @@ const UserAccess = () => {
   const selectedId = useSignal<string | undefined>(undefined);
   const isDeletePopup = useSignal<boolean>(false);
   const searchTerm = useSignal<string | undefined>(undefined);
+  const activeToggle = useSignal<string>("active");
 
   const getUsers = async () => {
     isLoading.value = "user:get";
     try {
-      const usersRes = await adminCustomersList({
-        q: searchTerm.value ? searchTerm.value : undefined,
-        limit: limit.value,
-        offset: offset.value,
-      });
-      if (!usersRes?.customers?.length && usersRes?.count) {
-        offset.value = 0;
+      if (activeToggle.value === "active") {
+        const usersRes = await adminCustomersList({
+          q: searchTerm.value ? searchTerm.value : undefined,
+          limit: limit.value,
+          offset: offset.value,
+        });
+        if (!usersRes?.customers?.length && usersRes?.count) {
+          offset.value = 0;
+        }
+        users.value = usersRes?.customers;
+        count.value = usersRes?.count;
+      } else {
+        searchTerm.value = undefined;
+        const usersRes = await adminListDeactivateCustomers();
+        users.value = usersRes;
+        count.value = usersRes?.length;
       }
-      users.value = usersRes?.customers;
-      count.value = usersRes?.count;
     } catch (error) {
       console.log(error);
     } finally {
@@ -65,7 +81,7 @@ const UserAccess = () => {
       return () => clearTimeout(getData);
     }
     getUsers();
-  }, [offset.value, searchTerm.value]);
+  }, [offset.value, searchTerm.value, addUser.value, activeToggle.value]);
 
   // handle dialog
   const handleDialog = (index: number) => {
@@ -140,10 +156,22 @@ const UserAccess = () => {
     }
   };
 
-  const handleDelete = async (id: string, index: number, email: string) => {
-    isLoading.value = "user:delete";
+  const handleActivate = async (id: string, index: number, email: string) => {
+    isLoading.value = "user:activate";
     try {
-      await adminDeleteCustomer({ email });
+      await adminActivateCustomer({ email });
+      dialogRef.current[index]?.close();
+      getUsers();
+      isDeletePopup.value = false;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+  const handleDeactivate = async (id: string, index: number, email: string) => {
+    isLoading.value = "user:deactivate";
+    try {
+      await adminDeactivateCustomer({ email });
       dialogRef.current[index]?.close();
       getUsers();
       isDeletePopup.value = false;
@@ -165,36 +193,50 @@ const UserAccess = () => {
       <div className="my-2">
         <Typography size="h6/normal">User Access Master</Typography>
       </div>
-      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
+      <Toggle
+        activeToggle={activeToggle}
+        toggleItems={["active", "inactive"]}
+        isLoading={isLoading.value === "user:get" ? true : false}
+        count={count.value}
+      />
+      {activeToggle.value === "active" ? (
+        <SearchInput
+          searchTerm={searchTerm}
+          placeholder="Search active users"
+          isSearchSort={false}
+        />
+      ) : null}
       <div className="text-center my-2 w-full mb-20">
-        <div className="flex justify-end">
-          <Button
-            type="button"
-            className="gap-2"
-            onClick={() => {
-              (isUserPopUp.value = true),
-                (selectedId.value = undefined),
-                (errorMessage.value = null);
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6 stroke-secondray stroke-2"
+        {activeToggle.value === "active" ? (
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              className="gap-2"
+              onClick={() => {
+                (isUserPopUp.value = true),
+                  (selectedId.value = undefined),
+                  (errorMessage.value = null);
+              }}
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            Add
-          </Button>
-        </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6 stroke-secondray stroke-2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+              Add
+            </Button>
+          </div>
+        ) : null}
         {isLoading.value !== "user:get" ? (
           users.value?.length ? (
             <div className="w-full flex flex-col  my-2 gap-4">
@@ -240,13 +282,32 @@ const UserAccess = () => {
                   </Button>
                   <Dialog
                     dialogRef={dialogRef}
-                    isLoading={isLoading.value === "user:delete" ? true : false}
+                    isLoading={
+                      activeToggle.value === "active"
+                        ? isLoading.value === "user:deactivate"
+                          ? true
+                          : false
+                        : isLoading.value === "user:activate"
+                        ? true
+                        : false
+                    }
                     index={index}
                     id={user.id}
                     email={user.email}
-                    handleEdit={handleEdit}
+                    handleEdit={
+                      activeToggle.value === "active" ? handleEdit : undefined
+                    }
                     isPopup={isDeletePopup}
-                    handleDelete={handleDelete}
+                    handleDelete={
+                      activeToggle.value === "active"
+                        ? handleDeactivate
+                        : handleActivate
+                    }
+                    variant={
+                      activeToggle.value === "active"
+                        ? "deactivate-user"
+                        : "activate-user"
+                    }
                   />
                 </div>
               ))}
