@@ -9,14 +9,7 @@ type TAddProduct = {
   }[];
   images?: string[];
   thumbnail?: string;
-  variants?: {
-    title: string;
-    manage_inventory: boolean;
-    prices: {
-      amount: number;
-      currency_code: string;
-    };
-  }[];
+  inventory_quantity: number;
 };
 
 export const adminAddProduct = async ({
@@ -26,6 +19,7 @@ export const adminAddProduct = async ({
   categories,
   images,
   thumbnail,
+  inventory_quantity,
 }: TAddProduct) => {
   return medusa.admin.products.create({
     title,
@@ -37,6 +31,7 @@ export const adminAddProduct = async ({
     variants: [
       {
         title: "one size",
+        inventory_quantity,
         manage_inventory: true,
         prices: [{ amount: 10000, currency_code: "usd" }],
       },
