@@ -44,7 +44,7 @@ const Dialog = ({
         className="absolute top-full left-1/2 p-2 shadow-lg rounded-md z-10"
       >
         <div className="flex flex-col ">
-          {handleEdit ? (
+          {handleEdit || handleEditRedirect ? (
             <Button
               type="button"
               link={handleEditRedirect}
