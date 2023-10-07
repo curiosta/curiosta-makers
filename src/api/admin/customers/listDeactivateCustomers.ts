@@ -1,14 +1,15 @@
 import { Customer } from "@medusajs/medusa";
-import ky from "ky";
 
 const baseUrl = import.meta.env.VITE_PUBLIC_BASE_URL;
 
 export const adminListDeactivateCustomers = async () => {
-  const data = await ky
-    .get(`${baseUrl}admin/customers/list-deleted`, {
-      credentials: "include",
-    })
-    .json();
-
+  const response = await fetch(`${baseUrl}admin/customers/list-deleted`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  const data = await response.json();
   return data as Customer[];
 };
