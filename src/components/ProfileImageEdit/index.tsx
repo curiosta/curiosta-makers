@@ -4,6 +4,7 @@ import Typography from "../Typography";
 import FileUploadPopup from "../Popup/FileUploadPopup";
 import { useRef } from "preact/hooks";
 import { ChangeEvent } from "preact/compat";
+import { customerUploadFile } from "@/api/user/upload";
 
 type TProfileImageEdit = {
   isProfileImageEdit: Signal<boolean>;
@@ -17,6 +18,21 @@ const ProfileImageEdit = ({ isProfileImageEdit }: TProfileImageEdit) => {
 
   const handleUpload = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append("Content-Type", "fileType");
+    formData.append("file", selectedFile.value);
+    try {
+      const respose = await customerUploadFile();
+      const res = await fetch(`${respose.url}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        credentials: "include",
+        body: formData,
+      });
+      const data = await res.json();
+    } catch (error) {}
   };
 
   return (
@@ -54,7 +70,9 @@ const ProfileImageEdit = ({ isProfileImageEdit }: TProfileImageEdit) => {
               type="button"
               variant="icon"
               className=" flex-col gap-2 !items-center"
-              onClick={() => (uploadPopup.value = true)}
+              onClick={() => {
+                (uploadPopup.value = true), (isProfileImageEdit.value = false);
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

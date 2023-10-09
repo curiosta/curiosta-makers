@@ -32,8 +32,9 @@ const Cart = () => {
 
   const selectedDate = useSignal<string>("");
   const selectedDateLoading = useSignal<boolean>(false);
-  const isCartComplete = useSignal<boolean>(false);
+  const isCartCompletePopUp = useSignal<boolean>(false);
   const isCartDiscarding = useSignal<boolean>(false);
+  const isCartComplete = useSignal<boolean>(false);
 
   const handleSelectDate = async (e: ChangeEvent<HTMLInputElement>) => {
     const { value, checked, name } = e.currentTarget;
@@ -68,11 +69,14 @@ const Cart = () => {
 
   // handle cart complete
   const handleCartComplete = async () => {
+    isCartComplete.value = true;
     try {
       await cart.completeCart(cart.store.value.id);
-      isCartComplete.value = true;
+      isCartCompletePopUp.value = true;
     } catch (error) {
       console.log(error);
+    } finally {
+      isCartComplete.value = false;
     }
   };
 
@@ -253,7 +257,7 @@ const Cart = () => {
           <Loading loadingText="loading" />
         </div>
       )}
-      {cart.loading.value === "cart:complete" ? (
+      {isCartComplete.value ? (
         <LoadingPopUp loadingText="please wait" />
       ) : (
         <PopUp
@@ -261,7 +265,7 @@ const Cart = () => {
           subtitle={`Request ID: ${cart.orderStore?.value?.data?.id}`}
           actionText="Check request"
           actionLink={`/orders/${cart.orderStore.value?.data?.id}`}
-          isPopup={isCartComplete}
+          isPopup={isCartCompletePopUp}
         />
       )}
       <PopUp

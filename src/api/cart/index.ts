@@ -1,12 +1,13 @@
 import medusa from "@api/medusa";
 import user from "@api/user";
 import useLocalStorage from "@hooks/useLocalStorage";
-import type {
-  StoreCompleteCartRes,
-  Cart,
-  StorePostCartReq,
-  StorePostCartsCartReq,
-  StorePostCartsCartLineItemsReq,
+import {
+  type StoreCompleteCartRes,
+  type Cart,
+  type StorePostCartReq,
+  type StorePostCartsCartReq,
+  type StorePostCartsCartLineItemsReq,
+  Region,
 } from "@medusajs/medusa";
 import type { PricedShippingOption } from "@medusajs/medusa/dist/types/pricing";
 import { effect, signal } from "@preact/signals";
@@ -299,6 +300,19 @@ class CartStore {
   async completeCart(id: string) {
     if (!this.store.value?.id) return null;
     this.loading.value = "cart:complete";
+    const regionRes = await medusa.regions.list();
+    const regions: Region[] = regionRes?.regions;
+    const shipping_address = user.customer.value?.shipping_addresses[0];
+    const regionId = regions?.find(
+      (region) => region.countries[0]?.iso_2 === shipping_address?.country_code
+    )?.id;
+    console.log(regionId);
+    await cart.updateCart({
+      region_id: regionId,
+      shipping_address: shipping_address?.id,
+      billing_address: shipping_address?.id,
+    });
+    await user.updateUser({ billing_address: shipping_address?.id });
     await this.createPaymentSession();
     const result = await medusa.carts.complete(id);
     this.orderStore.value = result;

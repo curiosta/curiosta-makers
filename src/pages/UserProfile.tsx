@@ -160,7 +160,7 @@ const UserProfile = ({ id }: Props) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 relative">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">User Profile</Typography>
@@ -176,7 +176,7 @@ const UserProfile = ({ id }: Props) => {
                       ? userData.value?.first_name.charAt(0)
                       : userData.value?.email.charAt(0)}
                   </Chip>
-                  <Button
+                  {/* <Button
                     variant="icon"
                     className="absolute right-0 -bottom-2 !rounded-full bg-gray-200"
                     onClick={() => (isProfileImageEdit.value = true)}
@@ -200,7 +200,7 @@ const UserProfile = ({ id }: Props) => {
                         d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
                       />
                     </svg>
-                  </Button>
+                  </Button> */}
                 </div>
                 <div>
                   {userData.value?.first_name ? (
@@ -325,8 +325,13 @@ const UserProfile = ({ id }: Props) => {
          successfully `}
         subtitle={`User ID: ${userData.value?.id} `}
       />
-
-      <ProfileImageEdit isProfileImageEdit={isProfileImageEdit} />
+      {/* {isProfileImageEdit.value ? (
+        <div
+          className="absolute backdrop-brightness-75 w-full h-full"
+          onClick={() => (isProfileImageEdit.value = false)}
+        />
+      ) : null}
+      <ProfileImageEdit isProfileImageEdit={isProfileImageEdit} /> */}
       <BottomNavbar />
     </div>
   );
