@@ -30,15 +30,6 @@
       ],
       "@hooks/*": [
         "src/hooks/*"
-      ],
-      "@Toggle/*": [
-        "src/components/Toggle/*"
-      ],
-      "@regions/*": [
-        "src/api/regions/*"
-      ],
-      "@region/*": [
-        "src/api/region/*"
       ]
     }
   },
