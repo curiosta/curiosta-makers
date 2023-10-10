@@ -31,8 +31,14 @@
       "@hooks/*": [
         "src/hooks/*"
       ],
-      "@utils/*": [
-        "src/utils/*"
+      "@Toggle/*": [
+        "src/components/Toggle/*"
+      ],
+      "@regions/*": [
+        "src/api/regions/*"
+      ],
+      "@region/*": [
+        "src/api/region/*"
       ]
     }
   },
