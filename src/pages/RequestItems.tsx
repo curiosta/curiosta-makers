@@ -104,7 +104,7 @@ const RequestItems = ({ id }: Props) => {
                 className="flex justify-between items-center gap-4 my-3 py-2 border-b last:border-none relative"
               >
                 <Link
-                  href={`/product/${product?.id}`}
+                  href={`/product/${product?.id}/${product?.handle}`}
                   className="flex gap-2 w-1/2 z-10"
                 >
                   <img

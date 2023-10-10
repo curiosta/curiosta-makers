@@ -89,7 +89,7 @@ const App = () => {
       <Route path="/approve" component={Approve} />
       <Route path="/master" component={Master} />
       <Route path="/category-master" component={CategoryMaster} />
-      <Route path="/product/:id" component={ProductInfo} />
+      <Route path="/product/:id/:handle?" component={ProductInfo} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/password-reset" component={PasswordReset} />
       <Route path="/material-master" component={MaterialMaster} />

@@ -72,7 +72,7 @@ const SearchResult = () => {
               {products.value.map((product) => (
                 <div className="w-full flex justify-between items-center relative pb-2 border-b last:border-none">
                   <Link
-                    href={`/product/${product?.id}`}
+                    href={`/product/${product?.id}/${product?.handle}`}
                     className="flex items-center gap-2 w-full "
                   >
                     <img
