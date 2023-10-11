@@ -259,7 +259,7 @@ const UserProfile = ({ id }: Props) => {
             </div>
           </div>
 
-          <AddressList address={address} />
+          {isUser.value ? <AddressList address={address} /> : null}
 
           {!isUser.value ? (
             <div className="w-full mb-20">

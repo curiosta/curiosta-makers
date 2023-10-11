@@ -5,19 +5,27 @@ import type {
   Address,
   AddressCreatePayload,
   AddressPayload,
+  Region,
 } from "@medusajs/medusa";
 import user from "@api/user";
 import { Signal, useSignal } from "@preact/signals";
 import { useRef } from "preact/hooks";
 import { addAddress } from "@/api/user/address/addAddress";
 import Typography from "../Typography";
+import { listRegion } from "@/api/user/region/listRegion";
+import cart from "@/api/cart";
 
 type TAddressForm = {
   isNewAddress: Signal<boolean>;
   address: Signal<Address[]>;
+  selectedAddressId: Signal<string>;
 };
 
-const AddressForm = ({ isNewAddress, address }: TAddressForm) => {
+const AddressForm = ({
+  isNewAddress,
+  address,
+  selectedAddressId,
+}: TAddressForm) => {
   const isLoading = useSignal<boolean>(false);
   const resetButtonRef = useRef<HTMLButtonElement>(null);
   const errorMessage = useSignal<string | null>(null);
@@ -29,16 +37,16 @@ const AddressForm = ({ isNewAddress, address }: TAddressForm) => {
         errorMessage.value = null;
       }
       const payloadAddress = { ...data };
-      if (user.customer.value?.phone) {
-        payloadAddress.first_name = user.customer.value?.first_name;
-        payloadAddress.last_name = user.customer.value?.last_name;
-        payloadAddress.phone = user.customer.value?.phone;
-        payloadAddress.country_code = "IN";
-      } else {
-        throw new Error("Please add phone No. in profile first!");
-      }
+      payloadAddress.first_name = user.customer.value?.first_name;
+      payloadAddress.last_name = user.customer.value?.last_name;
+      payloadAddress.country_code = "IN";
+
       const addressRes = await addAddress(payloadAddress);
       address.value = addressRes?.customer?.shipping_addresses;
+      const latestAddress: Address = [
+        ...addressRes.customer.shipping_addresses,
+      ].pop();
+      selectedAddressId.value = latestAddress?.id;
       isNewAddress.value = false;
       resetButtonRef.current?.click();
     } catch (error) {
@@ -99,9 +107,31 @@ const AddressForm = ({ isNewAddress, address }: TAddressForm) => {
               minLength={5}
               autocomplete="postal-code"
             />
+            <Input
+              name="phone"
+              type="tel"
+              label="Phone Number"
+              autocomplete="phone"
+              required={{ message: "Phone number is required!", value: true }}
+              validator={(value) =>
+                !/^(?:(?:\+|0{0,2})91(\s*|[\-])?|[0]?)?([6789]\d{2}([ -]?)\d{3}([ -]?)\d{4})$/.test(
+                  value
+                )
+                  ? "Invalid phone number!"
+                  : true
+              }
+              placeholder={"+91 9876543210"}
+            />
           </div>
 
-          <div class="mt-5 border-t border-gray-200 pt-6">
+          <div class="flex justify-between items-center mt-5 border-t border-gray-200 pt-6">
+            <Button
+              variant="danger"
+              type="button"
+              onClick={() => (isNewAddress.value = false)}
+            >
+              Close
+            </Button>
             <div className="flex justify-end items-center gap-4">
               <Button
                 variant="danger"
