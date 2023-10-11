@@ -1,8 +1,14 @@
 import medusa from "@api/medusa";
 import { AdminPostCustomersCustomerReq } from "@medusajs/medusa";
 
-type TUpdateCustomer = AdminPostCustomersCustomerReq & {
+type TCustomerMetadata = {
+  cart_id?: string | null;
+  profile_image_key?: string;
+};
+
+type TUpdateCustomer = Omit<AdminPostCustomersCustomerReq, "metadata"> & {
   customerId: string;
+  metadata?: TCustomerMetadata;
 };
 
 export const adminUpdateCustomer = async ({
@@ -10,12 +16,14 @@ export const adminUpdateCustomer = async ({
   email,
   first_name,
   last_name,
-  password,
+  phone,
+  metadata,
 }: TUpdateCustomer) => {
   return medusa.admin.customers.update(customerId, {
     email,
     first_name,
     last_name,
-    password,
+    phone,
+    metadata,
   });
 };

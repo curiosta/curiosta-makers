@@ -5,34 +5,57 @@ import FileUploadPopup from "../Popup/FileUploadPopup";
 import { useRef } from "preact/hooks";
 import { ChangeEvent } from "preact/compat";
 import { customerUploadFile } from "@/api/user/upload";
+import { adminProtectedUploadFile } from "@/api/admin/upload/protectedUploadFile";
+import { adminUpdateCustomer } from "@/api/admin/customers/updateCustomer";
+import LoadingPopUp from "../Popup/LoadingPopUp";
 
 type TProfileImageEdit = {
   isProfileImageEdit: Signal<boolean>;
+  customerId: string;
 };
+type TLoadableOptions = "profile:image:upload" | "profile:image:delete";
 
-const ProfileImageEdit = ({ isProfileImageEdit }: TProfileImageEdit) => {
+const ProfileImageEdit = ({
+  isProfileImageEdit,
+  customerId,
+}: TProfileImageEdit) => {
   const selectedFile = useSignal<File | null>(null);
   const uploadPopup = useSignal<boolean>(false);
   const uploadFormRef = useRef<HTMLFormElement>(null);
   const errorMessage = useSignal<string | null>(null);
+  const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
 
   const handleUpload = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("Content-Type", "fileType");
-    formData.append("file", selectedFile.value);
+    isLoading.value = "profile:image:upload";
     try {
-      const respose = await customerUploadFile();
-      const res = await fetch(`${respose.url}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        credentials: "include",
-        body: formData,
+      const uploadRes = await adminProtectedUploadFile(selectedFile.value);
+      const file_key: string = uploadRes?.uploads[0]?.key;
+      await adminUpdateCustomer({
+        customerId: customerId,
+        metadata: { profile_image_key: file_key },
       });
-      const data = await res.json();
-    } catch (error) {}
+      uploadPopup.value = false;
+    } catch (error) {
+      if (error instanceof Error) {
+        errorMessage.value = error.message;
+      }
+    } finally {
+      isLoading.value = undefined;
+      selectedFile.value = null;
+    }
+  };
+  const handleDeleteImage = async () => {
+    isLoading.value = "profile:image:delete";
+    try {
+      await adminUpdateCustomer({
+        customerId: customerId,
+        metadata: { profile_image_key: "" },
+      });
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
   };
 
   return (
@@ -94,7 +117,7 @@ const ProfileImageEdit = ({ isProfileImageEdit }: TProfileImageEdit) => {
               type="button"
               variant="icon"
               className="!text-danger-600 flex-col  gap-2 !items-center"
-              // onClick={() => (thumbnail.value = null)}
+              onClick={handleDeleteImage}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -115,15 +138,23 @@ const ProfileImageEdit = ({ isProfileImageEdit }: TProfileImageEdit) => {
           </div>
         </div>
       </div>
-      <FileUploadPopup
-        isPopup={uploadPopup}
-        selectedFile={selectedFile}
-        formRef={uploadFormRef}
-        actionText="Upload"
-        acceptFileType="image/png, image/jpeg"
-        errorMessage={errorMessage}
-        handlePopupAction={handleUpload}
-      />
+      {isLoading.value === "profile:image:delete" ? (
+        <LoadingPopUp loadingText="Please wait" />
+      ) : null}
+
+      {isLoading.value === "profile:image:upload" ? (
+        <LoadingPopUp loadingText="Please wait" />
+      ) : (
+        <FileUploadPopup
+          isPopup={uploadPopup}
+          selectedFile={selectedFile}
+          formRef={uploadFormRef}
+          actionText="Upload"
+          acceptFileType="image/png, image/jpeg"
+          errorMessage={errorMessage}
+          handlePopupAction={handleUpload}
+        />
+      )}
     </div>
   );
 };

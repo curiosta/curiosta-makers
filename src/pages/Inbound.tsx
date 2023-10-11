@@ -1,7 +1,7 @@
 import { adminCreateBatchJobs } from "@/api/admin/product/createBatchJob";
 import { adminGetBatchJobs } from "@/api/admin/product/getBatchjob";
 import { adminGetDownloadLink } from "@/api/admin/product/getDownloadLink";
-import { adminUploadFile } from "@/api/admin/product/uploadFile";
+import { adminUploadFile } from "@/api/admin/upload/uploadFile";
 import Button from "@/components/Button";
 import FileInput from "@/components/FileInput";
 import Loading from "@/components/Loading";

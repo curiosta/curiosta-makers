@@ -23,6 +23,8 @@ import user, { TCustomer } from "@api/user";
 import { ordersList } from "@/api/user/orders/ordersList";
 import AddressList from "@/components/AddressList";
 import ProfileImageEdit from "@/components/ProfileImageEdit";
+import { adminProtectedUploadFile } from "@/api/admin/upload/protectedUploadFile";
+import { adminGetProtectedUploadFile } from "@/api/admin/upload/getProtectedUpload";
 
 type Props = {
   id: string;
@@ -45,6 +47,7 @@ const UserProfile = ({ id }: Props) => {
   const activeToggle = useSignal<string[]>(["awaiting"]);
   const address = useSignal<Address[]>([]);
   const isProfileImageEdit = useSignal<boolean>(false);
+  const profileImageUrl = useSignal<string | null>(null);
 
   const getUser = async () => {
     isLoading.value = "user:get";
@@ -56,6 +59,10 @@ const UserProfile = ({ id }: Props) => {
           customerId: id,
         });
         userData.value = userRes?.customer;
+        const file_key = (userRes?.customer as TCustomer)?.metadata
+          ?.profile_image_key;
+        const uploadRes = await adminGetProtectedUploadFile(file_key);
+        profileImageUrl.value = uploadRes?.download_url;
       }
       address.value = userData.value?.shipping_addresses;
     } catch (error) {
@@ -63,7 +70,7 @@ const UserProfile = ({ id }: Props) => {
       isLoading.value = undefined;
     }
   };
-
+  console.log(isLoading.value);
   const getOrdersList = async () => {
     isLoading.value = "user:oders:get";
     try {
@@ -99,14 +106,14 @@ const UserProfile = ({ id }: Props) => {
   };
 
   useEffect(() => {
+    getUser();
+  }, []);
+
+  useEffect(() => {
     if (!isUser.value) {
       getOrdersList();
     }
   }, [offset.value, activeToggle.value]);
-
-  useEffect(() => {
-    getUser();
-  }, []);
 
   // handle dialog
   const handleDialog = (index: number) => {
@@ -171,12 +178,24 @@ const UserProfile = ({ id }: Props) => {
             <div className="flex justify-between items-center w-full relative">
               <div className=" w-full flex items-center gap-4">
                 <div className="w-full max-w-[5rem] h-20 flex relative">
-                  <Chip className="!bg-primary-700 uppercase text-4xl w-full flex justify-center items-center text-white">
-                    {userData.value?.first_name
-                      ? userData.value?.first_name.charAt(0)
-                      : userData.value?.email.charAt(0)}
-                  </Chip>
-                  {/* <Button
+                  {isUser.value ? (
+                    <Chip className="!bg-primary-700 uppercase text-4xl w-full flex justify-center items-center text-white">
+                      {userData.value?.first_name
+                        ? userData.value?.first_name.charAt(0)
+                        : userData.value?.email.charAt(0)}
+                    </Chip>
+                  ) : (
+                    <img
+                      src={
+                        profileImageUrl.value ?? "/images/placeholderImg.svg"
+                      }
+                      alt="profile"
+                      className={`w-full border-2 rounded-full shadow ${
+                        !profileImageUrl.value ? "p-1.5" : ""
+                      }`}
+                    />
+                  )}
+                  <Button
                     variant="icon"
                     className="absolute right-0 -bottom-2 !rounded-full bg-gray-200"
                     onClick={() => (isProfileImageEdit.value = true)}
@@ -200,7 +219,7 @@ const UserProfile = ({ id }: Props) => {
                         d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
                       />
                     </svg>
-                  </Button> */}
+                  </Button>
                 </div>
                 <div>
                   {userData.value?.first_name ? (
@@ -325,13 +344,16 @@ const UserProfile = ({ id }: Props) => {
          successfully `}
         subtitle={`User ID: ${userData.value?.id} `}
       />
-      {/* {isProfileImageEdit.value ? (
+      {isProfileImageEdit.value ? (
         <div
           className="absolute backdrop-brightness-75 w-full h-full"
           onClick={() => (isProfileImageEdit.value = false)}
         />
       ) : null}
-      <ProfileImageEdit isProfileImageEdit={isProfileImageEdit} /> */}
+      <ProfileImageEdit
+        isProfileImageEdit={isProfileImageEdit}
+        customerId={id}
+      />
       <BottomNavbar />
     </div>
   );
