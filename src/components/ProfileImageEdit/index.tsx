@@ -4,26 +4,34 @@ import Typography from "../Typography";
 import FileUploadPopup from "../Popup/FileUploadPopup";
 import { useRef } from "preact/hooks";
 import { ChangeEvent } from "preact/compat";
-import { customerUploadFile } from "@/api/user/upload";
 import { adminProtectedUploadFile } from "@/api/admin/upload/protectedUploadFile";
 import { adminUpdateCustomer } from "@/api/admin/customers/updateCustomer";
 import LoadingPopUp from "../Popup/LoadingPopUp";
+import { adminDeleteUploadFile } from "@/api/admin/upload/deleteUpload";
+import DeletePopUp from "../Popup/DeletePopUp";
 
 type TProfileImageEdit = {
   isProfileImageEdit: Signal<boolean>;
   customerId: string;
+  getUser: () => Promise<void>;
+  profileImage: Signal<{
+    key: string;
+    url: string;
+  }>;
 };
 type TLoadableOptions = "profile:image:upload" | "profile:image:delete";
 
 const ProfileImageEdit = ({
   isProfileImageEdit,
   customerId,
+  profileImage,
 }: TProfileImageEdit) => {
   const selectedFile = useSignal<File | null>(null);
   const uploadPopup = useSignal<boolean>(false);
   const uploadFormRef = useRef<HTMLFormElement>(null);
   const errorMessage = useSignal<string | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
+  const isDeletePopup = useSignal<boolean>(false);
 
   const handleUpload = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,6 +44,7 @@ const ProfileImageEdit = ({
         metadata: { profile_image_key: file_key },
       });
       uploadPopup.value = false;
+      window.location.reload();
     } catch (error) {
       if (error instanceof Error) {
         errorMessage.value = error.message;
@@ -48,13 +57,17 @@ const ProfileImageEdit = ({
   const handleDeleteImage = async () => {
     isLoading.value = "profile:image:delete";
     try {
+      if (!profileImage.value) return;
+      await adminDeleteUploadFile(profileImage.value.key);
       await adminUpdateCustomer({
         customerId: customerId,
         metadata: { profile_image_key: "" },
       });
+      window.location.reload();
     } catch (error) {
     } finally {
       isLoading.value = undefined;
+      isProfileImageEdit.value = false;
     }
   };
 
@@ -113,28 +126,30 @@ const ProfileImageEdit = ({
               </svg>
               Upload
             </Button>
-            <Button
-              type="button"
-              variant="icon"
-              className="!text-danger-600 flex-col  gap-2 !items-center"
-              onClick={handleDeleteImage}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
+            {profileImage.value ? (
+              <Button
+                type="button"
+                variant="icon"
+                className="!text-danger-600 flex-col  gap-2 !items-center"
+                onClick={() => (isDeletePopup.value = true)}
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                />
-              </svg>
-              Delete
-            </Button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                  />
+                </svg>
+                Delete
+              </Button>
+            ) : null}
           </div>
         </div>
       </div>
@@ -155,6 +170,17 @@ const ProfileImageEdit = ({
           handlePopupAction={handleUpload}
         />
       )}
+
+      <DeletePopUp
+        id={customerId}
+        index={0}
+        isPopup={isDeletePopup}
+        isLoading={isLoading.value === "profile:image:delete" ? true : false}
+        title={`Are you sure you want to delete this image?`}
+        subtitle="This will delete this permanently. You cannot undo this action"
+        handlePopupAction={handleDeleteImage}
+        actionText={"Yes, Confirm"}
+      />
     </div>
   );
 };

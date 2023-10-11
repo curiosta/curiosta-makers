@@ -265,10 +265,20 @@ const OrderInfo = ({ id }: Props) => {
                 <Typography size="h6/semi-bold" className="text-center">
                   Address
                 </Typography>
-                <AddressCard
-                  address={order.value?.shipping_address}
-                  variant="order"
-                />
+                {order.value?.shipping_address ? (
+                  <AddressCard
+                    address={order.value?.shipping_address}
+                    variant="order"
+                  />
+                ) : (
+                  <Typography
+                    size="body2/normal"
+                    variant="error"
+                    className="my-4 text-center"
+                  >
+                    Address not found
+                  </Typography>
+                )}
               </div>
             ) : null}
             {!isUser.value &&

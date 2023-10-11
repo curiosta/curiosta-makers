@@ -1,6 +1,6 @@
 import { adminCreateBatchJobs } from "@/api/admin/product/createBatchJob";
 import { adminGetBatchJobs } from "@/api/admin/product/getBatchjob";
-import { adminGetDownloadLink } from "@/api/admin/product/getDownloadLink";
+import { adminGetProtectedUploadFile } from "@/api/admin/upload/getProtectedUpload";
 import { adminUploadFile } from "@/api/admin/upload/uploadFile";
 import Button from "@/components/Button";
 import FileInput from "@/components/FileInput";
@@ -98,7 +98,7 @@ const Inbound = () => {
       if (!batchjobId.value) return;
       const res = await adminGetBatchJobs({ batchJobId: batchjobId.value });
       if (res?.batch_job?.status === "completed") {
-        const downloadLinkRes = await adminGetDownloadLink({
+        const downloadLinkRes = await adminGetProtectedUploadFile({
           file_key: res?.batch_job?.result.file_key,
         });
         downloadLink.value = downloadLinkRes.download_url;

@@ -46,9 +46,14 @@ const ProductInfo = ({ id }: Props) => {
   }, []);
 
   const handleAddToCart = () => {
+    const { shipping_addresses, phone } = user.customer.value;
+    const { profile_image_key, govt_id_key } = user.customer.value?.metadata;
     const isProfileComplete =
-      user.customer.value?.shipping_addresses?.length > 0 &&
-      user.customer.value?.phone !== null;
+      shipping_addresses?.length > 0 &&
+      phone !== null &&
+      govt_id_key &&
+      profile_image_key;
+
     if (!isProfileComplete) {
       return (isProfileCompletePopUp.value = true);
     }
@@ -249,7 +254,8 @@ const ProductInfo = ({ id }: Props) => {
         actionText="Check profile"
         actionLink={`/user/${user.customer.value?.id}`}
         title="Please complete your profile first!"
-        subtitle="Add your phone no. and address before request any item"
+        subtitle="Add your phone no., address, profile image and any valid govt. Id before request any item. 
+        For uploading profile image and govt. id contact makers admin"
       />
       <BottomNavbar />
     </div>
