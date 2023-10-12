@@ -257,7 +257,9 @@ const UserProfile = ({ id }: Props) => {
                   ) : (
                     <img
                       src={
-                        profileImage.value?.url ?? "/images/placeholderImg.svg"
+                        profileImage.value?.url
+                          ? profileImage.value?.url
+                          : "/images/placeholderImg.svg"
                       }
                       alt="profile"
                       className="w-full border-2 p-1.5 rounded-full shadow"

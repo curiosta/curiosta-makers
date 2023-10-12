@@ -240,7 +240,11 @@ const UserAccess = () => {
         ) : null}
         {isLoading.value !== "user:get" ? (
           users.value?.length ? (
-            <div className="w-full flex flex-col  my-2 gap-4">
+            <div
+              className={`w-full flex flex-col  my-2 gap-4 ${
+                count.value < limit.value ? "mb-20" : ""
+              }`}
+            >
               {users.value.map((user, index) => (
                 <div className="w-full flex justify-between items-center relative">
                   <Link
