@@ -4,6 +4,7 @@ import Typography from "@components/Typography";
 import type { Order, Return } from "@medusajs/medusa";
 import type { FunctionComponent } from "preact";
 import Chip from "@components/Chip";
+import { Link } from "preact-router";
 
 type TOrderItemProps = {
   order?: Order;
@@ -96,7 +97,14 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
               : "border-gray-200"
           }`}
         >
-          <div className="flex items-center gap-3">
+          <Link
+            href={
+              page !== "adminReturn"
+                ? `/user/${order?.customer_id}`
+                : `/user/${returnVal?.order?.customer_id}`
+            }
+            className="flex items-center gap-3"
+          >
             <Chip className="!bg-primary-700 uppercase text-white">
               {page !== "adminReturn"
                 ? order?.email.charAt(0)
@@ -105,7 +113,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
             <Typography size="body2/normal" className="truncate w-36">
               {page !== "adminReturn" ? order?.email : returnVal?.order.email}
             </Typography>
-          </div>
+          </Link>
 
           <Button
             link={

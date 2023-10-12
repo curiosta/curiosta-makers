@@ -61,11 +61,11 @@ const PopUp = ({
         className={`absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6`}
       >
         <div className="flex flex-col text-center gap-2 mb-4">
-          <Typography className={formContents?.length ? "!font-semibold" : ""}>
-            {title}
-          </Typography>
+          <Typography size="body1/semi-bold">{title}</Typography>
           {subtitle ? (
-            <Typography className="break-words">{subtitle}</Typography>
+            <Typography size="body2/normal" className="break-words">
+              {subtitle}
+            </Typography>
           ) : null}
         </div>
         {formContents ? (

@@ -10,31 +10,14 @@
     "jsxImportSource": "preact",
     "baseUrl": ".",
     "paths": {
-      "@assets/*": [
-        "src/assets/*"
-      ],
-      "@pages/*": [
-        "src/pages/*"
-      ],
-      "@/*": [
-        "src/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@api/*": [
-        "src/api/*"
-      ],
-      "@store/*": [
-        "src/store/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ]
+      "@assets/*": ["src/assets/*"],
+      "@pages/*": ["src/pages/*"],
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@api/*": ["src/api/*"],
+      "@store/*": ["src/store/*"],
+      "@hooks/*": ["src/hooks/*"]
     }
   },
-  "include": [
-    "node_modules/vite/client.d.ts",
-    "**/*"
-  ]
+  "include": ["node_modules/vite/client.d.ts", "**/*"]
 }

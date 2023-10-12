@@ -40,7 +40,12 @@ const FileUploadPopup = ({
       >
         <Typography className="capitalize">Upload File</Typography>
 
-        <form onSubmit={handlePopupAction} ref={formRef} required>
+        <form
+          onSubmit={handlePopupAction}
+          encType="multipart/form-data"
+          ref={formRef}
+          required
+        >
           <div className="flex flex-col gap-4 items-center justify-center w-full my-4">
             <FileInput
               selectedFile={selectedFile}

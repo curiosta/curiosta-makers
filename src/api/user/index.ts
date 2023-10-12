@@ -5,8 +5,8 @@ import { signal } from "@preact/signals";
 
 type TCustomerMetadata = {
   cart_id?: string | null;
-  stripe_id?: string;
-  country_id?: number;
+  profile_image_key?: string;
+  govt_id_key?: string;
 };
 
 export type TCustomer = Omit<Customer, "password_hash" | "metadata"> & {

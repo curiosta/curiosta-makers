@@ -1,15 +1,17 @@
 import medusa from "@api/medusa";
 import user from "@api/user";
 import useLocalStorage from "@hooks/useLocalStorage";
-import type {
-  StoreCompleteCartRes,
-  Cart,
-  StorePostCartReq,
-  StorePostCartsCartReq,
-  StorePostCartsCartLineItemsReq,
+import {
+  type StoreCompleteCartRes,
+  type Cart,
+  type StorePostCartReq,
+  type StorePostCartsCartReq,
+  type StorePostCartsCartLineItemsReq,
+  Region,
 } from "@medusajs/medusa";
 import type { PricedShippingOption } from "@medusajs/medusa/dist/types/pricing";
 import { effect, signal } from "@preact/signals";
+import { listRegion } from "../user/region/listRegion";
 
 type TCart = Omit<Cart, "refundable_amount" | "refunded_total">;
 type TCartMetadata = {
@@ -299,6 +301,26 @@ class CartStore {
   async completeCart(id: string) {
     if (!this.store.value?.id) return null;
     this.loading.value = "cart:complete";
+    const currentUser = user.customer.value;
+    const billing_address_id = currentUser?.billing_address_id;
+    if (!billing_address_id) {
+      this.loading.value = undefined;
+      throw new Error("Default address not found!");
+    }
+    const regionRes = await listRegion();
+    const regions: Region[] = regionRes?.regions;
+    const shipping_addresses = currentUser?.shipping_addresses;
+    const shippingCountryCodes = shipping_addresses.map(
+      (address) => address.country_code
+    );
+    const regionId = regions?.find((region) =>
+      shippingCountryCodes.includes(region.countries[0]?.iso_2)
+    )?.id;
+    await cart.updateCart({
+      region_id: regionId,
+      shipping_address: billing_address_id,
+      billing_address: billing_address_id,
+    });
     await this.createPaymentSession();
     const result = await medusa.carts.complete(id);
     this.orderStore.value = result;

@@ -13,6 +13,8 @@ import cart from "@/api/cart";
 import AddProduct from "@/components/AddProduct";
 import ViewCartLayer from "@/components/ViewCartLayer";
 import { Link } from "preact-router";
+import user from "@/api/user";
+import PopUp from "@/components/Popup";
 
 interface Props {
   id: string;
@@ -28,6 +30,8 @@ const RequestItems = ({ id }: Props) => {
   const selectedCartType = useSignal<string | null>(null);
   const selectedVariantId = useSignal<string | null>(null);
   const selectedRefIndex = useSignal<number | null>(null);
+  const isProfileCompletePopUp = useSignal<boolean>(false);
+  const isProfileImgIdCardPopUp = useSignal<boolean>(false);
 
   const getProducts = async () => {
     isLoading.value = true;
@@ -52,6 +56,17 @@ const RequestItems = ({ id }: Props) => {
 
   // handle dialog
   const handleDialog = (index: number, product: PricedProduct) => {
+    const { shipping_addresses, phone } = user.customer.value;
+    const { profile_image_key, govt_id_key } = user.customer.value?.metadata;
+
+    const isProfileComplete = shipping_addresses?.length > 0 && phone !== null;
+
+    if (!profile_image_key || !govt_id_key) {
+      return (isProfileImgIdCardPopUp.value = true);
+    }
+    if (!isProfileComplete) {
+      return (isProfileCompletePopUp.value = true);
+    }
     dialogRef.current.map((val, i) => i != index && val?.close());
     if (dialogRef.current[index]?.open) {
       dialogRef.current[index]?.close();
@@ -68,6 +83,7 @@ const RequestItems = ({ id }: Props) => {
     if (checked) {
       selectedCartType.value = value;
     }
+
     if (selectedVariantId.value && selectedCartType.value) {
       try {
         await cart.addItem({
@@ -79,8 +95,6 @@ const RequestItems = ({ id }: Props) => {
       } finally {
         dialogRef.current[selectedRefIndex.value]?.close();
       }
-    } else {
-      alert("Can't add to card because variant id not found");
     }
   };
   return (
@@ -193,7 +207,18 @@ const RequestItems = ({ id }: Props) => {
         )}
         <ViewCartLayer actionText="View Cart" actionLink="/cart" />
       </div>
-
+      <PopUp
+        isPopup={isProfileCompletePopUp}
+        actionText="Check profile"
+        actionLink={`/user/${user.customer.value?.id}`}
+        title="Please complete your profile first!"
+        subtitle="Add your phone no. and address before request any item"
+      />
+      <PopUp
+        isPopup={isProfileImgIdCardPopUp}
+        title="Profile image or ID Card not found!"
+        subtitle="Contact the admin for adding a profile image and government ID card."
+      />
       <BottomNavbar />
     </div>
   );

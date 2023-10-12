@@ -30,7 +30,7 @@ const FileInput = ({ selectedFile, acceptFileType }: TFileInput) => {
       {selectedFile.value ? <span>{selectedFile.value?.name}</span> : null}
       <input
         type="file"
-        name="file_upload"
+        name="file"
         id={id}
         className="sr-only"
         accept={acceptFileType}

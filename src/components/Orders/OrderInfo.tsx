@@ -16,6 +16,7 @@ import { adminPaymentCapture } from "@/api/admin/orders/paymentCapture";
 import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
 import { ordersList } from "@/api/user/orders/ordersList";
 import { Link } from "preact-router";
+import AddressCard from "../AddressList/AddressCard";
 
 interface Props {
   id: string;
@@ -259,10 +260,31 @@ const OrderInfo = ({ id }: Props) => {
               </div>
             ) : null}
 
+            {!isUser.value ? (
+              <div className="flex flex-col gap-4 my-4">
+                <Typography size="h6/semi-bold" className="text-center">
+                  Address
+                </Typography>
+                {order.value?.shipping_address ? (
+                  <AddressCard
+                    address={order.value?.shipping_address}
+                    variant="order"
+                  />
+                ) : (
+                  <Typography
+                    size="body2/normal"
+                    variant="error"
+                    className="my-4 text-center"
+                  >
+                    Address not found
+                  </Typography>
+                )}
+              </div>
+            ) : null}
             {!isUser.value &&
             order.value?.fulfillment_status === "not_fulfilled" ? (
               order.value?.payment_status === "awaiting" ? (
-                <div className="w-full flex items-center justify-evenly mt-8">
+                <div className="w-full flex items-center justify-evenly my-8">
                   <Button type="button" onClick={hanldeApprove}>
                     Approve
                   </Button>
@@ -271,7 +293,7 @@ const OrderInfo = ({ id }: Props) => {
                   </Button>
                 </div>
               ) : (
-                <div className="flex justify-center">
+                <div className="flex justify-center my-8">
                   <Button link={`/pick-items/${order.value?.id}`}>
                     Start Picking
                   </Button>

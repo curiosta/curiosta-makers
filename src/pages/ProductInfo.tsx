@@ -1,11 +1,13 @@
 import { adminGetProduct } from "@/api/admin/product/getProduct";
 import cart from "@/api/cart";
 import { getProductInfo } from "@/api/product/getProductInfo";
+import user from "@/api/user";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import ManageQty from "@/components/ManageQty";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
+import PopUp from "@/components/Popup";
 import ProductImage from "@/components/ProductImage";
 import Radio from "@/components/Radio";
 import Typography from "@/components/Typography";
@@ -26,6 +28,8 @@ const ProductInfo = ({ id }: Props) => {
   const isLoading = useSignal<boolean>(false);
   const cartTypeOpen = useSignal<boolean>(false);
   const selectedCartType = useSignal<string | null>(null);
+  const isProfileCompletePopUp = useSignal<boolean>(false);
+  const isProfileImgIdCardPopUp = useSignal<boolean>(false);
 
   const getProduct = async () => {
     isLoading.value = true;
@@ -42,6 +46,21 @@ const ProductInfo = ({ id }: Props) => {
   useEffect(() => {
     getProduct();
   }, []);
+
+  const handleAddToCart = () => {
+    const { shipping_addresses, phone } = user.customer.value;
+    const { profile_image_key, govt_id_key } = user.customer.value?.metadata;
+    const isProfileComplete = shipping_addresses?.length > 0 && phone !== null;
+
+    if (!profile_image_key || !govt_id_key) {
+      return (isProfileImgIdCardPopUp.value = true);
+    }
+    if (!isProfileComplete) {
+      return (isProfileCompletePopUp.value = true);
+    }
+
+    cartTypeOpen.value = !cartTypeOpen.value;
+  };
 
   // handle radio input and add line items with selected cart type value
   const handleRadioInput = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -60,8 +79,6 @@ const ProductInfo = ({ id }: Props) => {
       } finally {
         cartTypeOpen.value = false;
       }
-    } else {
-      alert("Can't add to card because variant id not found");
     }
   };
 
@@ -214,7 +231,7 @@ const ProductInfo = ({ id }: Props) => {
                   type="button"
                   variant="secondary"
                   className="!w-full border-2 !rounded-lg mt-4"
-                  onClick={() => (cartTypeOpen.value = !cartTypeOpen.value)}
+                  onClick={handleAddToCart}
                 >
                   Add to cart
                 </Button>
@@ -234,6 +251,18 @@ const ProductInfo = ({ id }: Props) => {
         </div>
       )}
 
+      <PopUp
+        isPopup={isProfileCompletePopUp}
+        actionText="Check profile"
+        actionLink={`/user/${user.customer.value?.id}`}
+        title="Please complete your profile first!"
+        subtitle="Add your phone no. and address before request any item"
+      />
+      <PopUp
+        isPopup={isProfileImgIdCardPopUp}
+        title="Profile image or ID Card not found!"
+        subtitle="Contact the admin for adding a profile image and government ID card."
+      />
       <BottomNavbar />
     </div>
   );

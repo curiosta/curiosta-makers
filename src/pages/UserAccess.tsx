@@ -19,6 +19,7 @@ import Toggle from "@/components/Toggle";
 import Typography from "@/components/Typography";
 import { Customer } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
+import { Link } from "preact-router";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
 
@@ -239,10 +240,17 @@ const UserAccess = () => {
         ) : null}
         {isLoading.value !== "user:get" ? (
           users.value?.length ? (
-            <div className="w-full flex flex-col  my-2 gap-4">
+            <div
+              className={`w-full flex flex-col  my-2 gap-4 ${
+                count.value < limit.value ? "mb-20" : ""
+              }`}
+            >
               {users.value.map((user, index) => (
                 <div className="w-full flex justify-between items-center relative">
-                  <div className="flex items-center gap-4 w-10/12">
+                  <Link
+                    href={`/user/${user.id}`}
+                    className="flex items-center gap-4 w-10/12"
+                  >
                     <div className="w-9 h-9 flex">
                       <Chip className="!bg-primary-700 uppercase text-white">
                         {user.first_name
@@ -260,7 +268,7 @@ const UserAccess = () => {
                         {user?.email}
                       </Typography>
                     )}
-                  </div>
+                  </Link>
                   <Button
                     type="button"
                     variant="icon"

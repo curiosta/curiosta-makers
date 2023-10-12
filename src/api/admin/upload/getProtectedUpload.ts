@@ -1,6 +1,6 @@
 import medusa from "@api/medusa";
 
-export const adminGetDownloadLink = async ({
+export const adminGetProtectedUploadFile = async ({
   file_key,
 }: {
   file_key: string;

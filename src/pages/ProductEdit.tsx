@@ -1,7 +1,7 @@
 import { adminListCategory } from "@/api/admin/category/listCategory";
 import { adminGetProduct } from "@/api/admin/product/getProduct";
 import { adminUpdateProduct } from "@/api/admin/product/updateProduct";
-import { adminUploadFile } from "@/api/admin/product/uploadFile";
+import { adminUploadFile } from "@/api/admin/upload/uploadFile";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
 import PopUp from "@/components/Popup";

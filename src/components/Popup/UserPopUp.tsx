@@ -7,6 +7,8 @@ import { Customer, User } from "@medusajs/medusa";
 import NewInput from "../Input/NewInput";
 import { adminGetCustomer } from "@/api/admin/customers/getCustomer";
 import { adminGetuser } from "@/api/admin/adminUsers/getAdminUser";
+import { isUser } from "@/store/userState";
+import user, { TCustomer } from "@/api/user";
 
 type PopUp = {
   isPopup: Signal<boolean>;
@@ -17,6 +19,10 @@ type PopUp = {
   type: "add" | "edit";
   variant: "adminUser" | "user";
   selectedId?: string;
+};
+
+type TUser = User & {
+  phone: string;
 };
 
 const UserPopUp = ({
@@ -30,22 +36,27 @@ const UserPopUp = ({
   variant,
 }: PopUp) => {
   const isLoading = useSignal<boolean>(false);
-  const user = useSignal<Customer | User | null>(null);
+  const userData = useSignal<TUser | TCustomer | null>(null);
 
   const getUser = async () => {
     isLoading.value = true;
-    if (!selectedId?.length) return;
-    try {
-      const userRes =
-        variant === "user"
-          ? await adminGetCustomer({
-              customerId: selectedId,
-            })
-          : await adminGetuser({
-              userId: selectedId,
-            });
 
-      user.value = variant === "user" ? userRes?.customer : userRes?.user;
+    try {
+      if (isUser.value) {
+        userData.value = user.customer.value;
+      } else {
+        if (!selectedId?.length) return;
+        const userRes =
+          variant === "user"
+            ? await adminGetCustomer({
+                customerId: selectedId,
+              })
+            : await adminGetuser({
+                userId: selectedId,
+              });
+
+        userData.value = variant === "user" ? userRes?.customer : userRes?.user;
+      }
     } catch (error) {
     } finally {
       isLoading.value = undefined;
@@ -60,7 +71,7 @@ const UserPopUp = ({
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-full backdrop-brightness-75 items-center justify-center ${
+      className={`fixed top-0 left-0 w-full h-full backdrop-brightness-75 z-10 items-center justify-center ${
         isPopup.value ? "flex " : "hidden"
       }`}
     >
@@ -80,22 +91,41 @@ const UserPopUp = ({
         <form onSubmit={handlePopupAction} ref={formRef} required>
           <div className="flex flex-col gap-4 items-center justify-center w-full my-4">
             {type === "edit" ? (
-              <Typography>Email: {user.value?.email}</Typography>
+              <Typography className="break-all">
+                Email: {userData.value?.email}
+              </Typography>
             ) : null}
             <NewInput
               name="first_name"
               label="First Name"
               type="text"
-              defaultValue={type === "edit" ? user.value?.first_name : ""}
+              minLength={3}
+              maxLength={20}
+              defaultValue={type === "edit" ? userData.value?.first_name : ""}
               required
             />
             <NewInput
               name="last_name"
               label="Last Name"
               type="text"
-              defaultValue={type === "edit" ? user.value?.last_name : ""}
+              minLength={3}
+              maxLength={20}
+              defaultValue={type === "edit" ? userData.value?.last_name : ""}
               required
             />
+            {variant === "user" ? (
+              <NewInput
+                name="phone"
+                type="tel"
+                label="Phone Number"
+                autocomplete="phone"
+                pattern="(\+91)?(-)?\s*?(91)?\s*?(\d{3})-?\s*?(\d{3})-?\s*?(\d{4})"
+                placeholder={"+91 9876543210"}
+                title="Invalid phone number"
+                defaultValue={type === "edit" ? userData.value?.phone : ""}
+                required
+              />
+            ) : null}
             {type === "add" ? (
               <>
                 <NewInput

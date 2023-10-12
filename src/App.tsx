@@ -37,6 +37,7 @@ import UserAccess from "@pages/UserAccess";
 import AdminUserAccess from "@pages/AdminUserAccess";
 import ProductAdd from "@pages/ProductAdd";
 import SearchResult from "@pages/SearchResult";
+import UserProfile from "@pages/UserProfile";
 import { useEffect } from "preact/hooks";
 import ErrorBanner from "./components/ErrorBanner";
 import { categoriesList } from "./api/product/categoriesList";
@@ -119,6 +120,7 @@ const App = () => {
       <Route path="/access-master/user-access" component={UserAccess} />
       <Route path="/access-master/admin-access" component={AdminUserAccess} />
       <Route path="/search" component={SearchResult} />
+      <Route path="/user/:id" component={UserProfile} />
     </Router>
   );
 };
