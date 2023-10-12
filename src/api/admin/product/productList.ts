@@ -1,5 +1,13 @@
 import medusa from "@api/medusa";
-import { AdminGetProductsParams } from "@medusajs/medusa";
+
+type TGetProductsParams = {
+  q?: string;
+  limit?: number;
+  offset?: number;
+  category_id?: string[];
+  order?: string;
+  status?: string[];
+};
 
 export const adminProductList = async ({
   q,
@@ -7,12 +15,14 @@ export const adminProductList = async ({
   offset,
   category_id,
   order,
-}: AdminGetProductsParams) => {
+  status,
+}: TGetProductsParams) => {
   return medusa.admin.products.list({
     q,
     limit,
     offset,
     category_id,
     order,
+    status,
   });
 };
