@@ -1,4 +1,5 @@
 import cart from "@/api/cart";
+import user from "@/api/user";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import ManageQty from "@/components/ManageQty";
@@ -35,6 +36,7 @@ const Cart = () => {
   const isCartCompletePopUp = useSignal<boolean>(false);
   const isCartDiscarding = useSignal<boolean>(false);
   const isCartComplete = useSignal<boolean>(false);
+  const addressSelectPopUp = useSignal<boolean>(false);
 
   const handleSelectDate = async (e: ChangeEvent<HTMLInputElement>) => {
     const { value, checked, name } = e.currentTarget;
@@ -75,6 +77,11 @@ const Cart = () => {
       isCartCompletePopUp.value = true;
     } catch (error) {
       console.log(error);
+      if (error instanceof Error) {
+        if (error.message.includes("Default address not found")) {
+          addressSelectPopUp.value = true;
+        }
+      }
     } finally {
       isCartComplete.value = false;
     }
@@ -282,6 +289,13 @@ const Cart = () => {
         <LoadingPopUp loadingText="Deleting please wait" />
       ) : null}
 
+      <PopUp
+        isPopup={addressSelectPopUp}
+        actionText="Check Address"
+        actionLink={`/user/${user.customer.value?.id}`}
+        title="Default address not found!"
+        subtitle="Please set a default address from address list before proceed request"
+      />
       <BottomNavbar />
     </div>
   );

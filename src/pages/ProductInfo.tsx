@@ -28,6 +28,7 @@ const ProductInfo = ({ id }: Props) => {
   const cartTypeOpen = useSignal<boolean>(false);
   const selectedCartType = useSignal<string | null>(null);
   const isProfileCompletePopUp = useSignal<boolean>(false);
+  const isProfileImgIdCardPopUp = useSignal<boolean>(false);
 
   const getProduct = async () => {
     isLoading.value = true;
@@ -48,15 +49,15 @@ const ProductInfo = ({ id }: Props) => {
   const handleAddToCart = () => {
     const { shipping_addresses, phone } = user.customer.value;
     const { profile_image_key, govt_id_key } = user.customer.value?.metadata;
-    const isProfileComplete =
-      shipping_addresses?.length > 0 &&
-      phone !== null &&
-      govt_id_key &&
-      profile_image_key;
+    const isProfileComplete = shipping_addresses?.length > 0 && phone !== null;
 
+    if (!profile_image_key || !govt_id_key) {
+      return (isProfileImgIdCardPopUp.value = true);
+    }
     if (!isProfileComplete) {
       return (isProfileCompletePopUp.value = true);
     }
+
     cartTypeOpen.value = !cartTypeOpen.value;
   };
 
@@ -254,8 +255,12 @@ const ProductInfo = ({ id }: Props) => {
         actionText="Check profile"
         actionLink={`/user/${user.customer.value?.id}`}
         title="Please complete your profile first!"
-        subtitle="Add your phone no., address, profile image and any valid govt. Id before request any item. 
-        For uploading profile image and govt. id contact makers admin"
+        subtitle="Add your phone no. and address before request any item"
+      />
+      <PopUp
+        isPopup={isProfileImgIdCardPopUp}
+        title="Profile image or ID Card not found!"
+        subtitle="Contact the admin for adding a profile image and government ID card."
       />
       <BottomNavbar />
     </div>

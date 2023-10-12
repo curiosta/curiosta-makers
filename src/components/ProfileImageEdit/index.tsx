@@ -13,7 +13,6 @@ import DeletePopUp from "../Popup/DeletePopUp";
 type TProfileImageEdit = {
   isProfileImageEdit: Signal<boolean>;
   customerId: string;
-  getUser: () => Promise<void>;
   profileImage: Signal<{
     key: string;
     url: string;
