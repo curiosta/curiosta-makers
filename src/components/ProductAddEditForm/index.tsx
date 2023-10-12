@@ -196,6 +196,14 @@ const ProductAddEditForm = ({
         Upload
       </Button>
 
+      <NewInput
+        type="number"
+        name="quantity"
+        label="Inventory quantity"
+        value={product.value?.variants[0]?.inventory_quantity}
+        required
+      />
+
       <Typography size="body1/medium">Select category</Typography>
 
       {isLoading ? (

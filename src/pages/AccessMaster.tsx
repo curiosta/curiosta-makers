@@ -6,7 +6,7 @@ import { Link } from "preact-router";
 const AccessMaster = () => {
   const accessOptions = [
     { title: "User Access", link: "/access-master/user-access" },
-    { title: "Admin User Access", link: "/access-master/admin-access" },
+    { title: "Admin Access", link: "/access-master/admin-access" },
   ];
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">

@@ -20,6 +20,7 @@ import { useEffect, useRef } from "preact/hooks";
 
 interface Props {
   id: string;
+  handle?: string;
 }
 
 const ProductInfo = ({ id }: Props) => {

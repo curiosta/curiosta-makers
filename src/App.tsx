@@ -38,19 +38,38 @@ import AdminUserAccess from "@pages/AdminUserAccess";
 import ProductAdd from "@pages/ProductAdd";
 import SearchResult from "@pages/SearchResult";
 import UserProfile from "@pages/UserProfile";
+import { useEffect } from "preact/hooks";
+import ErrorBanner from "./components/ErrorBanner";
+import { categoriesList } from "./api/product/categoriesList";
 
 const App = () => {
+  const isServerDown = useSignal<boolean>(false);
   const currentUrl = useSignal<string>(getCurrentUrl());
   const publicRoute = ["/welcome", "/login", "/forgot-password"];
+  const getCategory = async () => {
+    try {
+      await categoriesList({ limit: 1, offset: 0 });
+    } catch (error) {
+      isServerDown.value = true;
+    }
+  };
+
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   const userState = isUser.value ? user.state.value : admin.state.value;
 
-  if (!publicRoute.includes(currentUrl.value) && userState === "loading") {
-    return (
-      <div className="h-screen">
-        <Loading loadingText="loading" />
-      </div>
-    );
+  if (isServerDown.value) {
+    return <ErrorBanner errorMessage="We have an internal server error!" />;
+  } else {
+    if (!publicRoute.includes(currentUrl.value) && userState === "loading") {
+      return (
+        <div className="h-screen">
+          <Loading loadingText="loading" />
+        </div>
+      );
+    }
   }
 
   // if user not authenticated then redirect to /login page
@@ -90,7 +109,7 @@ const App = () => {
       <Route path="/approve" component={Approve} />
       <Route path="/master" component={Master} />
       <Route path="/category-master" component={CategoryMaster} />
-      <Route path="/product/:id" component={ProductInfo} />
+      <Route path="/product/:id/:handle?" component={ProductInfo} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/password-reset" component={PasswordReset} />
       <Route path="/material-master" component={MaterialMaster} />

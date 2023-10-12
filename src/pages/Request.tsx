@@ -28,6 +28,9 @@ const Request = () => {
         limit: limit.value,
         offset: offset.value,
       });
+      if (!categoryRes?.product_categories?.length && categoryRes?.count) {
+        offset.value = 0;
+      }
       categories.value = categoryRes?.product_categories;
       count.value = categoryRes?.count;
     } catch (error) {
@@ -58,24 +61,32 @@ const Request = () => {
         <Typography size="h6/normal">Choose Category</Typography>
 
         {!isLoading.value ? (
-          <div>
-            <div className="grid grid-cols-3 my-2 items-start gap-4">
-              {categories.value.map((category, index) => (
-                <Button
-                  key={index}
-                  link={`/create-requests/${category.id}`}
-                  variant="icon"
-                  className={"flex-col items-center gap-2 !p-0"}
-                >
-                  <div className="border border-black rounded-full bg-secondray shadow-lg">
-                    <img src={leser_icon} alt="icon" className="p-3" />
-                  </div>
-                  <Typography size="body2/normal">{category.name}</Typography>
-                </Button>
-              ))}
+          categories.value?.length ? (
+            <div className="w-full">
+              <div className="grid grid-cols-3 my-2 items-start gap-4">
+                {categories.value.map((category, index) => (
+                  <Button
+                    key={index}
+                    link={`/create-requests/${category.id}`}
+                    variant="icon"
+                    className={"flex-col items-center gap-2 !p-0"}
+                  >
+                    <div className="border border-black rounded-full bg-secondray shadow-lg">
+                      <img src={leser_icon} alt="icon" className="p-3" />
+                    </div>
+                    <Typography size="body2/normal">{category.name}</Typography>
+                  </Button>
+                ))}
+              </div>
+              <OffsetPagination limit={limit} offset={offset} count={count} />
             </div>
-            <OffsetPagination limit={limit} offset={offset} count={count} />
-          </div>
+          ) : !categories.value?.length && count.value ? (
+            <div className="w-full h-40 ">
+              <Loading loadingText="loading" />
+            </div>
+          ) : (
+            <Typography className="mt-8">No category found</Typography>
+          )
         ) : (
           <div className="h-40">
             <Loading loadingText="loading" />

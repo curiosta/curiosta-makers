@@ -84,7 +84,8 @@ const UserPopUp = ({
         className={`absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6`}
       >
         <Typography size="body1/semi-bold" className="capitalize">
-          {type === "add" ? "Add" : "Update"} User
+          {type === "add" ? "Add" : "Update"}{" "}
+          {variant === "adminUser" ? "Admin" : "User"}
         </Typography>
 
         <form onSubmit={handlePopupAction} ref={formRef} required>

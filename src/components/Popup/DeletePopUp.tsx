@@ -10,9 +10,14 @@ type TPopUp = {
   isPopup: Signal<boolean>;
   actionText?: string;
   actionLink?: string;
-  handlePopupAction: (id: string, index: number) => Promise<void>;
+  handlePopupAction: (
+    id: string,
+    index: number,
+    email?: string
+  ) => Promise<void>;
   errorMessage?: string;
   isLoading: boolean;
+  email?: string;
 };
 
 const DeletePopUp = ({
@@ -26,6 +31,7 @@ const DeletePopUp = ({
   handlePopupAction,
   errorMessage,
   isLoading,
+  email,
 }: TPopUp) => {
   return (
     <div
@@ -86,7 +92,7 @@ const DeletePopUp = ({
                 type="button"
                 variant="danger"
                 className={`${actionText ? "flex" : "hidden"}`}
-                onClick={() => handlePopupAction(id, index)}
+                onClick={() => handlePopupAction(id, index, email)}
               >
                 {actionText}
               </Button>
