@@ -1,6 +1,5 @@
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 import Button from "../Button";
-import cart from "@/api/cart";
 import ManageQty from "../ManageQty";
 import { Signal } from "@preact/signals";
 import { TDraftOrderItems } from "@pages/CreateDraftOrder";

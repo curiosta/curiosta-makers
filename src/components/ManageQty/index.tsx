@@ -83,7 +83,7 @@ const ManageQty = ({
     loadingInputQty.value = true;
     try {
       if (page === "draftOrder") {
-        if (inventoryQty <= draftItem.quantity) {
+        if (inventoryQty < quantity) {
           throw new Error(`Cannot set quantity exceeding ${inventoryQty} !.`);
         }
         const updatedData = draftOrderItems.value?.map((item) =>
@@ -233,7 +233,7 @@ const ManageQty = ({
       {page !== "cart" ? (
         <Typography size="body2/normal" className="capitalize">
           {page === "draftOrder"
-            ? draftItem.metadata?.orderType
+            ? draftItem.metadata?.cartType
             : productItem.metadata?.cartType}{" "}
           Request
         </Typography>
