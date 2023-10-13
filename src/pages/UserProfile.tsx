@@ -38,8 +38,6 @@ type TLoadableOptions =
   | "profile:govtId:upload"
   | "profile:govtId:delete";
 
-type TFileUplaod = { key: string; url: string };
-
 const UserProfile = ({ id }: Props) => {
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const userData = useSignal<Customer | TCustomer | null>(null);
@@ -56,11 +54,10 @@ const UserProfile = ({ id }: Props) => {
   const activeToggle = useSignal<string[]>(["awaiting"]);
   const address = useSignal<Address[]>([]);
   const isProfileImageEdit = useSignal<boolean>(false);
-  const profileImage = useSignal<TFileUplaod>({
-    key: "",
-    url: "",
-  });
-  const profileIdCard = useSignal<TFileUplaod>({ key: "", url: "" });
+  const profileImageKey = useSignal<string | undefined>(undefined);
+  const profileImageUrl = useSignal<string | undefined>(undefined);
+  const profileIdCardKey = useSignal<string | undefined>(undefined);
+  const profileIdCardUrl = useSignal<string | undefined>(undefined);
   const selectedFile = useSignal<File | null>(null);
   const uploadPopup = useSignal<boolean>(false);
   const uploadFormRef = useRef<HTMLFormElement>(null);
@@ -79,18 +76,18 @@ const UserProfile = ({ id }: Props) => {
           userRes?.customer as TCustomer
         )?.metadata;
         if (profile_image_key) {
-          profileImage.value.key = profile_image_key;
+          profileImageKey.value = profile_image_key;
           const profileImageUploadRes = await adminGetProtectedUploadFile({
             file_key: profile_image_key,
           });
-          profileImage.value.url = profileImageUploadRes?.download_url;
+          profileImageUrl.value = profileImageUploadRes?.download_url;
         }
         if (govt_id_key) {
-          profileIdCard.value.key = govt_id_key;
+          profileIdCardKey.value = govt_id_key;
           const govtIdUploadRes = await adminGetProtectedUploadFile({
             file_key: govt_id_key,
           });
-          profileIdCard.value.url = govtIdUploadRes?.download_url;
+          profileIdCardUrl.value = govtIdUploadRes?.download_url;
         }
       }
       address.value = userData.value?.shipping_addresses;
@@ -208,7 +205,7 @@ const UserProfile = ({ id }: Props) => {
       });
 
       uploadPopup.value = false;
-      window.location.reload();
+      getUser();
     } catch (error) {
       if (error instanceof Error) {
         errorMessage.value = error.message;
@@ -222,8 +219,8 @@ const UserProfile = ({ id }: Props) => {
   const handleDeleteIdCard = async () => {
     isLoading.value = "profile:govtId:delete";
     try {
-      if (!profileIdCard.value.key) return;
-      await adminDeleteUploadFile(profileIdCard.value.key);
+      if (!profileIdCardKey.value) return;
+      await adminDeleteUploadFile(profileIdCardKey.value);
       await adminUpdateCustomer({
         customerId: id,
         metadata: { govt_id_key: "" },
@@ -257,9 +254,7 @@ const UserProfile = ({ id }: Props) => {
                   ) : (
                     <img
                       src={
-                        profileImage.value?.url
-                          ? profileImage.value?.url
-                          : "/images/placeholderImg.svg"
+                        profileImageUrl.value ?? "/images/placeholderImg.svg"
                       }
                       alt="profile"
                       className="w-full border-2 p-1.5 rounded-full shadow"
@@ -357,7 +352,7 @@ const UserProfile = ({ id }: Props) => {
               <div className="p-2">
                 <Typography size="h6/medium">Govt. id</Typography>
                 <div className="flex flex-col items-center justify-center gap-4">
-                  {!profileIdCard.value?.url ? (
+                  {!profileIdCardUrl.value ? (
                     <div>
                       <Typography
                         size="body2/normal"
@@ -380,8 +375,7 @@ const UserProfile = ({ id }: Props) => {
                     <div className="flex flex-col gap-2 items-center my-4 w-full">
                       <img
                         src={
-                          profileIdCard.value?.url ??
-                          "/images/placeholderImg.svg"
+                          profileIdCardUrl.value ?? "/images/placeholderImg.svg"
                         }
                         className="w-9/12 object-cover border rounded-lg"
                         alt="govt_id"
@@ -496,7 +490,8 @@ const UserProfile = ({ id }: Props) => {
         <ProfileImageEdit
           isProfileImageEdit={isProfileImageEdit}
           customerId={id}
-          profileImage={profileImage}
+          profileImagekey={profileImageKey}
+          profileImageUrl={profileImageUrl}
         />
       ) : null}
       {isLoading.value === "profile:govtId:upload" ? (

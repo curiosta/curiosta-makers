@@ -13,17 +13,16 @@ import DeletePopUp from "../Popup/DeletePopUp";
 type TProfileImageEdit = {
   isProfileImageEdit: Signal<boolean>;
   customerId: string;
-  profileImage: Signal<{
-    key: string;
-    url: string;
-  }>;
+  profileImagekey: Signal<string>;
+  profileImageUrl: Signal<string>;
 };
 type TLoadableOptions = "profile:image:upload" | "profile:image:delete";
 
 const ProfileImageEdit = ({
   isProfileImageEdit,
   customerId,
-  profileImage,
+  profileImagekey,
+  profileImageUrl,
 }: TProfileImageEdit) => {
   const selectedFile = useSignal<File | null>(null);
   const uploadPopup = useSignal<boolean>(false);
@@ -56,12 +55,13 @@ const ProfileImageEdit = ({
   const handleDeleteImage = async () => {
     isLoading.value = "profile:image:delete";
     try {
-      if (!profileImage.value) return;
-      await adminDeleteUploadFile(profileImage.value.key);
+      if (!profileImagekey.value) return;
+      await adminDeleteUploadFile(profileImagekey.value);
       await adminUpdateCustomer({
         customerId: customerId,
         metadata: { profile_image_key: "" },
       });
+      isDeletePopup.value = false;
       window.location.reload();
     } catch (error) {
     } finally {
@@ -125,7 +125,7 @@ const ProfileImageEdit = ({
               </svg>
               Upload
             </Button>
-            {profileImage.value ? (
+            {profileImageUrl.value ? (
               <Button
                 type="button"
                 variant="icon"
