@@ -4,6 +4,13 @@ export const adminCustomersList = async ({
   q,
   offset,
   limit,
+  has_account,
 }: AdminGetCustomersParams) => {
-  return medusa.admin.customers.list({ q, offset, limit });
+  return medusa.admin.customers.list({
+    q,
+    offset,
+    limit,
+    has_account,
+    expand: "billing_address",
+  });
 };

@@ -1,17 +1,27 @@
-import { useSignal } from "@preact/signals";
+import { Signal, useSignal } from "@preact/signals";
 import Button from "@components/Button";
 import Typography from "@components/Typography";
 import { LineItem } from "@medusajs/medusa";
 import cart from "@/api/cart";
 import Input from "@components/Input";
 import { ChangeEvent } from "preact/compat";
+import { TDraftOrderItems } from "@pages/CreateDraftOrder";
 
 type TManageQty = {
-  productItem: LineItem;
-  page: "cart" | "request";
+  productItem?: LineItem;
+  page: "cart" | "request" | "draftOrder";
+  draftOrderItems?: Signal<TDraftOrderItems[]>;
+  draftItem?: TDraftOrderItems;
+  inventoryQty?: number;
 };
 
-const ManageQty = ({ productItem, page }: TManageQty) => {
+const ManageQty = ({
+  productItem,
+  page,
+  draftOrderItems,
+  draftItem,
+  inventoryQty,
+}: TManageQty) => {
   const loadingQty = useSignal<boolean>(false);
   const loadingInputQty = useSignal<boolean>(false);
   const errorMessage = useSignal<string | null>(null);
@@ -20,7 +30,19 @@ const ManageQty = ({ productItem, page }: TManageQty) => {
     loadingQty.value = true;
     errorMessage.value = null;
     try {
-      await cart.setItemQuantity(productItem.id, productItem.quantity + 1);
+      if (page === "draftOrder") {
+        if (inventoryQty <= draftItem.quantity) {
+          throw new Error(`Cannot set quantity exceeding ${inventoryQty} !.`);
+        }
+        const updatedData = draftOrderItems.value?.map((item) =>
+          item.variant_id === draftItem.variant_id
+            ? { ...item, quantity: draftItem.quantity + 1 }
+            : item
+        );
+        draftOrderItems.value = updatedData;
+      } else {
+        await cart.setItemQuantity(productItem.id, productItem.quantity + 1);
+      }
     } catch (error) {
       if (error instanceof Error) {
         errorMessage.value = error.message;
@@ -33,7 +55,19 @@ const ManageQty = ({ productItem, page }: TManageQty) => {
     loadingQty.value = true;
     errorMessage.value = null;
     try {
-      await cart.setItemQuantity(productItem.id, productItem.quantity - 1);
+      if (page === "draftOrder") {
+        if (draftItem.quantity <= 1) {
+          throw new Error("Cannot set quantity less than 1.");
+        }
+        const updatedData = draftOrderItems.value?.map((item) =>
+          item.variant_id === draftItem.variant_id
+            ? { ...item, quantity: draftItem.quantity - 1 }
+            : item
+        );
+        draftOrderItems.value = updatedData;
+      } else {
+        await cart.setItemQuantity(productItem.id, productItem.quantity - 1);
+      }
     } catch (error) {
       if (error instanceof Error) {
         errorMessage.value = error.message;
@@ -48,7 +82,19 @@ const ManageQty = ({ productItem, page }: TManageQty) => {
     errorMessage.value = null;
     loadingInputQty.value = true;
     try {
-      await cart.setItemQuantity(productItem.id, quantity);
+      if (page === "draftOrder") {
+        if (inventoryQty < quantity) {
+          throw new Error(`Cannot set quantity exceeding ${inventoryQty} !.`);
+        }
+        const updatedData = draftOrderItems.value?.map((item) =>
+          item.variant_id === draftItem.variant_id
+            ? { ...item, quantity: quantity }
+            : item
+        );
+        draftOrderItems.value = updatedData;
+      } else {
+        await cart.setItemQuantity(productItem.id, quantity);
+      }
     } catch (error) {
       console.log(error);
       if (error instanceof Error) {
@@ -59,6 +105,12 @@ const ManageQty = ({ productItem, page }: TManageQty) => {
     }
   };
 
+  const handleDeleteDraftItem = () => {
+    const updatedData = draftOrderItems.value?.filter(
+      (item) => item.variant_id !== draftItem.variant_id
+    );
+    draftOrderItems.value = updatedData;
+  };
   return (
     <div
       className={`flex flex-col gap-2 items-center relative  ${
@@ -113,7 +165,11 @@ const ManageQty = ({ productItem, page }: TManageQty) => {
               className={`text-center ${
                 loadingInputQty.value ? "bg-gray-100" : ""
               }`}
-              value={productItem.quantity}
+              value={
+                page === "draftOrder"
+                  ? draftItem.quantity
+                  : productItem.quantity
+              }
               onBlur={handleQty}
               disabled={loadingInputQty.value}
             />
@@ -150,7 +206,11 @@ const ManageQty = ({ productItem, page }: TManageQty) => {
           type="button"
           variant="icon"
           className="!p-0"
-          onClick={() => cart.removeItem(productItem.id)}
+          onClick={() =>
+            page === "draftOrder"
+              ? handleDeleteDraftItem()
+              : cart.removeItem(productItem.id)
+          }
           disabled={cart.loading.value === "cart:line_items:remove"}
         >
           <svg
@@ -170,9 +230,12 @@ const ManageQty = ({ productItem, page }: TManageQty) => {
         </Button>
       </div>
 
-      {page === "request" ? (
+      {page !== "cart" ? (
         <Typography size="body2/normal" className="capitalize">
-          {productItem.metadata?.cartType} Request
+          {page === "draftOrder"
+            ? draftItem.metadata?.cartType
+            : productItem.metadata?.cartType}{" "}
+          Request
         </Typography>
       ) : null}
 
