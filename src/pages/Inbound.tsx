@@ -114,11 +114,12 @@ const Inbound = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center gap-4 items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center gap-4 items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Inbound Items</Typography>
       </div>
+
       <div className="w-full flex flex-col justify-center gap-10 items-center max-w-xs mt-8">
         <form
           className="w-full flex flex-col items-center justify-center gap-4"

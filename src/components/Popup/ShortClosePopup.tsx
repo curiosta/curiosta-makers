@@ -32,9 +32,7 @@ const ShortClosePopup = ({
         className="block w-full h-full"
         onClick={() => (isPopup.value = false)}
       />
-      <div
-        className={`absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6`}
-      >
+      <div className="absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6 sm:w-1/3">
         <div className="flex gap-4 items-center justify-center w-full">
           <Typography>To Be Picked</Typography>
           <div className="w-12">

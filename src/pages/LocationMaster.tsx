@@ -17,6 +17,7 @@ import { useEffect, useRef } from "preact/hooks";
 
 type TLoadableOptions =
   | "locationCategory:get"
+  | "locationCategory:create"
   | "category:get"
   | "category:add"
   | "category:edit"
@@ -59,6 +60,29 @@ const LocationMaster = () => {
   useEffect(() => {
     getLocationCategory();
   }, [addCategory.value]);
+
+  // create location master
+  const handleCreateLocation = async () => {
+    isLoading.value = "locationCategory:create";
+    if (errorMessage.value) {
+      errorMessage.value = null;
+    }
+    try {
+      const createLocationRes = await adminAddCategory({
+        categoryName: "Location-master",
+        isActive: false,
+        isInternal: true,
+      });
+      addCategory.value = createLocationRes?.product_category;
+    } catch (error) {
+      if (error instanceof Error) {
+        errorMessage.value = error.message;
+      }
+    } finally {
+      isPopUp.value = true;
+      isLoading.value = undefined;
+    }
+  };
 
   // generate random characters
   function randomChar(length: number) {
@@ -155,13 +179,13 @@ const LocationMaster = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Location Master</Typography>
       </div>
 
-      <div className="text-center my-2 w-full mb-20">
+      <div className="text-center my-2 w-full mb-20 sm:w-3/4">
         {locationCategory.value ? (
           <div className="flex justify-end">
             <Button
@@ -216,8 +240,10 @@ const LocationMaster = () => {
                 )
               ) : (
                 <div className="flex flex-col gap-4 items-center w-full">
-                  <Typography>'Location master' Not found</Typography>
-                  <Button link="/category-master">
+                  <Typography variant="error">
+                    'Location master' Not found
+                  </Typography>
+                  <Button type="button" onClick={handleCreateLocation}>
                     Create 'Location master'
                   </Button>
                 </div>
@@ -229,7 +255,17 @@ const LocationMaster = () => {
             <Loading loadingText="loading" />
           </div>
         )}
+
+        {errorMessage.value ? (
+          <Typography variant="error" className="text-center mt-2">
+            {errorMessage.value}
+          </Typography>
+        ) : null}
       </div>
+
+      {isLoading.value === "locationCategory:create" ? (
+        <LoadingPopUp loadingText="Please wait" />
+      ) : null}
 
       {isLoading.value === "category:add" ? (
         <LoadingPopUp loadingText="Please wait" />

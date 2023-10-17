@@ -11,7 +11,7 @@ type TToggle = {
 
 const Toggle = ({ activeToggle, toggleItems, isLoading, count }: TToggle) => {
   return (
-    <div className="flex justify-evenly items-center my-2 px-4 gap-10 bg-gray-200/50 p-2 shadow-lg rounded-2xl">
+    <div className="flex justify-evenly items-center my-2 px-4 gap-10 bg-gray-200/50 p-2 shadow-lg rounded-2xl w-3/4 mx-auto sm:w-2/5">
       {toggleItems.map((item) => (
         <Button
           type="button"

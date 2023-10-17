@@ -22,9 +22,9 @@ const ProductImage = ({
     <div class="flex flex-col-reverse w-full">
       {/* Image selector */}
       {productImages?.length ? (
-        <div class="mx-auto mt-6 w-full ">
+        <div class="mx-auto mt-6 w-full sm:w-3/4">
           <div
-            class="grid grid-cols-4 gap-6"
+            class="grid grid-cols-4 gap-6 sm:grid-cols-5"
             aria-orientation="horizontal"
             role="tablist"
           >
@@ -73,13 +73,13 @@ const ProductImage = ({
                 "/images/placeholderImg.svg"
               }
               alt={productTitle}
-              class="w-10/12 object-cover object-center sm:rounded-lg"
+              class="w-10/12 object-cover object-center sm:rounded-lg sm:w-1/3"
             />
           ) : (
             <img
               src={prouductThumbnail ?? "/images/placeholderImg.svg"}
               alt={productTitle}
-              class="w-10/12 object-cover object-center sm:rounded-lg"
+              class="w-10/12 object-cover object-center sm:rounded-lg sm:w-1/3"
             />
           )}
         </div>

@@ -53,58 +53,66 @@ const SearchResult = () => {
   }, [offset.value, searchTerm.value]);
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
-      <div className="my-2">
-        <Typography size="h6/normal">Search Products</Typography>
-      </div>
-      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
+      <div className="w-full mb-12 sm:w-3/4">
+        <div className="my-2">
+          <Typography size="h6/normal">Search Products</Typography>
+        </div>
+        <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
-      <div className="text-center my-2 w-full mb-20">
-        {searchTerm.value ? (
-          <Typography size="body2/normal" className="mb-4 text-start">
-            Search Result for '{searchTerm.value}'
-          </Typography>
-        ) : null}
-        {!isLoading.value ? (
-          products.value?.length ? (
-            <div className=" w-full flex flex-col  my-2 gap-4">
-              {products.value.map((product) => (
-                <div className="w-full flex justify-between items-center relative pb-2 border-b last:border-none">
-                  <Link
-                    href={`/product/${product?.id}/${product?.handle}`}
-                    className="flex items-center gap-2 w-full "
-                  >
-                    <img
-                      src={product.thumbnail ?? "/images/placeholderImg.svg"}
-                      alt={product.title}
-                      className="w-12 h-12 object-cover"
-                    />
-                    <Typography
-                      size="body1/normal"
-                      className="text-start truncate "
-                    >
-                      {product.title}
-                    </Typography>
-                  </Link>
+        <div className="text-center my-2 w-full mb-20">
+          {searchTerm.value ? (
+            <Typography size="body2/normal" className="mb-4 text-start">
+              Search Result for '{searchTerm.value}'
+            </Typography>
+          ) : null}
+          {!isLoading.value ? (
+            products.value?.length ? (
+              <div className="w-full">
+                <div className="w-full flex flex-col  my-2 gap-4">
+                  {products.value.map((product) => (
+                    <div className="w-full flex justify-between items-center relative pb-2 border-b last:border-none">
+                      <Link
+                        href={`/product/${product?.id}/${product?.handle}`}
+                        className="flex items-center gap-2 w-full "
+                      >
+                        <img
+                          src={
+                            product.thumbnail ?? "/images/placeholderImg.svg"
+                          }
+                          alt={product.title}
+                          className="w-12 h-12 object-cover"
+                        />
+                        <Typography
+                          size="body1/normal"
+                          className="text-start truncate "
+                        >
+                          {product.title}
+                        </Typography>
+                      </Link>
+                    </div>
+                  ))}
                 </div>
-              ))}
-              <OffsetPagination limit={limit} offset={offset} count={count} />
-            </div>
-          ) : !products.value?.length && count.value ? (
-            <div className="w-full h-40 ">
+                <OffsetPagination limit={limit} offset={offset} count={count} />
+              </div>
+            ) : !products.value?.length && count.value ? (
+              <div className="w-full h-40 ">
+                <Loading loadingText="loading" />
+              </div>
+            ) : isLoading.value === undefined ? null : (
+              <Typography className="w-full">
+                Search result not found
+              </Typography>
+            )
+          ) : (
+            <div className="h-40">
               <Loading loadingText="loading" />
             </div>
-          ) : isLoading.value === undefined ? null : (
-            <Typography className="w-full">Search result not found</Typography>
-          )
-        ) : (
-          <div className="h-40">
-            <Loading loadingText="loading" />
-          </div>
-        )}
+          )}
+        </div>
+        <BottomNavbar />
       </div>
-      <BottomNavbar />
     </div>
   );
 };

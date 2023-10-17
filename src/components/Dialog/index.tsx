@@ -41,7 +41,7 @@ const Dialog = ({
       />
       <dialog
         ref={(e) => (dialogRef.current[index] = e)}
-        className="absolute top-full left-1/2 p-2 shadow-lg rounded-md z-10"
+        className="absolute top-full left-1/2 sm:left-3/4 p-2 shadow-lg rounded-md z-10"
       >
         <div className="flex flex-col ">
           {handleEdit || handleEditRedirect ? (

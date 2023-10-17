@@ -141,13 +141,13 @@ const AdminUserAccess = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Admin User Access Master</Typography>
       </div>
 
-      <div className="text-center my-2 w-full mb-20">
+      <div className="text-center my-2 w-full mb-20 sm:w-3/4">
         <div className="flex justify-end">
           <Button
             type="button"

@@ -98,14 +98,14 @@ const RequestItems = ({ id }: Props) => {
     }
   };
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Request Items</Typography>
       </div>
       {/* <SearchInput /> */}
 
-      <div className="text-center my-2 w-full mb-12">
+      <div className="text-center my-2 w-full mb-12 sm:w-3/4">
         <Typography size="h6/normal" className="capitalize">
           Products
         </Typography>
@@ -154,7 +154,7 @@ const RequestItems = ({ id }: Props) => {
                 />
                 <dialog
                   ref={(e) => (dialogRef.current[index] = e)}
-                  className="absolute translate-x-full p-2 shadow-lg rounded-md z-10"
+                  className="absolute translate-x-full p-2 shadow-lg sm:left-2/3 rounded-md z-10"
                 >
                   {cart.loading.value === "cart:line_items:add" ? (
                     <Typography

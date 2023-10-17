@@ -87,12 +87,12 @@ const OrderInfo = ({ id }: Props) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Order items</Typography>
       </div>
-      <div className="w-full flex flex-col gap-4 mb-12 ">
+      <div className="w-full flex flex-col gap-4 mb-12 sm:w-3/4">
         {isLoading.value !== "order:get" ? (
           <div className="w-full">
             <div className="my-2">
@@ -261,10 +261,8 @@ const OrderInfo = ({ id }: Props) => {
             ) : null}
 
             {!isUser.value ? (
-              <div className="flex flex-col gap-4 my-4">
-                <Typography size="h6/semi-bold" className="text-center">
-                  Address
-                </Typography>
+              <div className="flex flex-col items-center gap-4 my-4">
+                <Typography size="h6/semi-bold">Address</Typography>
                 {order.value?.shipping_address ? (
                   <AddressCard
                     address={order.value?.shipping_address}

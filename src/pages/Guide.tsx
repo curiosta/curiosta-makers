@@ -48,7 +48,7 @@ const Guide = () => {
 
   return (
     <div className="flex justify-center  p-4">
-      <div className="flex flex-col justify-center items-center gap-8 rounded-2xl w-full sm:w-1/4 ">
+      <div className="flex flex-col justify-center items-center gap-8 rounded-2xl w-full sm:w-1/2 ">
         <div className="w-20">
           <img src="/images/curiosta_logo.svg" alt="curiosta-logo" />
         </div>

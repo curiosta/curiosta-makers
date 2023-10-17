@@ -96,101 +96,103 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Return items</Typography>
       </div>
-      {isLoading.value !== "order:get" ? (
-        borrowItems?.length ? (
-          <div className="w-full">
-            <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondray">
-              <Typography size="h6/normal">Items</Typography>
-              <Typography size="h6/normal">Quantity</Typography>
-            </div>
+      <div className="w-full mb-12 sm:w-3/4">
+        {isLoading.value !== "order:get" ? (
+          borrowItems?.length ? (
             <div className="w-full">
-              {borrowItems?.map((item) => (
-                <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
-                  <Link
-                    href={`/product/${item?.variant?.product_id}`}
-                    className="flex gap-2 items-center"
-                  >
-                    <img
-                      src={item.thumbnail ?? "/images/placeholderImg.svg"}
-                      alt={item.title}
-                      className="w-10 h-10 object-cover"
-                    />
-                    <Typography
-                      size="body1/normal"
-                      className="text-start truncate w-56"
+              <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondray">
+                <Typography size="h6/normal">Items</Typography>
+                <Typography size="h6/normal">Quantity</Typography>
+              </div>
+              <div className="w-full">
+                {borrowItems?.map((item) => (
+                  <div className="flex justify-between items-center my-3 py-2 border-b last:border-none">
+                    <Link
+                      href={`/product/${item?.variant?.product_id}`}
+                      className="flex gap-2 items-center"
                     >
-                      {item.title}
-                    </Typography>
-                  </Link>
-                  <Typography className="pr-8">
-                    x{item.fulfilled_quantity}
-                  </Typography>
-                </div>
-              ))}
-              <div className="flex items-center justify-center">
-                {isUser.value ? (
-                  order.value?.returns?.at(0)?.status !== "requested" ? (
-                    <Button type="button" onClick={handleReqestReturn}>
-                      Request Return
-                    </Button>
-                  ) : (
-                    <div className="flex flex-col items-center gap-4 ">
-                      <Typography size="body2/normal">
-                        Already return requested
-                      </Typography>
-                      <Button
-                        link={`/orders/${order.value?.id}`}
-                        variant="secondary"
+                      <img
+                        src={item.thumbnail ?? "/images/placeholderImg.svg"}
+                        alt={item.title}
+                        className="w-10 h-10 object-cover"
+                      />
+                      <Typography
+                        size="body1/normal"
+                        className="text-start truncate w-56"
                       >
-                        Check status
-                      </Button>
-                    </div>
-                  )
-                ) : (
-                  <div>
-                    {!order.value?.fulfillment_status.includes("returned") ? (
-                      <Button type="button" onClick={handleApproveReturn}>
-                        Approve Return
+                        {item.title}
+                      </Typography>
+                    </Link>
+                    <Typography className="pr-8">
+                      x{item.fulfilled_quantity}
+                    </Typography>
+                  </div>
+                ))}
+                <div className="flex items-center justify-center">
+                  {isUser.value ? (
+                    order.value?.returns?.at(0)?.status !== "requested" ? (
+                      <Button type="button" onClick={handleReqestReturn}>
+                        Request Return
                       </Button>
                     ) : (
-                      <Typography>Already Approved</Typography>
-                    )}
-                  </div>
-                )}
+                      <div className="flex flex-col items-center gap-4 ">
+                        <Typography size="body2/normal">
+                          Already return requested
+                        </Typography>
+                        <Button
+                          link={`/orders/${order.value?.id}`}
+                          variant="secondary"
+                        >
+                          Check status
+                        </Button>
+                      </div>
+                    )
+                  ) : (
+                    <div>
+                      {!order.value?.fulfillment_status.includes("returned") ? (
+                        <Button type="button" onClick={handleApproveReturn}>
+                          Approve Return
+                        </Button>
+                      ) : (
+                        <Typography>Already Approved</Typography>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <Typography className="mt-8" size="body2/normal">
+              No item for return
+            </Typography>
+          )
         ) : (
-          <Typography className="mt-8" size="body2/normal">
-            No item for return
-          </Typography>
-        )
-      ) : (
-        <div className="h-40">
-          <Loading loadingText="loading" />
-        </div>
-      )}
-      {isLoading.value === "order:return" ? (
-        <LoadingPopUp loadingText="Please wait" />
-      ) : (
-        <PopUp
-          title={
-            isUser.value
-              ? "Return request is placed successfully"
-              : "Return request is approved successfully"
-          }
-          subtitle={`Request ID: ${returnItem.value?.id} `}
-          isPopup={isRequestReturn}
-          actionText="Check status"
-          actionLink={`/orders/${order.value?.id}`}
-        />
-      )}
-      <BottomNavbar />
+          <div className="h-40">
+            <Loading loadingText="loading" />
+          </div>
+        )}
+        {isLoading.value === "order:return" ? (
+          <LoadingPopUp loadingText="Please wait" />
+        ) : (
+          <PopUp
+            title={
+              isUser.value
+                ? "Return request is placed successfully"
+                : "Return request is approved successfully"
+            }
+            subtitle={`Request ID: ${returnItem.value?.id} `}
+            isPopup={isRequestReturn}
+            actionText="Check status"
+            actionLink={`/orders/${order.value?.id}`}
+          />
+        )}
+        <BottomNavbar />
+      </div>
     </div>
   );
 };

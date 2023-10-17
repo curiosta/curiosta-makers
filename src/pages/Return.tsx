@@ -47,40 +47,41 @@ const Returns = () => {
   }, [offset.value]);
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Return</Typography>
       </div>
-
-      {!isLoading.value ? (
-        isUser.value ? (
-          orders.value?.length ? (
+      <div className="w-full mb-12 sm:w-3/4">
+        {!isLoading.value ? (
+          isUser.value ? (
+            orders.value?.length ? (
+              <div className="w-full flex flex-col gap-4 mb-12 ">
+                {orders.value?.map((order) => (
+                  <OrderItem order={order} page="return" />
+                ))}
+                <OffsetPagination limit={limit} offset={offset} count={count} />
+              </div>
+            ) : (
+              <Typography>No order found</Typography>
+            )
+          ) : returns.value?.length ? (
             <div className="w-full flex flex-col gap-4 mb-12 ">
-              {orders.value?.map((order) => (
-                <OrderItem order={order} page="return" />
+              {returns.value?.map((returnVal) => (
+                <OrderItem returnVal={returnVal} page="adminReturn" />
               ))}
               <OffsetPagination limit={limit} offset={offset} count={count} />
             </div>
           ) : (
             <Typography>No order found</Typography>
           )
-        ) : returns.value?.length ? (
-          <div className="w-full flex flex-col gap-4 mb-12 ">
-            {returns.value?.map((returnVal) => (
-              <OrderItem returnVal={returnVal} page="adminReturn" />
-            ))}
-            <OffsetPagination limit={limit} offset={offset} count={count} />
-          </div>
         ) : (
-          <Typography>No order found</Typography>
-        )
-      ) : (
-        <div className="h-40">
-          <Loading loadingText="loading" />
-        </div>
-      )}
-      <BottomNavbar />
+          <div className="h-40">
+            <Loading loadingText="loading" />
+          </div>
+        )}
+        <BottomNavbar />
+      </div>
     </div>
   );
 };

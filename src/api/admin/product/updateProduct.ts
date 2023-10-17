@@ -1,6 +1,6 @@
 import medusa from "@api/medusa";
 
-type TAddProduct = {
+type TUpdateProduct = {
   productId: string;
   title: string;
   description?: string;
@@ -10,6 +10,7 @@ type TAddProduct = {
   }[];
   images?: string[];
   thumbnail?: string;
+  variantId: string;
   inventory_quantity?: number;
 };
 
@@ -21,8 +22,9 @@ export const adminUpdateProduct = async ({
   categories,
   images,
   thumbnail,
+  variantId,
   inventory_quantity,
-}: TAddProduct) => {
+}: TUpdateProduct) => {
   return medusa.admin.products.update(productId, {
     title,
     description,
@@ -32,10 +34,8 @@ export const adminUpdateProduct = async ({
     thumbnail,
     variants: [
       {
-        title: "one size",
+        id: variantId,
         inventory_quantity,
-        manage_inventory: true,
-        prices: [{ amount: 10000, currency_code: "usd" }],
       },
     ],
   });

@@ -179,67 +179,72 @@ const Account = () => {
   ];
 
   return (
-    <div className="flex flex-col justify-center items-center  bg-neutral-50 p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center  bg-neutral-50 p-4 w-full ">
       <TopNavbar />
-      <Link
-        href={`/user/${currentUser.id}`}
-        className="flex items-center gap-4 w-full rounded-2xl bg-secondray p-4 my-4"
-      >
-        <div className="w-9 h-9 flex">
-          <Chip className="!bg-primary-700 uppercase text-white">
-            {currentUser.first_name
-              ? currentUser.first_name.charAt(0)
-              : currentUser.email.charAt(0)}
-          </Chip>
-        </div>
-        {currentUser?.first_name ? (
-          <Typography
-            variant="secondary"
-            className="capitalize"
-          >{`${currentUser?.first_name} ${currentUser?.last_name}`}</Typography>
-        ) : (
-          <Typography variant="secondary" className="capitalize">
-            {currentUser?.email}
-          </Typography>
-        )}
-      </Link>
+      <div className="w-full mb-12 sm:w-3/4">
+        <Link
+          href={`/user/${currentUser.id}`}
+          className="flex items-center gap-4 w-full rounded-2xl bg-secondray p-4 my-4"
+        >
+          <div className="w-9 h-9 flex">
+            <Chip className="!bg-primary-700 uppercase text-white">
+              {currentUser.first_name
+                ? currentUser.first_name.charAt(0)
+                : currentUser.email.charAt(0)}
+            </Chip>
+          </div>
+          {currentUser?.first_name ? (
+            <Typography
+              variant="secondary"
+              className="capitalize"
+            >{`${currentUser?.first_name} ${currentUser?.last_name}`}</Typography>
+          ) : (
+            <Typography variant="secondary" className="capitalize">
+              {currentUser?.email}
+            </Typography>
+          )}
+        </Link>
 
-      <div className="w-full my-4">
-        <Typography size="h6/normal" variant="secondary" className="uppercase">
-          Account setting
-        </Typography>
-        <div className="flex flex-col items-start bg-secondray my-3">
-          {accountSettings.map((item, index) => (
-            <div className="flex justify-between items-center w-full p-3 border-b last:border-none">
-              <Button
-                link={item.link}
-                key={index}
-                variant="icon"
-                className="w-full !justify-start gap-4"
-              >
-                {item.icon}
-                <Typography size="body1/normal">{item.title}</Typography>
-              </Button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="8"
-                height="14"
-                viewBox="0 0 8 14"
-                fill="none"
-              >
-                <path
-                  d="M1 13L7 7L1 1"
-                  stroke="#828282"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-          ))}
+        <div className="w-full my-4">
+          <Typography
+            size="h6/normal"
+            variant="secondary"
+            className="uppercase"
+          >
+            Account setting
+          </Typography>
+          <div className="flex flex-col items-start bg-secondray my-3">
+            {accountSettings.map((item, index) => (
+              <div className="flex justify-between items-center w-full p-3 border-b last:border-none">
+                <Button
+                  link={item.link}
+                  key={index}
+                  variant="icon"
+                  className="w-full !justify-start gap-4"
+                >
+                  {item.icon}
+                  <Typography size="body1/normal">{item.title}</Typography>
+                </Button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="8"
+                  height="14"
+                  viewBox="0 0 8 14"
+                  fill="none"
+                >
+                  <path
+                    d="M1 13L7 7L1 1"
+                    stroke="#828282"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-      {/* <div className="w-full my-4 mb-12">
+        {/* <div className="w-full my-4 mb-12">
         <Typography size="h6/normal" variant="secondary" className="uppercase">
           PREFERENCES
         </Typography>
@@ -292,7 +297,8 @@ const Account = () => {
           ))}
         </div>
       </div> */}
-      <BottomNavbar />
+        <BottomNavbar />
+      </div>
     </div>
   );
 };
