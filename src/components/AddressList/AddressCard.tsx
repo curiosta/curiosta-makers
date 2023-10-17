@@ -86,7 +86,7 @@ const AddressCard = ({
           disabled={disabled}
         />
       ) : null}
-      <div class="flex flex-col w-full">
+      <div class="flex flex-col w-10/12">
         <Typography size="body1/medium" variant="primary">
           {address?.address_1}
         </Typography>

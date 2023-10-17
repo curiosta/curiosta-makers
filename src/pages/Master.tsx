@@ -12,7 +12,7 @@ const Master = () => {
   ];
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Master</Typography>

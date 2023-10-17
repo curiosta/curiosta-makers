@@ -22,30 +22,32 @@ const Home = () => {
     ? user.customer.value
     : admin.adminData.value;
   return (
-    <div className="flex flex-col justify-center items-center bg-neutral-50 p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center bg-neutral-50 p-4 w-full ">
       <TopNavbar />
-      <div className="w-full pl-2 my-4">
-        <Typography>
-          Hello{" "}
-          {currentUser?.first_name
-            ? currentUser?.first_name
-            : currentUser?.email}
-          👋
-        </Typography>
-        <Typography size="small/normal">
-          Let’s find you something to make
-        </Typography>
+      <div className="w-full mb-12 sm:w-3/4">
+        <div className="w-full pl-2 my-4">
+          <Typography>
+            Hello{" "}
+            {currentUser?.first_name
+              ? currentUser?.first_name
+              : currentUser?.email}
+            👋
+          </Typography>
+          <Typography size="small/normal">
+            Let’s find you something to make
+          </Typography>
+        </div>
+        <SearchInput
+          handleSubmit={handleSubmit}
+          placeholder="Search products..."
+          isSearchSort={false}
+        />
+        <ActivityCard />
+        {!isUser.value ? <MiddleContent /> : null}
+        <IssuedItems />
+        {/* {!isUser.value ? <Snapshot /> : null} */}
+        <BottomNavbar />
       </div>
-      <SearchInput
-        handleSubmit={handleSubmit}
-        placeholder="Search products..."
-        isSearchSort={false}
-      />
-      <ActivityCard />
-      {!isUser.value ? <MiddleContent /> : null}
-      <IssuedItems />
-      {/* {!isUser.value ? <Snapshot /> : null} */}
-      <BottomNavbar />
     </div>
   );
 };

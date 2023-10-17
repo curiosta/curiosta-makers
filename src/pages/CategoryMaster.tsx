@@ -15,7 +15,7 @@ import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import PopUp from "@/components/Popup";
 import { adminUpdateCategory } from "@/api/admin/category/updateCategory";
 import Category from "@/components/Accordion/Category";
-import SearchInput, { TSortOptions } from "@/components/SearchInput";
+import SearchInput from "@/components/SearchInput";
 
 type TLoadableOptions =
   | "category:get"
@@ -155,112 +155,114 @@ const CategoryMaster = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Category Master</Typography>
       </div>
-      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
-      <div className="text-center my-2 w-full mb-20">
-        <div className="flex justify-end">
-          <Button
-            type="button"
-            className="gap-2"
-            onClick={() => {
-              (isCategoryPopUp.value = true),
-                (selectedCategory.value = undefined),
-                (parentCategory.value = undefined);
-              errorMessage.value = null;
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6 stroke-secondray stroke-2"
+      <div className="w-full mb-12 sm:w-3/4">
+        <SearchInput searchTerm={searchTerm} isSearchSort={false} />
+        <div className="text-center my-2 w-full mb-20">
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              className="gap-2"
+              onClick={() => {
+                (isCategoryPopUp.value = true),
+                  (selectedCategory.value = undefined),
+                  (parentCategory.value = undefined);
+                errorMessage.value = null;
+              }}
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            Add
-          </Button>
-        </div>
-        {isLoading.value !== "category:get" ? (
-          topParanetCategory?.length ? (
-            <div className="w-full flex flex-col  my-2  gap-4">
-              {topParanetCategory?.map((category, index) => (
-                <Category
-                  category={category}
-                  depth={0}
-                  index={index}
-                  selectedCategory={selectedCategory}
-                  isCategoryEditPopUp={isCategoryEditPopUp}
-                  errorMessage={errorMessage}
-                  parentCategory={parentCategory}
-                  isCategoryPopUp={isCategoryPopUp}
-                  getCategory={getCategories}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6 stroke-secondray stroke-2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
                 />
-              ))}
-              <OffsetPagination limit={limit} offset={offset} count={count} />
-            </div>
-          ) : !categories.value?.length && count.value ? (
-            <div className="w-full h-40 ">
+              </svg>
+              Add
+            </Button>
+          </div>
+          {isLoading.value !== "category:get" ? (
+            topParanetCategory?.length ? (
+              <div className="w-full flex flex-col  my-2  gap-4">
+                {topParanetCategory?.map((category, index) => (
+                  <Category
+                    category={category}
+                    depth={0}
+                    index={index}
+                    selectedCategory={selectedCategory}
+                    isCategoryEditPopUp={isCategoryEditPopUp}
+                    errorMessage={errorMessage}
+                    parentCategory={parentCategory}
+                    isCategoryPopUp={isCategoryPopUp}
+                    getCategory={getCategories}
+                  />
+                ))}
+                <OffsetPagination limit={limit} offset={offset} count={count} />
+              </div>
+            ) : !categories.value?.length && count.value ? (
+              <div className="w-full h-40 ">
+                <Loading loadingText="loading" />
+              </div>
+            ) : (
+              <Typography>No category found</Typography>
+            )
+          ) : (
+            <div className="h-40">
               <Loading loadingText="loading" />
             </div>
-          ) : (
-            <Typography>No category found</Typography>
-          )
-        ) : (
-          <div className="h-40">
-            <Loading loadingText="loading" />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {isLoading.value === "category:add" ? (
-        <LoadingPopUp loadingText="Please wait" />
-      ) : isCategoryPopUp.value ? (
-        <CategoryPopup
-          isPopup={isCategoryPopUp}
-          handlePopupAction={handleAddCategory}
-          actionText="Save"
-          type="add"
-          formRef={formRef}
-          errorMessage={errorMessage}
-          parentCategory={parentCategory}
-          variant="category-master"
+        {isLoading.value === "category:add" ? (
+          <LoadingPopUp loadingText="Please wait" />
+        ) : isCategoryPopUp.value ? (
+          <CategoryPopup
+            isPopup={isCategoryPopUp}
+            handlePopupAction={handleAddCategory}
+            actionText="Save"
+            type="add"
+            formRef={formRef}
+            errorMessage={errorMessage}
+            parentCategory={parentCategory}
+            variant="category-master"
+          />
+        ) : null}
+        {isLoading.value === "category:edit" ? (
+          <LoadingPopUp loadingText="Please wait" />
+        ) : isCategoryEditPopUp.value ? (
+          <CategoryPopup
+            isPopup={isCategoryEditPopUp}
+            handlePopupAction={handleUpdateCategory}
+            actionText="Update"
+            type="edit"
+            selectedCategoryId={
+              selectedCategory.value ? selectedCategory.value?.id : undefined
+            }
+            formRef={formRef}
+            errorMessage={errorMessage}
+            parentCategory={parentCategory}
+            variant="category-master"
+          />
+        ) : null}
+        <PopUp
+          isPopup={isPopUp}
+          title={`Category is ${
+            selectedCategory.value ? "updated" : "created"
+          } successfully `}
+          subtitle={`Category ID: ${addCategory.value?.id} `}
         />
-      ) : null}
-      {isLoading.value === "category:edit" ? (
-        <LoadingPopUp loadingText="Please wait" />
-      ) : isCategoryEditPopUp.value ? (
-        <CategoryPopup
-          isPopup={isCategoryEditPopUp}
-          handlePopupAction={handleUpdateCategory}
-          actionText="Update"
-          type="edit"
-          selectedCategoryId={
-            selectedCategory.value ? selectedCategory.value?.id : undefined
-          }
-          formRef={formRef}
-          errorMessage={errorMessage}
-          parentCategory={parentCategory}
-          variant="category-master"
-        />
-      ) : null}
-      <PopUp
-        isPopup={isPopUp}
-        title={`Category is ${
-          selectedCategory.value ? "updated" : "created"
-        } successfully `}
-        subtitle={`Category ID: ${addCategory.value?.id} `}
-      />
-      <BottomNavbar />
+        <BottomNavbar />
+      </div>
     </div>
   );
 };

@@ -31,7 +31,7 @@ const Progressbar = ({ status }: { status: string }) => {
         {status !== "canceled"
           ? progressSteps.map((step, index) => (
               <li
-                class={`relative pr-8 last:pr-0 ${
+                class={`relative pr-8 max-[321px]:pr-7  last:pr-0 ${
                   step.stepText !== "canceled" ? "block" : "hidden"
                 }`}
               >
@@ -43,9 +43,7 @@ const Progressbar = ({ status }: { status: string }) => {
                 </div>
                 <div
                   class={`first-letter:relative flex h-6 w-6 items-center justify-center border border-primary-600 rounded-full shadow-lg
-            ${
-              currentStep < step.step ? "bg-secondray" : "bg-primary-600"
-            }  hover:bg-primary-900`}
+            ${currentStep < step.step ? "bg-secondray" : "bg-primary-600"} `}
                 >
                   <Typography
                     size="small/normal"

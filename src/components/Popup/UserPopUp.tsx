@@ -71,7 +71,7 @@ const UserPopUp = ({
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-full backdrop-brightness-75 z-10 items-center justify-center ${
+      className={`fixed top-0 left-0 w-full h-full backdrop-brightness-75 z-[15] items-center justify-center ${
         isPopup.value ? "flex " : "hidden"
       }`}
     >
@@ -80,9 +80,7 @@ const UserPopUp = ({
         className="block w-full h-full"
         onClick={() => (isPopup.value = false)}
       />
-      <div
-        className={`absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6`}
-      >
+      <div className="absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6 sm:w-1/3">
         <Typography size="body1/semi-bold" className="capitalize">
           {type === "add" ? "Add" : "Update"}{" "}
           {variant === "adminUser" ? "Admin" : "User"}

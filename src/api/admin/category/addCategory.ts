@@ -2,7 +2,7 @@ import medusa from "@api/medusa";
 
 type TAddCategory = {
   categoryName: string;
-  categoryDescription: string;
+  categoryDescription?: string;
   isActive: boolean;
   isInternal: boolean;
   parentCategoryId?: string;

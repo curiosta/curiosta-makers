@@ -82,14 +82,15 @@ const MaterialMaster = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Material Master</Typography>
       </div>
-      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
-      <div className="text-center my-2 w-full mb-20">
+      <div className="w-full text-center mb-12 sm:w-3/4">
+        <SearchInput searchTerm={searchTerm} isSearchSort={false} />
+
         <div className="flex justify-end">
           <Button link="/material-master/add" className="gap-2">
             <svg

@@ -50,50 +50,55 @@ const Request = () => {
   }, [offset.value, searchTerm.value]);
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Request Items</Typography>
       </div>
-      <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
-      <div className="text-center my-2 w-full mb-12">
-        <Typography size="h6/normal">Choose Category</Typography>
+      <div className="w-full mb-12 sm:w-3/4">
+        <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
-        {!isLoading.value ? (
-          categories.value?.length ? (
-            <div className="w-full">
-              <div className="grid grid-cols-3 my-2 items-start gap-4">
-                {categories.value.map((category, index) => (
-                  <Button
-                    key={index}
-                    link={`/create-requests/${category.id}`}
-                    variant="icon"
-                    className={"flex-col items-center gap-2 !p-0"}
-                  >
-                    <div className="border border-black rounded-full bg-secondray shadow-lg">
-                      <img src={leser_icon} alt="icon" className="p-3" />
-                    </div>
-                    <Typography size="body2/normal">{category.name}</Typography>
-                  </Button>
-                ))}
+        <div className="text-center my-2 w-full mb-12">
+          <Typography size="h6/normal">Choose Category</Typography>
+
+          {!isLoading.value ? (
+            categories.value?.length ? (
+              <div className="w-full">
+                <div className="grid grid-cols-3 my-2 items-start gap-4 sm:grid-cols-5">
+                  {categories.value.map((category, index) => (
+                    <Button
+                      key={index}
+                      link={`/create-requests/${category.id}`}
+                      variant="icon"
+                      className={"flex-col items-center gap-2 !p-0"}
+                    >
+                      <div className="border border-black rounded-full bg-secondray shadow-lg">
+                        <img src={leser_icon} alt="icon" className="p-3" />
+                      </div>
+                      <Typography size="body2/normal">
+                        {category.name}
+                      </Typography>
+                    </Button>
+                  ))}
+                </div>
+                <OffsetPagination limit={limit} offset={offset} count={count} />
               </div>
-              <OffsetPagination limit={limit} offset={offset} count={count} />
-            </div>
-          ) : !categories.value?.length && count.value ? (
-            <div className="w-full h-40 ">
+            ) : !categories.value?.length && count.value ? (
+              <div className="w-full h-40 ">
+                <Loading loadingText="loading" />
+              </div>
+            ) : (
+              <Typography className="mt-8">No category found</Typography>
+            )
+          ) : (
+            <div className="h-40">
               <Loading loadingText="loading" />
             </div>
-          ) : (
-            <Typography className="mt-8">No category found</Typography>
-          )
-        ) : (
-          <div className="h-40">
-            <Loading loadingText="loading" />
-          </div>
-        )}
+          )}
+        </div>
+        <BottomNavbar />
       </div>
-      <BottomNavbar />
     </div>
   );
 };

@@ -97,173 +97,181 @@ const ProductInfo = ({ id }: Props) => {
     );
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
+      <div className="w-full mb-12 sm:w-3/4">
+        {!isLoading.value ? (
+          <div className="flex flex-col gap-4  justify-center w-full mb-28 mt-4">
+            <ProductImage
+              productImages={product.value?.images}
+              prouductThumbnail={product.value?.thumbnail}
+              productTitle={product.value?.title}
+            />
+            <Typography size="h6/semi-bold" className="text-center">
+              {product.value?.title}
+            </Typography>
+            {!isUser.value ? (
+              <>
+                <Typography
+                  size="body1/semi-bold"
+                  variant="primary"
+                  className="text-start capitalize w-full"
+                >
+                  Status: {product.value?.status}
+                </Typography>
 
-      {!isLoading.value ? (
-        <div className="flex flex-col gap-4  justify-center w-full mb-28 mt-4">
-          <ProductImage
-            productImages={product.value?.images}
-            prouductThumbnail={product.value?.thumbnail}
-            productTitle={product.value?.title}
-          />
-          <Typography size="h6/semi-bold" className="text-center">
-            {product.value?.title}
-          </Typography>
-          {!isUser.value ? (
-            <>
-              <Typography
-                size="body1/semi-bold"
-                variant="primary"
-                className="text-start capitalize w-full"
-              >
-                Status: {product.value?.status}
-              </Typography>
+                <Typography
+                  size="body1/semi-bold"
+                  variant="primary"
+                  className="text-start w-full"
+                >
+                  Available Stock:{" "}
+                  {product.value?.variants?.length
+                    ? product.value?.variants?.at(0)?.inventory_quantity
+                    : "N/A"}
+                </Typography>
+              </>
+            ) : null}
+            <Typography>{product.value?.description}</Typography>
+            {product.value?.categories?.length ? (
+              <div className="flex flex-col gap-3">
+                <Typography size="h6/semi-bold" className="text-start w-full">
+                  Category
+                </Typography>
+                <ul className="w-full grid grid-cols-2 gap-2 ml-4">
+                  {categories?.length ? (
+                    categories?.map((category) => (
+                      <li className="list-disc">
+                        <Typography className="text-base capitalize truncate w-10/12">
+                          {category.name}
+                        </Typography>
+                      </li>
+                    ))
+                  ) : (
+                    <Typography size="body2/normal" variant="error">
+                      category not found
+                    </Typography>
+                  )}
+                </ul>
+                <Typography size="h6/semi-bold" className="text-start w-full">
+                  Location
+                </Typography>
+                <ul className="w-full ml-4">
+                  {locations?.length ? (
+                    locations?.map((category) => (
+                      <li className="list-disc">
+                        <Typography className="text-base capitalize ">
+                          {category.name}
+                        </Typography>
+                      </li>
+                    ))
+                  ) : (
+                    <Typography size="body2/normal" variant="error">
+                      location not found
+                    </Typography>
+                  )}
+                </ul>
+              </div>
+            ) : null}
 
-              <Typography
-                size="body1/semi-bold"
-                variant="primary"
-                className="text-start w-full"
-              >
-                Available Stock:{" "}
-                {product.value?.variants?.length
-                  ? product.value?.variants?.at(0)?.inventory_quantity
-                  : "N/A"}
-              </Typography>
-            </>
-          ) : null}
-          <Typography>{product.value?.description}</Typography>
-          {product.value?.categories?.length ? (
-            <div className="flex flex-col gap-3">
-              <Typography size="h6/semi-bold" className="text-start w-full">
-                Category
-              </Typography>
-              <ul className="w-full grid grid-cols-2 gap-2 ml-4">
-                {categories?.length ? (
-                  categories?.map((category) => (
-                    <li className="list-disc">
-                      <Typography className="text-base capitalize truncate w-10/12">
-                        {category.name}
-                      </Typography>
-                    </li>
-                  ))
-                ) : (
-                  <Typography size="body2/normal" variant="error">
-                    category not found
-                  </Typography>
-                )}
-              </ul>
-              <Typography size="h6/semi-bold" className="text-start w-full">
-                Location
-              </Typography>
-              <ul className="w-full ml-4">
-                {locations?.length ? (
-                  locations?.map((category) => (
-                    <li className="list-disc">
-                      <Typography className="text-base capitalize ">
-                        {category.name}
-                      </Typography>
-                    </li>
-                  ))
-                ) : (
-                  <Typography size="body2/normal" variant="error">
-                    location not found
-                  </Typography>
-                )}
-              </ul>
-            </div>
-          ) : null}
-
-          {isUser.value ? (
-            <div className="w-full mb-12  relative border-t-2">
-              <div
-                className={`absolute top-16 w-full p-2 shadow-lg rounded-md z-10 transition-all bg-secondray
+            {isUser.value ? (
+              <div className="w-full mb-12  relative border-t-2">
+                <div
+                  className={`absolute top-16 w-full p-2 shadow-lg rounded-md z-10 transition-all bg-secondray
               ${
                 cartTypeOpen.value
-                  ? "translate-x-0"
-                  : "-translate-x-full -left-4"
+                  ? "translate-x-0 left-0"
+                  : "-translate-x-full -left-full"
               }`}
-              >
-                {cart.loading.value === "cart:line_items:add" ? (
-                  <Typography
-                    size="body2/normal"
-                    className="flex flex-col items-center"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class={"animate-spin w-6 stroke-primary-600 duration-500"}
+                >
+                  {cart.loading.value === "cart:line_items:add" ? (
+                    <Typography
+                      size="body2/normal"
+                      className="flex flex-col items-center"
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class={
+                          "animate-spin w-6 stroke-primary-600 duration-500"
+                        }
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                        />
+                      </svg>
+                      Please Wait...
+                    </Typography>
+                  ) : (
+                    <div className="flex justify-evenly items-center">
+                      <Radio
+                        name="add-method"
+                        label="Issue"
+                        value="issue"
+                        onChange={handleRadioInput}
                       />
-                    </svg>
-                    Please Wait...
-                  </Typography>
+                      <Radio
+                        name="add-method"
+                        label="Borrow"
+                        value="borrow"
+                        onChange={handleRadioInput}
+                      />
+                    </div>
+                  )}
+                </div>
+                {cart.loading.value === "cart:get" ? (
+                  <div className="pt-4">
+                    <Loading loadingText="loading" />
+                  </div>
+                ) : !isProductItemInCart ? (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="!w-full border-2 !rounded-lg mt-4"
+                    onClick={handleAddToCart}
+                  >
+                    Add to cart
+                  </Button>
                 ) : (
-                  <div className="flex justify-evenly items-center">
-                    <Radio
-                      name="add-method"
-                      label="Issue"
-                      value="issue"
-                      onChange={handleRadioInput}
-                    />
-                    <Radio
-                      name="add-method"
-                      label="Borrow"
-                      value="borrow"
-                      onChange={handleRadioInput}
+                  <div className="flex justify-between mt-4">
+                    <Typography size="body1/semi-bold">
+                      Added to cart
+                    </Typography>
+                    <ManageQty
+                      productItem={isProductItemInCart}
+                      page="request"
                     />
                   </div>
                 )}
+                <ViewCartLayer actionText="View Cart" actionLink="/cart" />
               </div>
-              {cart.loading.value === "cart:get" ? (
-                <div className="pt-4">
-                  <Loading loadingText="loading" />
-                </div>
-              ) : !isProductItemInCart ? (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="!w-full border-2 !rounded-lg mt-4"
-                  onClick={handleAddToCart}
-                >
-                  Add to cart
-                </Button>
-              ) : (
-                <div className="flex justify-between mt-4">
-                  <Typography size="body1/semi-bold">Added to cart</Typography>
-                  <ManageQty productItem={isProductItemInCart} page="request" />
-                </div>
-              )}
-              <ViewCartLayer actionText="View Cart" actionLink="/cart" />
-            </div>
-          ) : null}
-        </div>
-      ) : (
-        <div className="h-40">
-          <Loading loadingText="loading" />
-        </div>
-      )}
+            ) : null}
+          </div>
+        ) : (
+          <div className="h-40">
+            <Loading loadingText="loading" />
+          </div>
+        )}
 
-      <PopUp
-        isPopup={isProfileCompletePopUp}
-        actionText="Check profile"
-        actionLink={`/user/${user.customer.value?.id}`}
-        title="Please complete your profile first!"
-        subtitle="Add your phone no. and address before request any item"
-      />
-      <PopUp
-        isPopup={isProfileImgIdCardPopUp}
-        title="Profile image or ID Card not found!"
-        subtitle="Contact the admin for adding a profile image and government ID card."
-      />
-      <BottomNavbar />
+        <PopUp
+          isPopup={isProfileCompletePopUp}
+          actionText="Check profile"
+          actionLink={`/user/${user.customer.value?.id}`}
+          title="Please complete your profile first!"
+          subtitle="Add your phone no. and address before request any item"
+        />
+        <PopUp
+          isPopup={isProfileImgIdCardPopUp}
+          title="Profile image or ID Card not found!"
+          subtitle="Contact the admin for adding a profile image and government ID card."
+        />
+        <BottomNavbar />
+      </div>
     </div>
   );
 };

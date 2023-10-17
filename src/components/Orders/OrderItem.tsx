@@ -30,14 +30,14 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
       } shadow-sm rounded-lg border`}
     >
       <div
-        class={`flex items-center border-b ${
+        class={`flex items-center border-b p-4 ${
           returnVal?.status === "received" ||
           (page === "return" && !borrowItems.length)
             ? "border-gray-400"
             : "border-gray-200"
-        }  p-4 sm:grid sm:grid-cols-4 sm:gap-x-6 sm:p-6`}
+        }`}
       >
-        <dl class="grid flex-1 grid-cols-2 gap-x-6 text-sm sm:col-span-3 sm:grid-cols-3 lg:col-span-2">
+        <dl class="grid flex-1 grid-cols-2 gap-x-6 text-sm ">
           {page !== "adminReturn" && page !== "return" ? (
             <div>
               <dt class="font-medium text-gray-900">Order number</dt>
@@ -55,7 +55,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
               </dd>
             </div>
           )}
-          <div class="block">
+          <div>
             <dt class="font-medium text-gray-900">Requested date</dt>
             <dd class="mt-1 text-gray-700">
               <time dateTime="2021-07-06">

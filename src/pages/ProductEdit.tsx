@@ -184,12 +184,15 @@ const ProductEdit = ({ id }: Props) => {
         if (selectedCategoryIds.value?.length) {
           selectedCategoryIds.value?.map((val) => categories.push({ id: val }));
         }
-
+        if (!product.value?.variants[0]?.id) {
+          throw new Error("Variant id not found");
+        }
         const updateProductRes = await adminUpdateProduct({
           productId: id,
           title: title.toString(),
           description: description.toString(),
           status: status.toString(),
+          variantId: product.value?.variants[0]?.id,
           inventory_quantity: parseInt(quantity.toString()),
           categories:
             selectedCategoryIds.value?.length || parentLocations?.length
@@ -214,7 +217,7 @@ const ProductEdit = ({ id }: Props) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full sm:w-1/4 ">
+    <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">Edit Product</Typography>
