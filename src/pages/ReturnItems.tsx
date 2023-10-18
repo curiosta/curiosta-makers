@@ -101,7 +101,7 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
       <div className="my-2">
         <Typography size="h6/normal">Return items</Typography>
       </div>
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         {isLoading.value !== "order:get" ? (
           borrowItems?.length ? (
             <div className="w-full">

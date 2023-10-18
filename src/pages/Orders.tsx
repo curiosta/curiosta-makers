@@ -119,7 +119,7 @@ const Orders = () => {
       <div className="my-2">
         <Typography size="h6/normal">Orders</Typography>
       </div>
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         <SearchInput
           searchTerm={searchTerm}
           sortOptions={sortOptions}

@@ -92,7 +92,7 @@ const OrderInfo = ({ id }: Props) => {
       <div className="my-2">
         <Typography size="h6/normal">Order items</Typography>
       </div>
-      <div className="w-full flex flex-col gap-4 mb-12 sm:w-3/4">
+      <div className="w-full flex flex-col gap-4 mb-12 max-w-2xl">
         {isLoading.value !== "order:get" ? (
           <div className="w-full">
             <div className="my-2">

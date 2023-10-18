@@ -105,7 +105,7 @@ const Cart = () => {
       <div className="my-2">
         <Typography size="h6/normal">Cart</Typography>
       </div>
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         {!cartLoading ? (
           cart.store?.value?.items.length ? (
             <div className="w-full my-2 mb-16">
@@ -203,43 +203,45 @@ const Cart = () => {
                 />
               ) : (
                 // confirm order or discard buttons
-                <div className="fixed bottom-16 left-0 p-4 w-full flex items-center justify-around z-10 bg-secondray">
-                  <Button
-                    type="button"
-                    variant="primary"
-                    onClick={handleCartComplete}
-                    disabled={cart.loading.value === "cart:complete"}
-                  >
-                    Request
-                  </Button>
-                  <Button
-                    link="/create-requests"
-                    variant="icon"
-                    className="!w-12 !h-12 items-center bg-primary-600/10  !rounded-full !p-0"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-6 h-6 stroke-primary-600"
+                <div className="fixed bottom-16 left-0 p-4 w-full z-10 bg-secondray border shadow-sm">
+                  <div className="flex items-center justify-around w-full mx-auto max-w-2xl">
+                    <Button
+                      type="button"
+                      variant="primary"
+                      onClick={handleCartComplete}
+                      disabled={cart.loading.value === "cart:complete"}
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                      />
-                    </svg>
-                  </Button>
+                      Request
+                    </Button>
+                    <Button
+                      link="/create-requests"
+                      variant="icon"
+                      className="!w-12 !h-12 items-center bg-primary-600/10  !rounded-full !p-0"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6 stroke-primary-600"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M12 4.5v15m7.5-7.5h-15"
+                        />
+                      </svg>
+                    </Button>
 
-                  <Button
-                    type="button"
-                    variant="danger"
-                    onClick={handleDiscard}
-                  >
-                    Discard
-                  </Button>
+                    <Button
+                      type="button"
+                      variant="danger"
+                      onClick={handleDiscard}
+                    >
+                      Discard
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>

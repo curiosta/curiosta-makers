@@ -147,7 +147,7 @@ const AdminUserAccess = () => {
         <Typography size="h6/normal">Admin User Access Master</Typography>
       </div>
 
-      <div className="text-center my-2 w-full mb-20 sm:w-3/4">
+      <div className="text-center my-2 w-full mb-20 max-w-2xl">
         <div className="flex justify-end">
           <Button
             type="button"

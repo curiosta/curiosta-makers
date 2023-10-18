@@ -185,7 +185,7 @@ const LocationMaster = () => {
         <Typography size="h6/normal">Location Master</Typography>
       </div>
 
-      <div className="text-center my-2 w-full mb-20 sm:w-3/4">
+      <div className="text-center my-2 w-full mb-20 max-w-2xl">
         {locationCategory.value ? (
           <div className="flex justify-end">
             <Button

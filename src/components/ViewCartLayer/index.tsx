@@ -34,7 +34,7 @@ const ViewCartLayer = ({
         isCartLayer.value ? "translate-x-0" : "translate-x-full"
       } `}
     >
-      <div className="flex justify-between items-center relative p-4 gap-2 mx-auto sm:w-3/4">
+      <div className="flex justify-between items-center relative p-4 gap-2 mx-auto max-w-2xl">
         <div className="flex items-center gap-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"

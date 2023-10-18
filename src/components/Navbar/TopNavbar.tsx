@@ -20,6 +20,7 @@ const TopNavbar = () => {
       <Button
         type="button"
         variant="icon"
+        title="menu"
         className="border !rounded-full"
         onClick={() => (isMenuOpen.value = true)}
       >

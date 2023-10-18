@@ -52,7 +52,7 @@ const Returns = () => {
       <div className="my-2">
         <Typography size="h6/normal">Return</Typography>
       </div>
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mt-8 mb-12 max-w-2xl">
         {!isLoading.value ? (
           isUser.value ? (
             orders.value?.length ? (

@@ -56,7 +56,7 @@ const Request = () => {
         <Typography size="h6/normal">Request Items</Typography>
       </div>
 
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
         <div className="text-center my-2 w-full mb-12">

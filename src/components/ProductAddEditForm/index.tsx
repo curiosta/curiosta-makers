@@ -69,7 +69,7 @@ const ProductAddEditForm = ({
   );
 
   return (
-    <div className="w-full mb-12 sm:w-3/4">
+    <div className="w-full mb-12 max-w-xl">
       <form
         className="w-full flex flex-col gap-4 mb-16"
         ref={formRef}
