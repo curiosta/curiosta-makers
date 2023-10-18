@@ -90,7 +90,9 @@ const App = () => {
   return (
     <Router
       url={currentUrl.value}
-      onChange={(e: RouterOnChangeArgs) => (currentUrl.value = e.url)}
+      onChange={(e: RouterOnChangeArgs) => {
+        (currentUrl.value = e.url), window.scrollTo({ top: 0 });
+      }}
     >
       <Route path="/" component={Guide} />
       <Route path="/welcome" component={Welcome} />
