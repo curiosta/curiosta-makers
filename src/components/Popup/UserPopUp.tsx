@@ -80,7 +80,7 @@ const UserPopUp = ({
         className="block w-full h-full"
         onClick={() => (isPopup.value = false)}
       />
-      <div className="absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6 sm:w-1/3">
+      <div className="absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6 max-w-sm">
         <Typography size="body1/semi-bold" className="capitalize">
           {type === "add" ? "Add" : "Update"}{" "}
           {variant === "adminUser" ? "Admin" : "User"}

@@ -46,7 +46,7 @@ const DeletePopUp = ({
       />
       <div
         className={`absolute ${
-          isLoading ? "w-fit" : "w-10/12 sm:w-1/3"
+          isLoading ? "w-fit" : "w-10/12 max-w-sm"
         } bg-secondray  rounded-2xl transition-all p-6`}
       >
         <div className="flex flex-col text-center gap-2 ">

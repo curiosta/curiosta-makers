@@ -42,7 +42,7 @@ const Login = () => {
   localStorage.setItem("userRole", JSON.stringify({ isUser: isUser.value }));
   return (
     <div className="flex justify-center p-4">
-      <div className="flex flex-col justify-center items-center  w-full sm:w-1/2 ">
+      <div className="flex flex-col justify-center items-center  w-full max-w-xl ">
         <div className="flex flex-col  items-center gap-2.5 ">
           <img src="/images/curiosta_logo.svg" alt="curiosta-logo" />
           <Typography size="h6/bold" className="text-center">
