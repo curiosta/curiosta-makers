@@ -103,12 +103,9 @@ const RequestItems = ({ id }: Props) => {
       <div className="my-2">
         <Typography size="h6/normal">Request Items</Typography>
       </div>
-      {/* <SearchInput /> */}
 
-      <div className="text-center my-2 w-full mb-12 sm:w-3/4">
-        <Typography size="h6/normal" className="capitalize">
-          Products
-        </Typography>
+      <div className="text-center my-2 w-full mb-12 max-w-2xl">
+        <Typography className="capitalize">Choose items</Typography>
 
         {!isLoading.value ? (
           <div className="mb-20">

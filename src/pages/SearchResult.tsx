@@ -55,7 +55,7 @@ const SearchResult = () => {
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         <div className="my-2">
           <Typography size="h6/normal">Search Products</Typography>
         </div>

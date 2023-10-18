@@ -22,7 +22,7 @@ const ProductImage = ({
     <div class="flex flex-col-reverse w-full">
       {/* Image selector */}
       {productImages?.length ? (
-        <div class="mx-auto mt-6 w-full sm:w-3/4">
+        <div class="mx-auto mt-6 w-full max-w-2xl">
           <div
             class="grid grid-cols-4 gap-6 sm:grid-cols-5"
             aria-orientation="horizontal"

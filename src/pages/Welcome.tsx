@@ -4,7 +4,7 @@ import Typography from "@components/Typography";
 const Welcome = () => {
   return (
     <div className="flex justify-center h-screen p-4">
-      <div className="flex flex-col justify-center items-center gap-10  w-full sm:w-1/2 ">
+      <div className="flex flex-col justify-center items-center gap-10  w-full max-w-xl ">
         <div className="flex flex-col  items-center gap-2.5 ">
           <img src="/images/curiosta_logo.svg" alt="curiosta-logo" />
           <Typography size="h6/bold" className="text-center uppercase">

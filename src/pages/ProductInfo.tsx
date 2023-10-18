@@ -99,7 +99,7 @@ const ProductInfo = ({ id }: Props) => {
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         {!isLoading.value ? (
           <div className="flex flex-col gap-4  justify-center w-full mb-28 mt-4">
             <ProductImage

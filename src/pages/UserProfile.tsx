@@ -239,7 +239,7 @@ const UserProfile = ({ id }: Props) => {
       <div className="my-2">
         <Typography size="h6/normal">User Profile</Typography>
       </div>
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         {isLoading.value !== "user:get" ? (
           <div className="w-full flex flex-col gap-2 ">
             <div className="w-full bg-secondray shadow-sm rounded-lg border p-4">

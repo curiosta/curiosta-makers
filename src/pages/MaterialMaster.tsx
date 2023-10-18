@@ -88,7 +88,7 @@ const MaterialMaster = () => {
         <Typography size="h6/normal">Material Master</Typography>
       </div>
 
-      <div className="w-full text-center mb-12 sm:w-3/4">
+      <div className="w-full text-center mb-12 max-w-2xl">
         <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
         <div className="flex justify-end">

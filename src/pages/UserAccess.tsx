@@ -4,6 +4,7 @@ import { adminDeactivateCustomer } from "@/api/admin/customers/deactivateCustome
 import { adminCustomersList } from "@/api/admin/customers/listCustomers";
 import { adminListDeactivateCustomers } from "@/api/admin/customers/listDeactivateCustomers";
 import { adminUpdateCustomer } from "@/api/admin/customers/updateCustomer";
+import user from "@/api/user";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
 import Dialog from "@/components/Dialog";
@@ -12,11 +13,13 @@ import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
 import OffsetPagination from "@/components/OffsetPagination";
 import PopUp from "@/components/Popup";
+import DeletePopUp from "@/components/Popup/DeletePopUp";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import UserPopUp from "@/components/Popup/UserPopUp";
 import SearchInput from "@/components/SearchInput";
 import Toggle from "@/components/Toggle";
 import Typography from "@/components/Typography";
+import UserCard from "@/components/UserCard";
 import { Customer } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { Link } from "preact-router";
@@ -45,7 +48,8 @@ const UserAccess = () => {
   const selectedId = useSignal<string | undefined>(undefined);
   const isDeletePopup = useSignal<boolean>(false);
   const searchTerm = useSignal<string | undefined>(undefined);
-  const activeToggle = useSignal<string>("active");
+  const activeToggle = useSignal<"active" | "inactive">("active");
+  const selectedUser = useSignal<Customer | null>(null);
 
   const getUsers = async () => {
     isLoading.value = "user:get";
@@ -84,16 +88,6 @@ const UserAccess = () => {
     }
     getUsers();
   }, [offset.value, searchTerm.value, addUser.value, activeToggle.value]);
-
-  // handle dialog
-  const handleDialog = (index: number) => {
-    dialogRef.current.map((val, i) => i != index && val?.close());
-    if (dialogRef.current[index]?.open) {
-      dialogRef.current[index]?.close();
-    } else {
-      dialogRef.current[index]?.show();
-    }
-  };
 
   const handleAddUser = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -138,12 +132,13 @@ const UserAccess = () => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { first_name, last_name } = formDataObj;
+        const { first_name, last_name, phone } = formDataObj;
         if (!selectedId.value) return;
         const addUserRes = await adminUpdateCustomer({
           customerId: selectedId.value,
           first_name: first_name.toString(),
           last_name: last_name.toString(),
+          phone: phone.toString(),
         });
         addUser.value = addUserRes?.customer;
         isUserEditPopUp.value = false;
@@ -183,19 +178,21 @@ const UserAccess = () => {
     }
   };
 
-  const handleEdit = async (id: string, index: number) => {
-    (selectedId.value = id),
-      (isUserEditPopUp.value = true),
-      dialogRef.current[index]?.close();
+  const handleEdit = (id: string) => {
+    selectedId.value = id;
+    isUserEditPopUp.value = true;
   };
-
+  const handleActiveInactive = (user: Customer) => {
+    isDeletePopup.value = true;
+    selectedUser.value = user;
+  };
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
         <Typography size="h6/normal">User Access Master</Typography>
       </div>
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         <Toggle
           activeToggle={activeToggle}
           toggleItems={["active", "inactive"]}
@@ -242,83 +239,17 @@ const UserAccess = () => {
           {isLoading.value !== "user:get" ? (
             users.value?.length ? (
               <div
-                className={`w-full flex flex-col  my-2 gap-4 ${
+                className={`w-full flex flex-col  my-4 gap-4 ${
                   count.value < limit.value ? "mb-20" : ""
                 }`}
               >
                 {users.value.map((user, index) => (
-                  <div className="w-full flex justify-between items-center relative">
-                    <Link
-                      href={`/user/${user.id}`}
-                      className="flex items-center gap-4 w-10/12"
-                    >
-                      <div className="w-9 h-9 flex">
-                        <Chip className="!bg-primary-700 uppercase text-white">
-                          {user.first_name
-                            ? user.first_name.charAt(0)
-                            : user.email.charAt(0)}
-                        </Chip>
-                      </div>
-                      {user?.first_name ? (
-                        <Typography
-                          variant="secondary"
-                          className="capitalize"
-                        >{`${user?.first_name} ${user?.last_name}`}</Typography>
-                      ) : (
-                        <Typography variant="secondary" className="capitalize">
-                          {user?.email}
-                        </Typography>
-                      )}
-                    </Link>
-                    <Button
-                      type="button"
-                      variant="icon"
-                      onClick={() => handleDialog(index)}
-                      className="z-10"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="4"
-                        height="18"
-                        viewBox="0 0 4 18"
-                        fill="none"
-                      >
-                        <path
-                          d="M2 4.75C3.1 4.75 4 3.79375 4 2.625C4 1.45625 3.1 0.5 2 0.5C0.9 0.5 0 1.45625 0 2.625C0 3.79375 0.9 4.75 2 4.75ZM2 6.875C0.9 6.875 0 7.83125 0 9C0 10.1687 0.9 11.125 2 11.125C3.1 11.125 4 10.1687 4 9C4 7.83125 3.1 6.875 2 6.875ZM2 13.25C0.9 13.25 0 14.2063 0 15.375C0 16.5438 0.9 17.5 2 17.5C3.1 17.5 4 16.5438 4 15.375C4 14.2063 3.1 13.25 2 13.25Z"
-                          fill="black"
-                        />
-                      </svg>
-                    </Button>
-                    <Dialog
-                      dialogRef={dialogRef}
-                      isLoading={
-                        activeToggle.value === "active"
-                          ? isLoading.value === "user:deactivate"
-                            ? true
-                            : false
-                          : isLoading.value === "user:activate"
-                          ? true
-                          : false
-                      }
-                      index={index}
-                      id={user.id}
-                      email={user.email}
-                      handleEdit={
-                        activeToggle.value === "active" ? handleEdit : undefined
-                      }
-                      isPopup={isDeletePopup}
-                      handleDelete={
-                        activeToggle.value === "active"
-                          ? handleDeactivate
-                          : handleActivate
-                      }
-                      variant={
-                        activeToggle.value === "active"
-                          ? "deactivate-user"
-                          : "activate-user"
-                      }
-                    />
-                  </div>
+                  <UserCard
+                    user={user}
+                    activeToggle={activeToggle.value}
+                    handleEdit={handleEdit}
+                    handleActiveInactive={handleActiveInactive}
+                  />
                 ))}
                 <OffsetPagination limit={limit} offset={offset} count={count} />
               </div>
@@ -363,6 +294,37 @@ const UserAccess = () => {
             variant="user"
           />
         ) : null}
+
+        <DeletePopUp
+          id={selectedUser.value?.id}
+          index={0}
+          isPopup={isDeletePopup}
+          isLoading={
+            activeToggle.value === "active"
+              ? isLoading.value === "user:deactivate"
+                ? true
+                : false
+              : isLoading.value === "user:activate"
+              ? true
+              : false
+          }
+          email={selectedUser.value?.email}
+          title={
+            activeToggle.value === "active"
+              ? `Are you sure you want to deactivate ${selectedUser.value?.email} ?`
+              : `Are you sure you want to activate ${selectedUser.value?.email} ?`
+          }
+          subtitle={
+            activeToggle.value === "active"
+              ? "This will deactivate this user. You can activate later from inactive user list"
+              : "This will activate this user. You can deactivate later from active user list"
+          }
+          handlePopupAction={
+            activeToggle.value === "active" ? handleDeactivate : handleActivate
+          }
+          actionText={"Yes, Confirm"}
+        />
+
         <PopUp
           isPopup={isPopUp}
           title={`User is ${

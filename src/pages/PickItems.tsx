@@ -175,7 +175,7 @@ const PickItems = ({ id }: Props) => {
       <div className="my-2">
         <Typography size="h6/normal">Pick Items</Typography>
       </div>
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         <Typography size="body1/normal" className="w-full truncate">
           Pick Id {id}
         </Typography>

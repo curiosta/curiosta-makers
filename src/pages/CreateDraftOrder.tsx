@@ -176,7 +176,7 @@ const CreateDraftOrder = () => {
       <div className="my-2">
         <Typography size="h6/normal">Create order for user</Typography>
       </div>
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         <div className="flex justify-center items-center gap-2 my-4">
           {Array(2)
             .fill(1)

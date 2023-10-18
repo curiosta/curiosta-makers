@@ -24,7 +24,7 @@ const Home = () => {
   return (
     <div className="flex flex-col justify-center items-center bg-neutral-50 p-4 w-full ">
       <TopNavbar />
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         <div className="w-full pl-2 my-4">
           <Typography>
             Hello{" "}

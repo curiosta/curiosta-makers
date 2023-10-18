@@ -181,7 +181,7 @@ const Account = () => {
   return (
     <div className="flex flex-col justify-center items-center  bg-neutral-50 p-4 w-full ">
       <TopNavbar />
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         <Link
           href={`/user/${currentUser.id}`}
           className="flex items-center gap-4 w-full rounded-2xl bg-secondray p-4 my-4"

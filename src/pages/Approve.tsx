@@ -55,7 +55,7 @@ const Approve = () => {
       <div className="my-2">
         <Typography size="h6/normal">Approve request</Typography>
       </div>
-      <div className="w-full mb-12 sm:w-3/4">
+      <div className="w-full mb-12 max-w-2xl">
         <SearchInput searchTerm={searchTerm} isSearchSort={false} />
         {!isLoading.value ? (
           orders.value?.length ? (
