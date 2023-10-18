@@ -73,11 +73,11 @@ const ProfileImageEdit = ({
   return (
     <div>
       <div
-        className={`fixed left-0 bottom-16 z-10  w-full bg-secondray border transition-all shadow-lg ${
+        className={`fixed left-0 bottom-14 z-10  w-full bg-secondray border transition-all shadow-lg ${
           isProfileImageEdit.value ? "translate-y-0" : "translate-y-full"
         } `}
       >
-        <div className="flex flex-col relative p-4 gap-2 ">
+        <div className="flex flex-col relative p-4 gap-2 mx-auto max-w-2xl  ">
           <Button
             type="button"
             variant="icon"

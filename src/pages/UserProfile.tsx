@@ -486,7 +486,7 @@ const UserProfile = ({ id }: Props) => {
         />
         {isProfileImageEdit.value ? (
           <div
-            className="absolute backdrop-brightness-75 w-full h-full"
+            className="absolute right-0 top-0 backdrop-brightness-75 w-full h-full"
             onClick={() => (isProfileImageEdit.value = false)}
           />
         ) : null}
