@@ -42,6 +42,7 @@ import { useEffect } from "preact/hooks";
 import ErrorBanner from "./components/ErrorBanner";
 import { categoriesList } from "./api/product/categoriesList";
 import CreateDraftOrder from "@pages/CreateDraftOrder";
+import CreateUser from "@pages/CreateUser";
 
 const App = () => {
   const isServerDown = useSignal<boolean>(false);
@@ -125,6 +126,7 @@ const App = () => {
       <Route path="/search" component={SearchResult} />
       <Route path="/user/:id" component={UserProfile} />
       <Route path="/create-draft-order" component={CreateDraftOrder} />
+      <Route path="/add-user" component={CreateUser} />
     </Router>
   );
 };
