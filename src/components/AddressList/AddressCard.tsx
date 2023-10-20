@@ -87,7 +87,7 @@ const AddressCard = ({
         />
       ) : null}
       <div class="flex flex-col w-10/12">
-        <Typography size="body1/medium" variant="primary">
+        <Typography size="body1/medium" variant="primary" className="w-11/12">
           {address?.address_1}
         </Typography>
         <Typography
