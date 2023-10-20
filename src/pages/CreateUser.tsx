@@ -1,4 +1,3 @@
-import Input from "@/components/Input";
 import TopNavbar from "@/components/Navbar/TopNavbar";
 import UserCreationProgress from "@/components/Progressbar/UserCreationProgress";
 import Typography from "@/components/Typography";
@@ -7,6 +6,11 @@ import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import CreateUserInfo from "@/components/CreateUserInfo";
 import UserBiometricInfo from "@/components/CreateUserInfo/UserBiometricInfo";
 import Button from "@/components/Button";
+import { Customer } from "@medusajs/medusa";
+import { TCustomer } from "@/api/user";
+import { adminCreateCustomer } from "@/api/admin/customers/createCustomer";
+import PopUp from "@/components/Popup";
+import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 
 export type TBasicInfo = {
   dob: Date;
@@ -16,26 +20,60 @@ export type TBasicInfo = {
   phone: string;
   gender: string;
 };
-export type TBiometricInfo = {
-  document: {
-    idNumber: number;
-    imageKey: string;
-  }[];
-  profileImageKey: string;
-};
+export type TDocumentInfo = {
+  idType: string;
+  idNumber: string;
+  idImageKey: string;
+}[];
 
 const CreateUser = () => {
   const basicInfo = useSignal<TBasicInfo | null>(null);
-  const biometricInfo = useSignal<TBiometricInfo | null>(null);
-  const activeStep = useSignal<number>(2);
+  const documentInfo = useSignal<TDocumentInfo>([]);
+  const profileImageKey = useSignal<string | null>(null);
+  const activeStep = useSignal<number>(1);
+  const isLoading = useSignal<boolean>(false);
+  const addUser = useSignal<TCustomer | null>(null);
+  const errorMessage = useSignal<string | undefined>(undefined);
+  const isUserPopUp = useSignal<boolean>(false);
 
   const handleBasicInfo = (data: TBasicInfo) => {
     basicInfo.value = data;
-    activeStep.value = 2;
+    activeStep.value = activeStep.value + 1;
   };
-  console.log(basicInfo.value);
 
-  const handleBiometricInfo = () => {};
+  const handleCreateUser = async () => {
+    isLoading.value = true;
+    try {
+      if (!basicInfo.value) return;
+      const { first_name, last_name, email, phone, dob, gender } =
+        basicInfo.value;
+      const addUserRes = await adminCreateCustomer({
+        first_name: first_name,
+        last_name: last_name,
+        email: email,
+        phone: phone,
+        password: "Maker@1234",
+        metadata: {
+          dob: dob,
+          gender: gender,
+          profile_image_key: profileImageKey.value,
+          documentInfo: documentInfo.value,
+        },
+      });
+      addUser.value = addUserRes?.customer;
+      isUserPopUp.value = true;
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes("422")) {
+          return (errorMessage.value = "User already exists with this email");
+        }
+        errorMessage.value = error.message;
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
@@ -48,7 +86,11 @@ const CreateUser = () => {
         {activeStep.value === 1 ? (
           <CreateUserInfo handleBasicInfo={handleBasicInfo} />
         ) : activeStep.value === 2 ? (
-          <UserBiometricInfo biometricInfo={biometricInfo} />
+          <UserBiometricInfo
+            documentInfo={documentInfo}
+            profileImageKey={profileImageKey}
+            activeStep={activeStep}
+          />
         ) : (
           <div className="flex flex-col gap-4">
             <Typography size="body1/semi-bold" className="text-center">
@@ -71,7 +113,12 @@ const CreateUser = () => {
                 </svg>
                 <Typography>Basic information</Typography>
               </div>
-              <Typography>Full Name</Typography>
+              <Typography className="capitalize">
+                {basicInfo.value?.first_name} {basicInfo.value?.last_name}
+              </Typography>
+              <Typography className="capitalize">
+                {basicInfo.value?.gender}
+              </Typography>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -89,8 +136,8 @@ const CreateUser = () => {
                 </svg>
                 <Typography>Contact information</Typography>
               </div>
-              <Typography>Email</Typography>
-              <Typography>Phone</Typography>
+              <Typography>{basicInfo.value?.email}</Typography>
+              <Typography>{basicInfo.value?.phone}</Typography>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -104,7 +151,9 @@ const CreateUser = () => {
                 </svg>
                 <Typography>Date of birth</Typography>
               </div>
-              <Typography>Dob</Typography>
+              <Typography>
+                {new Date(basicInfo.value?.dob).toLocaleDateString("en-GB")}
+              </Typography>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -122,43 +171,112 @@ const CreateUser = () => {
                 </svg>
                 <Typography>Identification Proof</Typography>
               </div>
-              <Typography>Aadhar no.</Typography>
-
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="w-6 h-6 fill-primary-600"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="w-6 h-6 fill-danger-600"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-
-                <Typography>Picture of proof uploaded</Typography>
-              </div>
+              {documentInfo.value?.map((info) => (
+                <div>
+                  <Typography>
+                    {info.idType}
+                    {":"} {info.idNumber}
+                  </Typography>
+                  {info.idImageKey ? (
+                    <div className="flex items-center gap-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="w-6 h-6 fill-primary-600"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      <Typography>Picture of proof uploaded</Typography>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="w-6 h-6 fill-danger-600"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      <Typography>Picture of proof not uploaded</Typography>
+                    </div>
+                  )}
+                </div>
+              ))}
+              {profileImageKey.value ? (
+                <div className="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="w-6 h-6 fill-primary-600"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <Typography>Profile picture uploaded</Typography>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="w-6 h-6 fill-danger-600"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <Typography>Profile picture not uploaded</Typography>
+                </div>
+              )}
             </div>
-            <div className="w-full flex justify-center items-center my-4">
-              <Button type="button">Submit and Create</Button>
+            {errorMessage.value ? (
+              <Typography variant="error" className="text-center mt-2">
+                {errorMessage.value}
+              </Typography>
+            ) : null}
+            <div className="w-full flex justify-between items-center my-4">
+              <Button
+                type="button"
+                onClick={() => (activeStep.value = activeStep.value - 1)}
+              >
+                Back
+              </Button>
+              <Button type="button" onClick={handleCreateUser}>
+                Submit and Create
+              </Button>
             </div>
           </div>
         )}
       </div>
+
+      {isLoading.value ? (
+        <LoadingPopUp loadingText="Please wait" />
+      ) : (
+        <PopUp
+          isPopup={isUserPopUp}
+          title="User is created successfully"
+          actionLink={`/user/${addUser.value?.id}`}
+          actionText="Check Profile"
+          subtitle={`User ID: ${addUser.value?.id} `}
+        />
+      )}
       <BottomNavbar />
     </div>
   );

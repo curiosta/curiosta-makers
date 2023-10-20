@@ -3,33 +3,84 @@ import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";
 import Typography from "../Typography";
-import { TBiometricInfo } from "@pages/CreateUser";
+import { TDocumentInfo } from "@pages/CreateUser";
 import LoadingPopUp from "../Popup/LoadingPopUp";
 import FileUploadPopup from "../Popup/FileUploadPopup";
 import { useRef } from "preact/hooks";
 import { ChangeEvent } from "preact/compat";
 import { adminProtectedUploadFile } from "@/api/admin/upload/protectedUploadFile";
-import FormControl from "../FormControl";
 
 type TUserBiometricInfo = {
-  biometricInfo: Signal<TBiometricInfo>;
+  documentInfo: Signal<TDocumentInfo>;
+  profileImageKey: Signal<string>;
+  activeStep: Signal<number>;
 };
 type TLoadableOptions = "profile:image:upload" | "idCard:upload";
 
-const UserBiometricInfo = ({ biometricInfo }: TUserBiometricInfo) => {
+const UserBiometricInfo = ({
+  documentInfo,
+  profileImageKey,
+  activeStep,
+}: TUserBiometricInfo) => {
   const numberOfIds = useSignal<number>(1);
   const selectedFile = useSignal<File | null>(null);
   const uploadPopup = useSignal<boolean>(false);
   const uploadFormRef = useRef<HTMLFormElement>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const errorMessage = useSignal<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const uploadType = useSignal<"idUpload" | "profileImageUpload" | null>(null);
 
   const handleUploadIdCard = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     isLoading.value = "idCard:upload";
+    if (errorMessage.value) {
+      errorMessage.value = null;
+    }
+    try {
+      if (!formRef.current) return;
+      const formData = new FormData(formRef.current);
+      const formDataObj = Object.fromEntries(formData.entries());
+      const { idCard_type, idCard_number } = formDataObj;
+
+      const idNumber = idCard_number.toString();
+      const idType = idCard_type.toString();
+      if (!idNumber) {
+        throw Error("Please enter ID Card number!");
+      } else if (idNumber.length < 3) {
+        throw Error("Please enter valid ID Card number!");
+      }
+      const uploadRes = await adminProtectedUploadFile(selectedFile.value);
+      const file_key: string = uploadRes?.uploads[0]?.key;
+      documentInfo.value = [
+        ...documentInfo.value,
+        {
+          idImageKey: file_key,
+          idNumber: idNumber,
+          idType: idType,
+        },
+      ];
+      uploadPopup.value = false;
+    } catch (error) {
+      if (error instanceof Error) {
+        errorMessage.value = error.message;
+      }
+    } finally {
+      isLoading.value = undefined;
+      selectedFile.value = null;
+    }
+  };
+
+  const handleUploadProfileImage = async (e: ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    isLoading.value = "profile:image:upload";
+    if (errorMessage.value) {
+      errorMessage.value = null;
+    }
     try {
       const uploadRes = await adminProtectedUploadFile(selectedFile.value);
       const file_key: string = uploadRes?.uploads[0]?.key;
+      profileImageKey.value = file_key;
       uploadPopup.value = false;
     } catch (error) {
       if (error instanceof Error) {
@@ -58,10 +109,14 @@ const UserBiometricInfo = ({ biometricInfo }: TUserBiometricInfo) => {
         </svg>
         <Typography>Identification Proof</Typography>
       </div>
-      <FormControl>
+      <form
+        onSubmit={handleUploadIdCard}
+        ref={formRef}
+        className="flex flex-col gap-4"
+      >
         {Array(numberOfIds.value)
           .fill(1)
-          .map((index) => (
+          .map((val, index) => (
             <div className="flex flex-col gap-2.5">
               <Select
                 name="idCard_type"
@@ -79,12 +134,36 @@ const UserBiometricInfo = ({ biometricInfo }: TUserBiometricInfo) => {
                 className="!p-2"
               />
               <div className="flex items-center justify-between border border-gray-400 bg-secondray p-4 rounded-lg">
-                <Typography>Take a picture of the ID Proof</Typography>
+                <div>
+                  <Typography>Take a picture of the ID Proof</Typography>
+                  {documentInfo.value?.length &&
+                  documentInfo.value?.at(index)?.idImageKey ? (
+                    <div className="flex items-center gap-2 my-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="w-5 h-5 fill-primary-600"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      <Typography size="body2/normal">
+                        Picture of proof uploaded
+                      </Typography>
+                    </div>
+                  ) : null}
+                </div>
                 <Button
                   type="button"
                   variant="icon"
                   className="ring-1 ring-third-500"
-                  onClick={() => (uploadPopup.value = true)}
+                  onClick={() => {
+                    (uploadPopup.value = true), (uploadType.value = "idUpload");
+                  }}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -128,35 +207,72 @@ const UserBiometricInfo = ({ biometricInfo }: TUserBiometricInfo) => {
             Add more Ids
           </Button>
         </div>
+      </form>
 
-        <div className="flex items-center justify-between border border-gray-400 bg-secondray p-4 rounded-lg">
+      <div className="flex items-center justify-between border border-gray-400 bg-secondray p-4 rounded-lg">
+        <div>
           <Typography>Take a picture of the User</Typography>
-          <Button
-            type="button"
-            variant="icon"
-            className="ring-1 ring-third-500"
+          {profileImageKey.value ? (
+            <div className="flex items-center gap-2 my-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="w-5 h-5 fill-primary-600"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <Typography size="body2/normal">
+                Profile image uploaded
+              </Typography>
+            </div>
+          ) : null}
+        </div>
+        <Button
+          type="button"
+          variant="icon"
+          className="ring-1 ring-third-500"
+          onClick={() => {
+            (uploadPopup.value = true),
+              (uploadType.value = "profileImageUpload");
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-14 h-14 fill-third-600"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="w-14 h-14 fill-third-600"
-            >
-              <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
-              <path
-                fill-rule="evenodd"
-                d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3h-15a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0zm12-1.5a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </Button>
-        </div>
-        <div className="w-full flex justify-end items-center my-4">
-          <Button type="submit">Next</Button>
-        </div>
-      </FormControl>
+            <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
+            <path
+              fill-rule="evenodd"
+              d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3h-15a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0zm12-1.5a.75.75 0 100-1.5.75.75 0 000 1.5z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </Button>
+      </div>
+      <div className="w-full flex justify-between items-center my-4">
+        <Button
+          type="button"
+          onClick={() => (activeStep.value = activeStep.value - 1)}
+        >
+          Back
+        </Button>
+        <Button
+          type="button"
+          onClick={() => (activeStep.value = activeStep.value + 1)}
+        >
+          Next
+        </Button>
+      </div>
 
-      {isLoading.value === "idCard:upload" ? (
+      {isLoading.value === "idCard:upload" ||
+      isLoading.value === "profile:image:upload" ? (
         <LoadingPopUp loadingText="Please wait" />
       ) : (
         <FileUploadPopup
@@ -166,7 +282,11 @@ const UserBiometricInfo = ({ biometricInfo }: TUserBiometricInfo) => {
           actionText="Upload"
           acceptFileType="image/png, image/jpeg"
           errorMessage={errorMessage}
-          handlePopupAction={handleUploadIdCard}
+          handlePopupAction={
+            uploadType.value === "idUpload"
+              ? handleUploadIdCard
+              : handleUploadProfileImage
+          }
         />
       )}
     </div>

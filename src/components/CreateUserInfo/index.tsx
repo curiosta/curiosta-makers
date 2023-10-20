@@ -149,6 +149,7 @@ const CreateUserInfo = ({ handleBasicInfo }: TCreateUserInfo) => {
         <Input
           type="date"
           name="dob"
+          max={new Date().toISOString().split("T")[0]}
           required={{ message: "Date of birth is required!", value: true }}
         />
       </div>

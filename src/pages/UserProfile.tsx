@@ -31,6 +31,13 @@ import DeletePopUp from "@/components/Popup/DeletePopUp";
 type Props = {
   id: string;
 };
+
+type TUserDocumentInfo = {
+  idType: string;
+  idNumber: string;
+  idImageUrl: string;
+  idImageKey: string;
+};
 type TLoadableOptions =
   | "user:get"
   | "user:edit"
@@ -40,7 +47,7 @@ type TLoadableOptions =
 
 const UserProfile = ({ id }: Props) => {
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
-  const userData = useSignal<Customer | TCustomer | null>(null);
+  const userData = useSignal<TCustomer | null>(null);
   const dialogRef = useRef<HTMLDialogElement[]>([]);
   const isUserEditPopUp = useSignal<boolean>(false);
   const isPopUp = useSignal<boolean>(false);
@@ -56,11 +63,11 @@ const UserProfile = ({ id }: Props) => {
   const isProfileImageEdit = useSignal<boolean>(false);
   const profileImageKey = useSignal<string | undefined>(undefined);
   const profileImageUrl = useSignal<string | undefined>(undefined);
-  const profileIdCardKey = useSignal<string | undefined>(undefined);
-  const profileIdCardUrl = useSignal<string | undefined>(undefined);
+  const userDocumentInfo = useSignal<TUserDocumentInfo[]>([]);
   const selectedFile = useSignal<File | null>(null);
   const uploadPopup = useSignal<boolean>(false);
   const uploadFormRef = useRef<HTMLFormElement>(null);
+  const selectedDocumentKey = useSignal<string | null>(null);
 
   const getUser = async () => {
     isLoading.value = "user:get";
@@ -72,7 +79,7 @@ const UserProfile = ({ id }: Props) => {
           customerId: id,
         });
         userData.value = userRes?.customer;
-        const { profile_image_key, govt_id_key } = (
+        const { profile_image_key, documentInfo } = (
           userRes?.customer as TCustomer
         )?.metadata;
         if (profile_image_key) {
@@ -82,12 +89,25 @@ const UserProfile = ({ id }: Props) => {
           });
           profileImageUrl.value = profileImageUploadRes?.download_url;
         }
-        if (govt_id_key) {
-          profileIdCardKey.value = govt_id_key;
-          const govtIdUploadRes = await adminGetProtectedUploadFile({
-            file_key: govt_id_key,
+        if (documentInfo?.length) {
+          documentInfo.map(async (document) => {
+            try {
+              const govtIdUploadRes = await adminGetProtectedUploadFile({
+                file_key: document.idImageKey,
+              });
+              userDocumentInfo.value = [
+                ...userDocumentInfo.value,
+                {
+                  idImageUrl: govtIdUploadRes?.download_url,
+                  idNumber: document.idNumber,
+                  idType: document.idType,
+                  idImageKey: document.idImageKey,
+                },
+              ];
+            } catch (error) {
+              console.log(error);
+            }
           });
-          profileIdCardUrl.value = govtIdUploadRes?.download_url;
         }
       }
       address.value = userData.value?.shipping_addresses;
@@ -199,10 +219,10 @@ const UserProfile = ({ id }: Props) => {
     try {
       const uploadRes = await adminProtectedUploadFile(selectedFile.value);
       const file_key: string = uploadRes?.uploads[0]?.key;
-      await adminUpdateCustomer({
-        customerId: id,
-        metadata: { govt_id_key: file_key },
-      });
+      // await adminUpdateCustomer({
+      //   customerId: id,
+      //   metadata: {  },
+      // });
 
       uploadPopup.value = false;
       getUser();
@@ -219,12 +239,13 @@ const UserProfile = ({ id }: Props) => {
   const handleDeleteIdCard = async () => {
     isLoading.value = "profile:govtId:delete";
     try {
-      if (!profileIdCardKey.value) return;
-      await adminDeleteUploadFile(profileIdCardKey.value);
+      if (!userDocumentInfo.value?.length) return;
+      await adminDeleteUploadFile(selectedDocumentKey.value);
       await adminUpdateCustomer({
         customerId: id,
-        metadata: { govt_id_key: "" },
+        metadata: { documentInfo: [] },
       });
+
       isDeletePopup.value = false;
       window.location.reload();
     } catch (error) {
@@ -290,18 +311,21 @@ const UserProfile = ({ id }: Props) => {
                     ) : null}
                   </div>
                   <div>
-                    {userData.value?.first_name ? (
-                      <Typography
-                        size="h6/bold"
-                        className="capitalize"
-                      >{`${userData.value?.first_name} ${userData.value?.last_name}`}</Typography>
-                    ) : (
-                      <Typography variant="secondary" className="capitalize">
-                        {userData.value?.email}
-                      </Typography>
-                    )}
+                    <Typography
+                      size="h6/bold"
+                      className="capitalize"
+                    >{`${userData.value?.first_name} ${userData.value?.last_name}`}</Typography>
                     <Typography variant="secondary" className="break-all">
                       {userData.value?.email}
+                    </Typography>
+                    <Typography variant="secondary" className="capitalize">
+                      {userData.value?.metadata?.gender}
+                    </Typography>
+                    <Typography variant="secondary" className="break-all">
+                      {"DOB:-"}{" "}
+                      {new Date(
+                        userData.value?.metadata?.dob
+                      ).toLocaleDateString("en-GB")}
                     </Typography>
                   </div>
                 </div>
@@ -351,16 +375,16 @@ const UserProfile = ({ id }: Props) => {
             {!isUser.value ? (
               <div className="w-full mb-20">
                 <div className="p-2">
-                  <Typography size="h6/medium">Govt. id</Typography>
+                  <Typography size="h6/medium">ID card info</Typography>
                   <div className="flex flex-col items-center justify-center gap-4">
-                    {!profileIdCardUrl.value ? (
+                    {!userDocumentInfo.value?.length ? (
                       <div>
                         <Typography
                           size="body2/normal"
                           variant="error"
                           className="my-4 text-center"
                         >
-                          Govt. id not found
+                          ID card not found
                         </Typography>
                         <Button
                           type="button"
@@ -373,38 +397,50 @@ const UserProfile = ({ id }: Props) => {
                         </Button>
                       </div>
                     ) : (
-                      <div className="flex flex-col gap-2 items-center my-4 w-full">
-                        <img
-                          src={
-                            profileIdCardUrl.value ??
-                            "/images/placeholderImg.svg"
-                          }
-                          className="w-9/12 object-cover border rounded-lg sm:w-1/2"
-                          alt="govt_id"
-                        />
-                        <Button
-                          type="button"
-                          variant="icon"
-                          className="!text-danger-600 border-2  gap-2 !items-center"
-                          onClick={() => (isDeletePopup.value = true)}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="w-6 h-6"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                      userDocumentInfo.value?.map((document) => (
+                        <div className="flex flex-col gap-2">
+                          <Typography>
+                            {document.idType}
+                            {":-"} {document.idNumber}
+                          </Typography>
+                          <div className="flex flex-col gap-2 items-center my-4 w-full">
+                            <img
+                              src={
+                                document.idImageUrl ??
+                                "/images/placeholderImg.svg"
+                              }
+                              className="w-9/12 object-cover border rounded-lg sm:w-1/2"
+                              alt="id card"
                             />
-                          </svg>
-                          Delete
-                        </Button>
-                      </div>
+                            <Button
+                              type="button"
+                              variant="icon"
+                              className="!text-danger-600 border-2  gap-2 !items-center"
+                              onClick={() => {
+                                (isDeletePopup.value = true),
+                                  (selectedDocumentKey.value =
+                                    document.idImageKey);
+                              }}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="w-6 h-6"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                />
+                              </svg>
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      ))
                     )}
                   </div>
                 </div>
