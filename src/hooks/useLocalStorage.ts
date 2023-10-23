@@ -5,6 +5,7 @@ type LocalStorageItems = {
   cartId: string;
   custId: string;
   countryId: number;
+  draftOrderId: number;
 };
 
 /**
