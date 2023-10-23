@@ -209,15 +209,7 @@ const UserAccess = () => {
         <div className="text-center my-2 w-full mb-20">
           {activeToggle.value === "active" ? (
             <div className="flex justify-end">
-              <Button
-                type="button"
-                className="gap-2"
-                onClick={() => {
-                  (isUserPopUp.value = true),
-                    (selectedId.value = undefined),
-                    (errorMessage.value = null);
-                }}
-              >
+              <Button className="gap-2" link="/add-user">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -266,19 +258,6 @@ const UserAccess = () => {
             </div>
           )}
         </div>
-        {isLoading.value === "user:add" ? (
-          <LoadingPopUp loadingText="Please wait" />
-        ) : isUserPopUp.value ? (
-          <UserPopUp
-            isPopup={isUserPopUp}
-            handlePopupAction={handleAddUser}
-            actionText="Save"
-            type="add"
-            formRef={formRef}
-            errorMessage={errorMessage}
-            variant="user"
-          />
-        ) : null}
 
         {isLoading.value === "user:edit" ? (
           <LoadingPopUp loadingText="Please wait" />

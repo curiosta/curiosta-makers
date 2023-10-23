@@ -27,6 +27,8 @@ import FileUploadPopup from "@/components/Popup/FileUploadPopup";
 import { adminProtectedUploadFile } from "@/api/admin/upload/protectedUploadFile";
 import { adminDeleteUploadFile } from "@/api/admin/upload/deleteUpload";
 import DeletePopUp from "@/components/Popup/DeletePopUp";
+import Input from "@/components/Input";
+import Select from "@/components/Select";
 
 type Props = {
   id: string;
@@ -35,15 +37,15 @@ type Props = {
 type TUserDocumentInfo = {
   idType: string;
   idNumber: string;
-  idImageUrl: string;
-  idImageKey: string;
+  idImageUrl?: string;
+  idImageKey?: string;
 };
 type TLoadableOptions =
   | "user:get"
   | "user:edit"
   | "user:oders:get"
-  | "profile:govtId:upload"
-  | "profile:govtId:delete";
+  | "profile:IdCard:upload"
+  | "profile:IdCard:delete";
 
 const UserProfile = ({ id }: Props) => {
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
@@ -68,6 +70,7 @@ const UserProfile = ({ id }: Props) => {
   const uploadPopup = useSignal<boolean>(false);
   const uploadFormRef = useRef<HTMLFormElement>(null);
   const selectedDocumentKey = useSignal<string | null>(null);
+  const numberOfIds = useSignal<number>(1);
 
   const getUser = async () => {
     isLoading.value = "user:get";
@@ -215,17 +218,39 @@ const UserProfile = ({ id }: Props) => {
 
   const handleUploadIdCard = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    isLoading.value = "profile:govtId:upload";
+    isLoading.value = "profile:IdCard:upload";
+    if (errorMessage.value) {
+      errorMessage.value = null;
+    }
     try {
+      if (!formRef.current) return;
+      const formData = new FormData(formRef.current);
+      const formDataObj = Object.fromEntries(formData.entries());
+      const { idCard_type, idCard_number } = formDataObj;
+
+      const idNumber = idCard_number.toString();
+      const idType = idCard_type.toString();
+      if (!idNumber) {
+        throw Error("Please enter ID Card number!");
+      } else if (idNumber.length < 3) {
+        throw Error("Please enter valid ID Card number!");
+      }
       const uploadRes = await adminProtectedUploadFile(selectedFile.value);
       const file_key: string = uploadRes?.uploads[0]?.key;
-      // await adminUpdateCustomer({
-      //   customerId: id,
-      //   metadata: {  },
-      // });
+      userDocumentInfo.value = [
+        ...userDocumentInfo.value,
+        {
+          idImageKey: file_key,
+          idNumber: idNumber,
+          idType: idType,
+        },
+      ];
 
+      await adminUpdateCustomer({
+        customerId: id,
+        metadata: { documentInfo: userDocumentInfo.value },
+      });
       uploadPopup.value = false;
-      getUser();
     } catch (error) {
       if (error instanceof Error) {
         errorMessage.value = error.message;
@@ -237,21 +262,24 @@ const UserProfile = ({ id }: Props) => {
   };
 
   const handleDeleteIdCard = async () => {
-    isLoading.value = "profile:govtId:delete";
-    try {
-      if (!userDocumentInfo.value?.length) return;
-      await adminDeleteUploadFile(selectedDocumentKey.value);
-      await adminUpdateCustomer({
-        customerId: id,
-        metadata: { documentInfo: [] },
-      });
+    isLoading.value = "profile:IdCard:delete";
 
-      isDeletePopup.value = false;
-      window.location.reload();
-    } catch (error) {
-    } finally {
-      isLoading.value = undefined;
-    }
+    if (!userDocumentInfo.value?.length) return;
+    userData.value?.metadata?.documentInfo?.map(async (document) => {
+      try {
+        await adminDeleteUploadFile(document.idImageKey);
+        await adminUpdateCustomer({
+          customerId: id,
+          metadata: { documentInfo: [] },
+        });
+        isDeletePopup.value = false;
+        window.location.reload();
+      } catch (error) {
+        console.log(error);
+      } finally {
+        isLoading.value = undefined;
+      }
+    });
   };
 
   return (
@@ -323,9 +351,11 @@ const UserProfile = ({ id }: Props) => {
                     </Typography>
                     <Typography variant="secondary" className="break-all">
                       {"DOB:-"}{" "}
-                      {new Date(
-                        userData.value?.metadata?.dob
-                      ).toLocaleDateString("en-GB")}
+                      {userData.value?.metadata?.dob
+                        ? new Date(
+                            userData.value?.metadata?.dob
+                          ).toLocaleDateString("en-GB")
+                        : "N/A"}
                     </Typography>
                   </div>
                 </div>
@@ -374,75 +404,124 @@ const UserProfile = ({ id }: Props) => {
 
             {!isUser.value ? (
               <div className="w-full mb-20">
-                <div className="p-2">
+                <div className="p-2 flex items-center justify-between">
                   <Typography size="h6/medium">ID card info</Typography>
-                  <div className="flex flex-col items-center justify-center gap-4">
-                    {!userDocumentInfo.value?.length ? (
-                      <div>
-                        <Typography
-                          size="body2/normal"
-                          variant="error"
-                          className="my-4 text-center"
-                        >
-                          ID card not found
-                        </Typography>
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={() => {
-                            uploadPopup.value = true;
-                          }}
-                        >
-                          Upload here
-                        </Button>
-                      </div>
-                    ) : (
-                      userDocumentInfo.value?.map((document) => (
-                        <div className="flex flex-col gap-2">
+                  {userDocumentInfo.value?.length ? (
+                    <Button
+                      type="button"
+                      variant="icon"
+                      className="!text-danger-600 border-2  gap-2 !items-center"
+                      onClick={() => {
+                        isDeletePopup.value = true;
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        />
+                      </svg>
+                      {userDocumentInfo.value?.length > 1
+                        ? "Delete All ID cards"
+                        : "Delete ID card"}
+                    </Button>
+                  ) : null}
+                </div>
+                <div className="w-full flex flex-col items-center justify-center gap-4 my-4">
+                  {!userDocumentInfo.value?.length ? (
+                    <form
+                      onSubmit={handleUploadIdCard}
+                      ref={formRef}
+                      className="w-full flex flex-col gap-4"
+                    >
+                      <Typography size="body1/medium" className="text-center">
+                        Upload ID card
+                      </Typography>
+                      <div className="flex flex-col gap-2.5">
+                        <Select
+                          name="idCard_type"
+                          options={[
+                            "College ID card",
+                            "Voter ID card",
+                            "Aadhar card",
+                            "Pan Card",
+                          ]}
+                        />
+                        <Input
+                          type="text"
+                          name="idCard_number"
+                          placeholder="Enter Identification Proof Number"
+                          className="!p-2"
+                        />
+                        <div className="flex items-center justify-between border border-gray-400 bg-secondray p-4 rounded-lg">
                           <Typography>
-                            {document.idType}
-                            {":-"} {document.idNumber}
+                            Take a picture of the ID Proof
                           </Typography>
-                          <div className="flex flex-col gap-2 items-center my-4 w-full">
+                          <Button
+                            type="button"
+                            variant="icon"
+                            className="ring-1 ring-third-500"
+                            onClick={() => {
+                              uploadPopup.value = true;
+                            }}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              class="w-14 h-14 fill-third-600"
+                            >
+                              <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
+                              <path
+                                fill-rule="evenodd"
+                                d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3h-15a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0zm12-1.5a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                          </Button>
+                        </div>
+                      </div>
+                    </form>
+                  ) : (
+                    userDocumentInfo.value?.map((document) => (
+                      <div className="w-full flex flex-col items-center gap-4 border bg-secondray p-4 rounded-lg">
+                        <div className="w-full flex flex-wrap items-center gap-4 sm:justify-around p-4  ">
+                          <div>
+                            <Typography size="body1/normal">
+                              Document Type
+                            </Typography>
+                            <Typography size="body1/semi-bold">
+                              {document.idType}
+                            </Typography>
+                            <Typography size="body1/normal">
+                              Document Number
+                            </Typography>
+                            <Typography size="body1/semi-bold">
+                              {document.idNumber}
+                            </Typography>
+                          </div>
+                          <div className="w-10/12 sm:w-48">
                             <img
                               src={
                                 document.idImageUrl ??
                                 "/images/placeholderImg.svg"
                               }
-                              className="w-9/12 object-cover border rounded-lg sm:w-1/2"
+                              className="object-cover border rounded-lg w-full "
                               alt="id card"
                             />
-                            <Button
-                              type="button"
-                              variant="icon"
-                              className="!text-danger-600 border-2  gap-2 !items-center"
-                              onClick={() => {
-                                (isDeletePopup.value = true),
-                                  (selectedDocumentKey.value =
-                                    document.idImageKey);
-                              }}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="w-6 h-6"
-                              >
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                                />
-                              </svg>
-                              Delete
-                            </Button>
                           </div>
                         </div>
-                      ))
-                    )}
-                  </div>
+                      </div>
+                    ))
+                  )}
                 </div>
 
                 <div className="p-2">
@@ -493,8 +572,10 @@ const UserProfile = ({ id }: Props) => {
           id={id}
           index={0}
           isPopup={isDeletePopup}
-          isLoading={isLoading.value === "profile:govtId:delete" ? true : false}
-          title={`Are you sure you want to delete this Id card?`}
+          isLoading={isLoading.value === "profile:IdCard:delete" ? true : false}
+          title={`Are you sure you want to delete  ${
+            userDocumentInfo.value?.length > 1 ? "all" : ""
+          } Id card?`}
           subtitle="This will delete this permanently. You cannot undo this action"
           handlePopupAction={handleDeleteIdCard}
           actionText={"Yes, Confirm"}
@@ -534,7 +615,7 @@ const UserProfile = ({ id }: Props) => {
             profileImageUrl={profileImageUrl}
           />
         ) : null}
-        {isLoading.value === "profile:govtId:upload" ? (
+        {isLoading.value === "profile:IdCard:upload" ? (
           <LoadingPopUp loadingText="Please wait" />
         ) : (
           <FileUploadPopup

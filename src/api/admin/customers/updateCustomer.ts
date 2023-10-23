@@ -6,10 +6,10 @@ type TCustomerMetadata = {
   profile_image_key?: string;
   dob?: Date;
   gender?: string;
-  documentInfo: {
+  documentInfo?: {
     idType: string;
     idNumber: string;
-    idImageKey: string;
+    idImageKey?: string;
   }[];
 };
 
