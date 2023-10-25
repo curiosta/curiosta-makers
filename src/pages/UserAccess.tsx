@@ -89,39 +89,6 @@ const UserAccess = () => {
     getUsers();
   }, [offset.value, searchTerm.value, addUser.value, activeToggle.value]);
 
-  const handleAddUser = async (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    isLoading.value = "user:add";
-    if (errorMessage.value) {
-      errorMessage.value = null;
-    }
-    try {
-      if (formRef.current) {
-        const formData = new FormData(formRef.current);
-        const formDataObj = Object.fromEntries(formData.entries());
-        const { first_name, last_name, email, password } = formDataObj;
-
-        const addUserRes = await adminCreateCustomer({
-          first_name: first_name.toString(),
-          last_name: last_name.toString(),
-          email: email.toString(),
-          password: password.toString(),
-        });
-        addUser.value = addUserRes?.customer;
-        isUserPopUp.value = false;
-        isPopUp.value = true;
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message.includes("422")) {
-          return (errorMessage.value = "User already exists with this email");
-        }
-        errorMessage.value = error.message;
-      }
-    } finally {
-      isLoading.value = undefined;
-    }
-  };
   const handleUpdateUser = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     isLoading.value = "user:edit";
@@ -247,7 +214,13 @@ const UserAccess = () => {
                     handleActiveInactive={handleActiveInactive}
                   />
                 ))}
-                <OffsetPagination limit={limit} offset={offset} count={count} />
+                {activeToggle.value === "active" ? (
+                  <OffsetPagination
+                    limit={limit}
+                    offset={offset}
+                    count={count}
+                  />
+                ) : null}
               </div>
             ) : !users.value?.length && count.value ? (
               <div className="w-full h-40 ">
