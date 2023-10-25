@@ -105,7 +105,10 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
             }
             className="flex items-center gap-3"
           >
-            <Chip className="!bg-primary-700 uppercase text-white">
+            <Chip
+              variant="primary2"
+              className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+            >
               {page !== "adminReturn"
                 ? order?.email.charAt(0)
                 : returnVal?.order.email.charAt(0)}
