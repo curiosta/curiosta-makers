@@ -132,13 +132,17 @@ const UserAccess = () => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { first_name, last_name, phone } = formDataObj;
+        const { first_name, last_name, phone, dob, gender } = formDataObj;
         if (!selectedId.value) return;
         const addUserRes = await adminUpdateCustomer({
           customerId: selectedId.value,
           first_name: first_name.toString(),
           last_name: last_name.toString(),
           phone: phone.toString(),
+          metadata: {
+            gender: gender.toString(),
+            dob: new Date(dob.toString()),
+          },
         });
         addUser.value = addUserRes?.customer;
         isUserEditPopUp.value = false;

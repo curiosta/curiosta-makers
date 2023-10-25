@@ -6,9 +6,9 @@ import { signal } from "@preact/signals";
 type TCustomerMetadata = {
   cart_id?: string | null;
   profile_image_key?: string;
-  dob: Date;
-  gender: string;
-  documentInfo: {
+  dob?: Date;
+  gender?: string;
+  documentInfo?: {
     idType: string;
     idNumber: string;
     idImageKey: string;

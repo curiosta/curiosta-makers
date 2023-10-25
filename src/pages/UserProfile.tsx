@@ -184,12 +184,16 @@ const UserProfile = ({ id }: Props) => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { first_name, last_name, phone } = formDataObj;
+        const { first_name, last_name, phone, dob, gender } = formDataObj;
         if (isUser.value) {
           await user.updateUser({
             first_name: first_name.toString(),
             last_name: last_name.toString(),
             phone: phone.toString(),
+            metadata: {
+              gender: gender.toString(),
+              dob: new Date(dob.toString()),
+            },
           });
         } else {
           const updateRes = await adminUpdateCustomer({
@@ -197,6 +201,10 @@ const UserProfile = ({ id }: Props) => {
             first_name: first_name.toString(),
             last_name: last_name.toString(),
             phone: phone.toString(),
+            metadata: {
+              gender: gender.toString(),
+              dob: new Date(dob.toString()),
+            },
           });
           userData.value = updateRes?.customer;
         }

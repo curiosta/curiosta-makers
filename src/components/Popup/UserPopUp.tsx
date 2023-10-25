@@ -3,12 +3,13 @@ import Button from "../Button";
 import Typography from "../Typography";
 import { ChangeEvent } from "preact/compat";
 import { MutableRef, useEffect } from "preact/hooks";
-import { Customer, User } from "@medusajs/medusa";
+import { User } from "@medusajs/medusa";
 import NewInput from "../Input/NewInput";
 import { adminGetCustomer } from "@/api/admin/customers/getCustomer";
 import { adminGetuser } from "@/api/admin/adminUsers/getAdminUser";
 import { isUser } from "@/store/userState";
 import user, { TCustomer } from "@/api/user";
+import Select from "../Select";
 
 type PopUp = {
   isPopup: Signal<boolean>;
@@ -112,17 +113,30 @@ const UserPopUp = ({
               required
             />
             {variant === "user" ? (
-              <NewInput
-                name="phone"
-                type="tel"
-                label="Phone Number"
-                autocomplete="phone"
-                pattern="(\+91)?(-)?\s*?(91)?\s*?(\d{3})-?\s*?(\d{3})-?\s*?(\d{4})"
-                placeholder={"+91 9876543210"}
-                title="Invalid phone number"
-                defaultValue={type === "edit" ? userData.value?.phone : ""}
-                required
-              />
+              <div className="w-full flex flex-col gap-4">
+                <Select
+                  name="gender"
+                  options={["male", "female", "other"]}
+                  defaultValue={userData.value?.metadata?.gender as string}
+                />
+                <NewInput
+                  type="date"
+                  name="dob"
+                  max={new Date().toISOString().split("T")[0]}
+                  required
+                />
+                <NewInput
+                  name="phone"
+                  type="tel"
+                  label="Phone Number"
+                  autocomplete="phone"
+                  pattern="(\+91)?(-)?\s*?(91)?\s*?(\d{3})-?\s*?(\d{3})-?\s*?(\d{4})"
+                  placeholder={"+91 9876543210"}
+                  title="Invalid phone number"
+                  defaultValue={type === "edit" ? userData.value?.phone : ""}
+                  required
+                />
+              </div>
             ) : null}
             {type === "add" ? (
               <>
