@@ -2,20 +2,22 @@ import { cx } from "class-variance-authority";
 import { HTMLAttributes } from "preact/compat";
 
 interface Props extends HTMLAttributes<HTMLInputElement> {
-  label: string;
+  label?: string;
 }
 
 const NewInput = ({ label, className, ...rest }: Props) => {
-  const id = label.replaceAll(" ", "-").toLowerCase();
+  const id = label?.replaceAll(" ", "-").toLowerCase();
 
   return (
     <div className="w-full">
-      <label
-        htmlFor={id}
-        className="text-sm font-medium leading-6 text-gray-900 flex gap-1 mb-1"
-      >
-        {label}
-      </label>
+      {label ? (
+        <label
+          htmlFor={id}
+          className="text-sm font-medium leading-6 text-gray-900 flex gap-1 mb-1"
+        >
+          {label}
+        </label>
+      ) : null}
       <input
         id={id}
         class={cx(
