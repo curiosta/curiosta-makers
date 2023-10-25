@@ -3,25 +3,18 @@ import user from "@api/user";
 import useLocalStorage from "@hooks/useLocalStorage";
 import {
   type StoreCompleteCartRes,
-  type StorePostCartReq,
-  type StorePostCartsCartReq,
   Region,
   DraftOrder,
-  AddressPayload,
+  AdminPostDraftOrdersReq,
+  AdminPostDraftOrdersDraftOrderReq,
 } from "@medusajs/medusa";
 import type { PricedShippingOption } from "@medusajs/medusa/dist/types/pricing";
-import { effect, signal } from "@preact/signals";
+import { signal } from "@preact/signals";
+import admin from "..";
 
-type TAdminCreateDraftOrder = {
-  email: string;
-  region_id: string;
-  items: {
-    quantity: number;
-    variant_id: string;
-    metadata: { cartType: string; borrowReturnDate?: string };
-  }[];
-  address: AddressPayload | string;
-  customer_id: string;
+type TDraftOrderMetadata = {
+  cartType: string;
+  borrowReturnDate?: string;
 };
 
 type TLoadableOptionsList = {
@@ -62,145 +55,100 @@ class DraftOrderStore {
 
   constructor() {
     // run initialize when user.state.value changes from loading to authenticated/unauthenticated
-    effect(() => {
-      // this.initialize();
-    });
+    // effect(() => {
+    //   this.initialize();
+    // });
   }
 
-  // async initialize() {
-  //   // function re runs since we are storing new cart value which makes a render again.
-  //   if (this.store.value) return;
-  //   this.loading.value = "cart:get";
-  //   let cartId: string | undefined;
-  //   const { get } = useLocalStorage();
-  //   const localStorageCartId = get("draftOrderId") || undefined;
-
-  //   if (user.state.value === "authenticated") {
-  //     // if user is authenticated, get cart id from server
-  //     cartId = user.customer.value?.metadata?.cart_id || undefined;
-  //   } else if (user.state.value === "unauthenticated") {
-  //     // if user is unauthenticated, set cart id from local storage
-  //     cartId = localStorageCartId;
-  //   }
-
-  //   if (!cartId && user.state.value !== "loading") {
-  //     this.loading.value = undefined;
-  //     return await this.resetCartId();
-  //   }
-
-  //   if (cartId) {
-  //     const cart = await this.getCart(cartId);
-
-  //     this.store.value = cart;
-
-  //     if (localStorageCartId && user.state.value === "authenticated") {
-  //       this.mergeCartItems(localStorageCartId);
-  //     }
-  //   }
-  //   this.loading.value = undefined;
-  // }
-
-  // cart
-
-  // private async getCart(id: string) {
-  //   this.loading.value = "cart:get";
-  //   const result = await medusa.carts.retrieve(id);
-  //   this.loading.value = undefined;
-  //   return result.cart;
-  // }
-
-  async createDraftOrder(payload?: TAdminCreateDraftOrder) {
+  async createDraftOrder(payload: AdminPostDraftOrdersReq) {
     this.loading.value = "draftOrder:complete";
-    const result = await medusa.admin.draftOrders.create(payload);
+    const { region_id, email, customer_id, billing_address } = payload;
+    const listShippingOption = await medusa.admin.shippingOptions.list({
+      region_id,
+    });
+    const result = await medusa.admin.draftOrders.create({
+      email,
+      region_id,
+      customer_id,
+      billing_address,
+      shipping_address: billing_address,
+      shipping_methods: [
+        {
+          option_id: listShippingOption.shipping_options[0]?.id,
+        },
+      ],
+    });
     this.store.value = result.draft_order;
-
-    const { set } = useLocalStorage();
-    set("draftOrderId", result.draft_order.id);
-
-    // await this.listShippingMethods();
+    await admin.updateAdminUser({
+      metadata: { draftOrderId: result.draft_order.id },
+    });
     this.loading.value = undefined;
   }
-  async updateCart(payload: TCartUpdatePayload) {
+
+  async getDraftOrder(id: string) {
+    this.loading.value = "draftOrder:get";
+    const result = await medusa.admin.draftOrders.retrieve(id);
+    this.loading.value = undefined;
+    this.store.value = result.draft_order;
+  }
+
+  async updateDraftOrder(payload: AdminPostDraftOrdersDraftOrderReq) {
     if (!this.store.value)
       throw new Error(
-        "Cart was not initialize before using cart.updateCart function."
+        "Draft order was not initialize before using draftOrder.updateDraftOrder function."
       );
-    this.loading.value = "cart:update";
+    this.loading.value = "draftOrder:update";
 
-    const updateResult = await medusa.carts.update(
+    const updateResult = await medusa.admin.draftOrders.update(
       this.store.value.id,
-      payload
+      {
+        payload,
+      }
     );
     this.store.value = updateResult.cart;
 
     this.loading.value = undefined;
   }
 
-  async resetCartId() {
-    this.loading.value = "cart:reset";
-    const response = await medusa.carts.create();
-    if (user.state.value === "authenticated") {
-      await user.updateUser({ metadata: { cart_id: response.cart.id } });
-    } else if (user.state.value === "unauthenticated") {
-      const { set } = useLocalStorage();
-      set("cartId", response.cart.id);
-    }
-    this.store.value = response.cart;
-    this.loading.value = undefined;
-    return response.cart;
-  }
-
-  async mergeCartItems(fromCartId: string) {
-    const fromCart = await this.getCart(fromCartId);
-    fromCart.items.map(
-      (item) =>
-        item.variant_id &&
-        this.addItem({
-          id: item.variant_id,
-          quantity: item.quantity,
-          metadata: item.metadata,
-        })
-    );
-    const { remove } = useLocalStorage();
-    remove("cartId");
-  }
-
   // line items
 
   async addItem({
-    id,
+    variant_id,
     quantity = 1,
     metadata,
   }: {
-    id: string;
+    variant_id: string;
     quantity?: number;
     metadata: TDraftOrderMetadata;
   }) {
     if (!this.store.value)
       throw new Error(
-        "Cart was not initialize before using cart.addItem function."
+        "Draft order was not initialize before using draftOrder.addItem function."
       );
-    this.loading.value = "cart:line_items:add";
-    const response = await medusa.carts.lineItems.create(this.store.value.id, {
-      quantity,
-      variant_id: id,
-      metadata,
-    });
+    this.loading.value = "draftOrder:line_items:add";
+    const response = await medusa.admin.draftOrders.addLineItem(
+      this.store.value.id,
+      {
+        quantity,
+        variant_id,
+        metadata,
+      }
+    );
     this.loading.value = undefined;
-    this.store.value = response.cart;
+    this.store.value = response.draft_order;
   }
 
-  async removeItem(id: string) {
+  async removeItem(line_id: string) {
     if (!this.store.value)
       throw new Error(
-        "Cart was not initialize before using cart.removeItem function."
+        "Draft order was not initialize before using draftOrder.removeItem function."
       );
-    this.loading.value = "cart:line_items:remove";
-    const response = await medusa.carts.lineItems.delete(
+    this.loading.value = "draftOrder:line_items:remove";
+    const response = await medusa.admin.draftOrders.removeLineItem(
       this.store.value.id,
-      id
+      line_id
     );
-    this.store.value = response.cart;
+    this.store.value = response.draft_order;
     this.loading.value = undefined;
   }
 
@@ -217,23 +165,28 @@ class DraftOrderStore {
       throw new Error(
         "Cart was not initialize before using cart.setItemQuantity function."
       );
-    this.loading.value = "cart:line_items:update_metadata";
-    const response = await medusa.carts.lineItems.create(this.store.value.id, {
-      variant_id,
-      quantity,
-      metadata,
-    });
-    this.store.value = response.cart;
+    this.loading.value = "draftOrder:line_items:update_metadata";
+    const response = await medusa.admin.draftOrders.addLineItem(
+      this.store.value.id,
+      {
+        quantity,
+        variant_id,
+        metadata,
+      }
+    );
+    this.store.value = response.draft_order;
     this.loading.value = undefined;
   }
 
-  async setItemQuantity(id: string, quantity: number) {
+  async setItemQuantity(line_id: string, quantity: number) {
     if (!this.store.value)
       throw new Error(
-        "Cart was not initialize before using cart.setItemQuantity function."
+        "Draft order was not initialize before using draftOrder.setItemQuantity function."
       );
-    this.loading.value = "cart:line_items:update";
-    const item = this.store.value.items.find((item) => item.id === id);
+    this.loading.value = "draftOrder:line_items:update";
+    const item = this.store.value.cart.items.find(
+      (item) => item.id === line_id
+    );
     if (quantity < 1) {
       this.loading.value = undefined;
       throw new Error("Cannot set quantity less than 1.");
@@ -248,77 +201,28 @@ class DraftOrderStore {
         `Cannot set quantity exceeding ${item.variant.inventory_quantity} !.`
       );
     }
-    const response = await medusa.carts.lineItems.update(
+    const response = await medusa.admin.draftOrders.updateLineItem(
       this.store.value.id,
-      id,
+      line_id,
       { quantity }
     );
     this.store.value = response.cart;
     this.loading.value = undefined;
   }
 
-  // shipping methods
-
-  async listShippingMethods() {
-    if (!this.store.value?.id) return null;
-    this.loading.value = "cart:shipping:all";
-
-    const response = await medusa.shippingOptions.listCartOptions(
-      this.store.value.id
-    );
-    this.shipping.options.value = response.shipping_options;
-    this.loading.value = undefined;
-    return response.shipping_options;
-  }
-
-  async updateShippingMethod(id: string) {
-    if (!this.store.value?.id) return null;
-    this.loading.value = "cart:shipping:set";
-    const result = await medusa.carts.addShippingMethod(this.store.value.id, {
-      option_id: id,
-    });
-    this.shipping.selectedOption.value = id;
-    this.loading.value = undefined;
-    this.store.value = result.cart;
-  }
-
-  // create payment session
-  async createPaymentSession() {
-    if (!this.store.value?.id) return null;
-    await medusa.carts.createPaymentSessions(this.store.value.id);
-    await medusa.carts.updatePaymentSession(this.store.value.id, "manual", {
-      data: {},
+  async resetDraftOrder() {
+    await admin.updateAdminUser({
+      metadata: { draftOrderId: "" },
     });
   }
 
   // complete cart
-  async completeCart(id: string) {
+  async completeDraftOrder(id: string) {
     if (!this.store.value?.id) return null;
-    this.loading.value = "cart:complete";
-    const currentUser = user.customer.value;
-    const billing_address_id = currentUser?.billing_address_id;
-    if (!billing_address_id) {
-      this.loading.value = undefined;
-      throw new Error("Default address not found!");
-    }
-    const regionRes = await listRegion();
-    const regions: Region[] = regionRes?.regions;
-    const shipping_addresses = currentUser?.shipping_addresses;
-    const shippingCountryCodes = shipping_addresses.map(
-      (address) => address.country_code
-    );
-    const regionId = regions?.find((region) =>
-      shippingCountryCodes.includes(region.countries[0]?.iso_2)
-    )?.id;
-    await cart.updateCart({
-      region_id: regionId,
-      shipping_address: billing_address_id,
-      billing_address: billing_address_id,
-    });
-    await this.createPaymentSession();
-    const result = await medusa.carts.complete(id);
+    this.loading.value = "draftOrder:complete";
+    const result = await medusa.admin.draftOrders.markPaid(this.store.value.id);
     this.orderStore.value = result;
-    await this.resetCartId();
+    await this.resetDraftOrder();
     this.loading.value = undefined;
   }
 }
