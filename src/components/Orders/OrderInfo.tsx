@@ -110,7 +110,7 @@ const OrderInfo = ({ id }: Props) => {
               </Typography>
 
               {!isUser.value ? (
-                <div className="flex justify-between items-center px-4 py-2 shadow-sm border rounded-lg my-2">
+                <div className="flex justify-between items-center px-2 py-2 shadow-sm border rounded-lg my-2">
                   <div className="flex items-center gap-3">
                     <Chip
                       variant="primary2"
@@ -120,7 +120,7 @@ const OrderInfo = ({ id }: Props) => {
                     </Chip>
                     <Typography
                       size="body2/normal"
-                      className="truncate w-36 sm:w-96"
+                      className="truncate w-36 max-[321px]:w-28 sm:w-96"
                     >
                       {order.value?.email}
                     </Typography>
