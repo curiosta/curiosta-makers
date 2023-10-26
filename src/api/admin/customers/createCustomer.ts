@@ -11,6 +11,8 @@ type TCustomerMetadata = {
     idNumber: string;
     idImageKey: string;
   }[];
+  temp_password: string;
+  new_account: boolean;
 };
 
 type TAddCustomer = Omit<AdminPostCustomersReq, "metadata"> & {

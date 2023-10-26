@@ -41,23 +41,39 @@ const CreateUser = () => {
     activeStep.value = activeStep.value + 1;
   };
 
+  // generate random password
+  function genPassword(passwordLength: number) {
+    const chars =
+      "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let password = "";
+    let counter = 0;
+    while (counter < passwordLength) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+      counter += 1;
+    }
+    return password;
+  }
+
   const handleCreateUser = async () => {
     isLoading.value = true;
     try {
       if (!basicInfo.value) return;
       const { first_name, last_name, email, phone, dob, gender } =
         basicInfo.value;
+      const password = genPassword(12);
       const addUserRes = await adminCreateCustomer({
         first_name: first_name,
         last_name: last_name,
         email: email,
         phone: phone,
-        password: "Maker@1234",
+        password: password,
         metadata: {
           dob: dob,
           gender: gender,
           profile_image_key: profileImageKey.value,
           documentInfo: documentInfo.value,
+          temp_password: password,
+          new_account: true,
         },
       });
       addUser.value = addUserRes?.customer;
