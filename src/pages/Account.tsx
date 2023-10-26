@@ -71,7 +71,7 @@ const Account = () => {
           />
         </svg>
       ),
-      link: "/forgot-password",
+      link: "/change-password",
     },
   ];
   const prefrenceList = [

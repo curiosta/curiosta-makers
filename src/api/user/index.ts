@@ -13,6 +13,8 @@ type TCustomerMetadata = {
     idNumber: string;
     idImageKey: string;
   }[];
+  temp_password?: string;
+  new_account?: boolean;
 };
 
 export type TCustomer = Omit<Customer, "password_hash" | "metadata"> & {
