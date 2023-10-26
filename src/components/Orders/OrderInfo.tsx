@@ -17,6 +17,7 @@ import { adminUpdateOrder } from "@/api/admin/orders/updateOrder";
 import { ordersList } from "@/api/user/orders/ordersList";
 import { Link } from "preact-router";
 import AddressCard from "../AddressList/AddressCard";
+import Chip from "../Chip";
 
 interface Props {
   id: string;
@@ -100,13 +101,39 @@ const OrderInfo = ({ id }: Props) => {
                 Requested-{" "}
                 {new Date(order.value?.created_at).toLocaleString("en-US", {
                   timeStyle: "medium",
-                  dateStyle: "full",
+                  dateStyle: "medium",
                 })}
               </Typography>
               <Typography size="body1/normal">
                 Order ID:{" "}
                 {order.value?.id.substring(order.value?.id.length - 5)}
               </Typography>
+
+              {!isUser.value ? (
+                <div className="flex justify-between items-center px-2 py-2 shadow-sm border rounded-lg my-2">
+                  <div className="flex items-center gap-3">
+                    <Chip
+                      variant="primary2"
+                      className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+                    >
+                      {order.value?.email.charAt(0)}
+                    </Chip>
+                    <Typography
+                      size="body2/normal"
+                      className="truncate w-36 max-[321px]:w-28 sm:w-96"
+                    >
+                      {order.value?.email}
+                    </Typography>
+                  </div>
+                  <Button
+                    link={`/user/${order.value?.customer_id}`}
+                    className="!px-3"
+                  >
+                    View profile
+                  </Button>
+                </div>
+              ) : null}
+
               <Progressbar
                 status={
                   order.value?.payment_status === "captured"
