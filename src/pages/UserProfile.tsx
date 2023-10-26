@@ -578,9 +578,7 @@ const UserProfile = ({ id }: Props) => {
           index={0}
           isPopup={isDeletePopup}
           isLoading={isLoading.value === "profile:IdCard:delete" ? true : false}
-          title={`Are you sure you want to delete  ${
-            userDocumentInfo.value?.length > 1 ? "all" : ""
-          } Id card?`}
+          title={`Are you sure you want to delete this Id card?`}
           subtitle="This will delete this permanently. You cannot undo this action"
           handlePopupAction={handleDeleteIdCard}
           actionText={"Yes, Confirm"}
