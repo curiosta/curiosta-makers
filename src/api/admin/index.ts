@@ -1,11 +1,22 @@
 import { isUser } from "@/store/userState";
 import medusa from "@api/medusa";
-import type { User } from "@medusajs/medusa";
+import type { User, AdminUpdateUserRequest } from "@medusajs/medusa";
 import { signal } from "@preact/signals";
+
+type TAdminMetadata = {
+  draftOrderId?: string;
+};
+
+type TAdminUser = Omit<User, "metadata"> & {
+  metadata?: TAdminMetadata;
+};
+type TAdminUpdatePayload = Omit<AdminUpdateUserRequest, "metadata"> & {
+  metadata?: TAdminMetadata;
+};
 
 class Admin {
   state = signal<"authenticated" | "loading" | "unauthenticated">("loading");
-  adminData = signal<User | null>(null);
+  adminData = signal<TAdminUser | null>(null);
 
   constructor() {
     // initially call admin
@@ -77,13 +88,16 @@ class Admin {
   }
 
   // update user
-  async updateAdminUser() {
-    await medusa.admin.users.update(
-      import.meta.env.VITE_PRIVATE_ADMIN_USER_ID,
-      {
-        api_token: import.meta.env.VITE_PRIVATE_API_TOKEN,
-      }
-    );
+  async updateAdminUser(payload: TAdminUpdatePayload) {
+    const { first_name, api_token, last_name, metadata, role } = payload;
+    const response = await medusa.admin.users.update(this.adminData.value.id, {
+      first_name,
+      api_token,
+      last_name,
+      metadata,
+      role,
+    });
+    this.adminData.value = response.customer;
   }
 }
 

@@ -1,4 +1,6 @@
 import cart from "@/api/cart";
+import { draftOrderItems } from "@/store/draftOrderStore";
+import { isUser } from "@/store/userState";
 import Button from "@components/Button";
 import Typography from "@components/Typography";
 import { useSignal } from "@preact/signals";
@@ -18,7 +20,9 @@ const ViewCartLayer = ({
   borrowItems,
 }: Props) => {
   const isCartLayer = useSignal<boolean>(false);
-  const totalCartItems = cart.store.value?.items?.length;
+  const totalCartItems = isUser.value
+    ? cart.store.value?.items?.length
+    : draftOrderItems.value?.length;
 
   useEffect(() => {
     if (totalCartItems > 0) {
