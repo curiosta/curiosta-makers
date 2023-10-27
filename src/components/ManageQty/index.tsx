@@ -1,16 +1,20 @@
-import { Signal, useSignal } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 import Button from "@components/Button";
 import Typography from "@components/Typography";
 import { LineItem } from "@medusajs/medusa";
 import cart from "@/api/cart";
 import Input from "@components/Input";
 import { ChangeEvent } from "preact/compat";
-import { TDraftOrderItems } from "@pages/CreateDraftOrder";
+import {
+  TDraftOrderItems,
+  draftOrderItems,
+  selectedUser,
+} from "@/store/draftOrderStore";
+import { isUser } from "@/store/userState";
 
 type TManageQty = {
   productItem?: LineItem;
   page: "cart" | "request" | "draftOrder";
-  draftOrderItems?: Signal<TDraftOrderItems[]>;
   draftItem?: TDraftOrderItems;
   inventoryQty?: number;
 };
@@ -18,7 +22,6 @@ type TManageQty = {
 const ManageQty = ({
   productItem,
   page,
-  draftOrderItems,
   draftItem,
   inventoryQty,
 }: TManageQty) => {
@@ -30,7 +33,7 @@ const ManageQty = ({
     loadingQty.value = true;
     errorMessage.value = null;
     try {
-      if (page === "draftOrder") {
+      if (!isUser.value) {
         if (inventoryQty <= draftItem.quantity) {
           throw new Error(`Cannot set quantity exceeding ${inventoryQty} !.`);
         }
@@ -55,7 +58,7 @@ const ManageQty = ({
     loadingQty.value = true;
     errorMessage.value = null;
     try {
-      if (page === "draftOrder") {
+      if (!isUser.value) {
         if (draftItem.quantity <= 1) {
           throw new Error("Cannot set quantity less than 1.");
         }
@@ -82,9 +85,12 @@ const ManageQty = ({
     errorMessage.value = null;
     loadingInputQty.value = true;
     try {
-      if (page === "draftOrder") {
+      if (!isUser.value) {
         if (inventoryQty < quantity) {
           throw new Error(`Cannot set quantity exceeding ${inventoryQty} !.`);
+        }
+        if (quantity < 1) {
+          throw new Error("Cannot set quantity less than 1.");
         }
         const updatedData = draftOrderItems.value?.map((item) =>
           item.variant_id === draftItem.variant_id
@@ -110,7 +116,15 @@ const ManageQty = ({
       (item) => item.variant_id !== draftItem.variant_id
     );
     draftOrderItems.value = updatedData;
+    if (!draftOrderItems.value?.length) {
+      selectedUser.value = null;
+    }
   };
+
+  localStorage.setItem(
+    "draftOrderItems",
+    JSON.stringify(draftOrderItems.value)
+  );
   return (
     <div
       className={`flex flex-col gap-2 items-center relative  ${
@@ -165,13 +179,10 @@ const ManageQty = ({
               className={`text-center ${
                 loadingInputQty.value ? "bg-gray-100" : ""
               }`}
-              value={
-                page === "draftOrder"
-                  ? draftItem.quantity
-                  : productItem.quantity
-              }
+              value={!isUser.value ? draftItem.quantity : productItem.quantity}
               onBlur={handleQty}
               disabled={loadingInputQty.value}
+              min={1}
             />
           </div>
         )}
@@ -207,7 +218,7 @@ const ManageQty = ({
           variant="icon"
           className="!p-0"
           onClick={() =>
-            page === "draftOrder"
+            !isUser.value
               ? handleDeleteDraftItem()
               : cart.removeItem(productItem.id)
           }
@@ -232,7 +243,7 @@ const ManageQty = ({
 
       {page !== "cart" ? (
         <Typography size="body2/normal" className="capitalize">
-          {page === "draftOrder"
+          {!isUser.value
             ? draftItem.metadata?.cartType
             : productItem.metadata?.cartType}{" "}
           Request
