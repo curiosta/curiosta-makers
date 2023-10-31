@@ -16,7 +16,7 @@ import { ChangeEvent } from "preact/compat";
 
 type TLoadableOptions = "product:import" | "product:export";
 
-const Inbound = () => {
+const ImportExportCSV = () => {
   const selectedFile = useSignal<File | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const errorMessage = useSignal<string | null>(null);
@@ -117,7 +117,7 @@ const Inbound = () => {
     <div className="flex flex-col justify-center gap-4 items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Inbound Items</Typography>
+        <Typography size="h6/normal">Import/Export from CSV</Typography>
       </div>
 
       <div className="w-full flex flex-col justify-center gap-10 items-center max-w-xs mt-8">
@@ -219,4 +219,4 @@ const Inbound = () => {
   );
 };
 
-export default Inbound;
+export default ImportExportCSV;

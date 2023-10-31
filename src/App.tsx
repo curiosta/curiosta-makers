@@ -21,7 +21,7 @@ import Orders from "@pages/Orders";
 import OrderInfo from "@components/Orders/OrderInfo";
 import Return from "@pages/Return";
 import ReturnItems from "@pages/ReturnItems";
-import Inbound from "@pages/Inbound";
+import ImportExportCSV from "@pages/ImportExportCSV";
 import Fulfill from "@pages/Fulfill";
 import Approve from "@pages/Approve";
 import Master from "@pages/Master";
@@ -42,6 +42,7 @@ import { useEffect } from "preact/hooks";
 import ErrorBanner from "./components/ErrorBanner";
 import { categoriesList } from "./api/product/categoriesList";
 import IssueInventory from "@pages/IssueInventory";
+import ItemTransfer from "@pages/ItemTransfer";
 
 const App = () => {
   const isServerDown = useSignal<boolean>(false);
@@ -107,7 +108,8 @@ const App = () => {
       <Route path="/orders/:id" component={OrderInfo} />
       <Route path="/return" component={Return} />
       <Route path="/return/:order_id/:return_id?" component={ReturnItems} />
-      <Route path="/inbound" component={Inbound} />
+      <Route path="/item-transfer" component={ItemTransfer} />
+      <Route path="/import-export-csv" component={ImportExportCSV} />
       <Route path="/fulfill" component={Fulfill} />
       <Route path="/approve" component={Approve} />
       <Route path="/master" component={Master} />
