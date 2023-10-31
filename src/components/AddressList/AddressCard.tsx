@@ -103,8 +103,8 @@ const AddressCard = ({
           {
             countryList.find(
               (country) =>
-                country.code.toLowerCase() ===
-                address?.country_code.toLowerCase()
+                country?.code?.toLowerCase() ===
+                address?.country_code?.toLowerCase()
             )?.name
           }
         </Typography>

@@ -43,7 +43,9 @@ const AddressList = ({ address }: Props) => {
         (address) => address.country_code
       );
       const regionId = regions?.find((region) =>
-        shippingCountryCodes.includes(region.countries[0]?.iso_2)
+        region.countries.find((country) =>
+          shippingCountryCodes.includes(country.iso_2)
+        )
       )?.id;
       await cart.updateCart({
         region_id: regionId,
@@ -56,6 +58,10 @@ const AddressList = ({ address }: Props) => {
       isLoading.value = false;
     }
   };
+
+  useEffect(() => {
+    updateShippingAddress();
+  }, [selectedAddressId.value]);
 
   return (
     <div className={`${isUser.value ? "mb-20" : "mb-4"}`}>

@@ -16,11 +16,18 @@ import Select from "../Select";
 import countryList from "@/utils/countryList";
 import { ChangeEvent } from "preact/compat";
 import NewInput from "../Input/NewInput";
+import MultiRadio from "../MultiRadio";
 
 type TAddressForm = {
   isNewAddress: Signal<boolean>;
   address: Signal<Address[]>;
   selectedAddressId: Signal<string>;
+};
+
+type TCountryList = {
+  name: string;
+  dial_code: string;
+  code: string;
 };
 
 const AddressForm = ({
@@ -31,40 +38,35 @@ const AddressForm = ({
   const isLoading = useSignal<boolean>(false);
   const resetButtonRef = useRef<HTMLButtonElement>(null);
   const errorMessage = useSignal<string | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const selectedCountryCode = useSignal<string | undefined>(undefined);
 
-  const handleAddAddress = async (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleAddAddress = async (data: AddressCreatePayload) => {
     isLoading.value = true;
     if (errorMessage.value) {
       errorMessage.value = null;
     }
     try {
-      if (formRef.current) {
-        const formData = new FormData(formRef.current);
-        const formDataObj = Object.fromEntries(formData.entries());
-        const { address_1, city, province, postal_code, country_code, phone } =
-          formDataObj;
-
-        const payloadAddress = {
-          first_name: user.customer.value?.first_name,
-          last_name: user.customer.value?.last_name,
-          address_1: address_1.toString(),
-          city: city.toString(),
-          province: province.toString(),
-          postal_code: postal_code.toString(),
-          country_code: country_code.toString(),
-          phone: phone.toString(),
-        };
-        const addressRes = await addAddress(payloadAddress);
-        address.value = addressRes?.customer?.shipping_addresses;
-        const latestAddress: Address = [
-          ...addressRes.customer.shipping_addresses,
-        ].pop();
-        selectedAddressId.value = latestAddress?.id;
-        isNewAddress.value = false;
-        resetButtonRef.current?.click();
+      if (!selectedCountryCode.value) {
+        throw Error("Please select country");
       }
+      const phoneCode = countryList.find(
+        (country) => country.code === selectedCountryCode.value
+      )?.dial_code;
+      const payloadAddress = { ...data };
+      payloadAddress.first_name = user.customer.value?.first_name;
+      payloadAddress.last_name = user.customer.value?.last_name;
+      payloadAddress.country_code = selectedCountryCode?.value;
+      payloadAddress.phone = phoneCode + data.phone;
+      console.log(data);
+      // const addressRes = await addAddress(payloadAddress);
+      // address.value = addressRes?.customer?.shipping_addresses;
+      // const latestAddress: Address = [
+      //   ...addressRes.customer.shipping_addresses,
+      // ].pop();
+      // selectedAddressId.value = latestAddress?.id;
+      // isNewAddress.value = false;
+      selectedCountryCode.value = undefined;
+      resetButtonRef.current?.click();
     } catch (error) {
       if (error instanceof Error) {
         errorMessage.value = error.message;
@@ -83,61 +85,84 @@ const AddressForm = ({
         Add new address
       </Typography>
       <div class="relative mx-auto max-w-2xl">
-        <form
+        <FormControl
           class="sm:px-6 mt-4 flex flex-col gap-5 lg:col-start-1 lg:row-start-1 lg:px-0 lg:pb-4"
+          noValidate
+          mode="onSubmit"
           onSubmit={handleAddAddress}
-          ref={formRef}
         >
-          <NewInput
+          <Input
             type="text"
             label="Address"
             name="address_1"
             autocomplete="street-address"
-            className="capitalize"
-            required
+            required={{ message: "Address is required!", value: true }}
           />
           <div class=" grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-3">
-            <NewInput
+            <Input
               type="text"
               name="city"
               label="City"
               autocomplete="address-level2"
-              className="capitalize"
-              required
+              required={{ message: "City is required!", value: true }}
             />
-            <NewInput
+            <Input
               type="text"
               name="province"
               label="State"
               autocomplete="address-level1"
-              className="capitalize"
-              required
+              required={{ message: "State is required!", value: true }}
             />
 
-            <NewInput
+            <Input
               type="text"
               name="postal_code"
               label="Postal code"
-              required
+              required={{
+                message: "Postal code is required!",
+                value: true,
+              }}
               minLength={5}
               autocomplete="postal-code"
             />
-            <Select
-              name="country_code"
-              label="Country"
-              options={countryList?.map((country) => ({
-                label: country.name,
-                value: country.code,
-              }))}
-            />
-
-            <NewInput
+            <div className="">
+              <Typography
+                size="body2/medium"
+                className="leading-6 text-gray-900 flex gap-1 mb-1"
+              >
+                Select Country
+              </Typography>
+              <MultiRadio
+                name="country_code"
+                options={countryList}
+                placeholder="Search country..."
+                selectedValue={selectedCountryCode}
+                required
+              />
+            </div>
+            <Input
               name="phone"
               type="tel"
               label="Phone Number"
               autocomplete="phone"
-              required
-              placeholder={"+91 9876543210"}
+              leftAdornment={
+                selectedCountryCode.value
+                  ? countryList.find(
+                      (country) => country.code === selectedCountryCode.value
+                    )?.dial_code
+                  : "N/A"
+              }
+              required={{ message: "Phone number is required!", value: true }}
+              placeholder={"9876543210"}
+              validator={(value) =>
+                !/\d{1,3}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
+                  value
+                )
+                  ? "Invalid phone number!"
+                  : true
+              }
+              minLength={5}
+              maxLength={15}
             />
           </div>
 
@@ -174,7 +199,7 @@ const AddressForm = ({
               {errorMessage.value}
             </Typography>
           ) : null}
-        </form>
+        </FormControl>
       </div>
     </div>
   );

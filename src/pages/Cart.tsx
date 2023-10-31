@@ -136,7 +136,9 @@ const Cart = () => {
         const regions: Region[] = regionRes?.regions;
         const countryCodes = billing_address.country_code;
         const regionId = regions?.find((region) =>
-          countryCodes.includes(region.countries[0]?.iso_2)
+          region.countries.find((country) =>
+            countryCodes.includes(country.iso_2)
+          )
         )?.id;
 
         const items = draftOrderItems.value.map((item) => {
