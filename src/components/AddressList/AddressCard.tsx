@@ -5,6 +5,7 @@ import Radio from "../Radio";
 import { ChangeEvent } from "preact/compat";
 import cart from "@/api/cart";
 import { cx } from "class-variance-authority";
+import countryList from "@/utils/countryList";
 
 interface Props {
   address: Address;
@@ -99,7 +100,13 @@ const AddressCard = ({
         </Typography>
         <Typography variant="secondary" className="mt-1 flex items-center">
           Country:{" "}
-          {address?.country_code === "in" ? "India" : address?.country_code}
+          {
+            countryList.find(
+              (country) =>
+                country.code.toLowerCase() ===
+                address?.country_code.toLowerCase()
+            )?.name
+          }
         </Typography>
         <Typography variant="secondary" className="mt-1 flex items-center">
           Phone: {address?.phone}

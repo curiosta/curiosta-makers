@@ -134,6 +134,13 @@ const UserAccess = () => {
         const formDataObj = Object.fromEntries(formData.entries());
         const { first_name, last_name, phone } = formDataObj;
         if (!selectedId.value) return;
+        const phonePattern =
+          /^\+\d{1,3}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
+        if (!phonePattern.test(phone.toString())) {
+          throw Error(
+            "Invalid phone number! Phone number length should be of minimum 8 characters including country code."
+          );
+        }
         const addUserRes = await adminUpdateCustomer({
           customerId: selectedId.value,
           first_name: first_name.toString(),

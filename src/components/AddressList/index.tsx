@@ -9,6 +9,7 @@ import { ChangeEvent, useEffect } from "preact/compat";
 import cart from "@/api/cart";
 import user from "@/api/user";
 import { listRegion } from "@/api/user/region/listRegion";
+import countryList from "@/utils/countryList";
 
 type Props = {
   address: Signal<Address[]>;
@@ -55,10 +56,6 @@ const AddressList = ({ address }: Props) => {
       isLoading.value = false;
     }
   };
-
-  useEffect(() => {
-    updateShippingAddress();
-  }, [selectedAddressId.value]);
 
   return (
     <div className={`${isUser.value ? "mb-20" : "mb-4"}`}>

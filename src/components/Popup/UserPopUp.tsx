@@ -117,10 +117,9 @@ const UserPopUp = ({
                 type="tel"
                 label="Phone Number"
                 autocomplete="phone"
-                pattern="(\+91)?(-)?\s*?(91)?\s*?(\d{3})-?\s*?(\d{3})-?\s*?(\d{4})"
-                placeholder={"+91 9876543210"}
-                title="Invalid phone number"
+                placeholder={"+1 9876543210"}
                 defaultValue={type === "edit" ? userData.value?.phone : ""}
+                minLength={8}
                 required
               />
             ) : null}
