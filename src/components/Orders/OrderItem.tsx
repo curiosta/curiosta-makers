@@ -61,6 +61,19 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
     (item) => item.metadata?.cartType === "borrow"
   );
 
+  // filter out fulfilled items
+  const fulfilledItemId = order?.fulfillments?.flatMap((fulfill) =>
+    fulfill.items.map((item) => item.item_id)
+  );
+  const fulfilledItem = order?.items.filter((item) =>
+    fulfilledItemId.includes(item.id)
+  );
+
+  // if item fulfilled then only it can return
+  const borrowItemsFulfilled = fulfilledItem?.filter(
+    (item) => item.metadata?.cartType === "borrow"
+  );
+
   return (
     <div
       class={`border-b border-t border-gray-200 ${
@@ -81,12 +94,12 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
         <dl class="grid flex-1 grid-cols-2 gap-x-6 text-sm ">
           {page !== "adminReturn" && page !== "return" ? (
             <div>
-              <dt class="font-medium text-gray-900">Order number</dt>
+              <dt class="font-medium text-gray-900">Order ID</dt>
               <dd class="mt-1 text-gray-700 truncate">{order.id}</dd>
             </div>
           ) : (
             <div>
-              <dt class="font-medium text-gray-900">Return number</dt>
+              <dt class="font-medium text-gray-900">Return ID</dt>
               <dd class="mt-1 text-gray-700 truncate">
                 {page === "adminReturn"
                   ? returnVal?.id
@@ -173,6 +186,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
           </Link>
 
           <Button
+            className="capitalize"
             link={
               page !== "adminReturn"
                 ? `/orders/${order.id}`
@@ -181,7 +195,11 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
                 : `/return/${returnVal?.order.id}/${returnVal?.id}`
             }
           >
-            View
+            {page !== "adminReturn"
+              ? "view order"
+              : returnVal?.status === "received"
+              ? "view order"
+              : "view request"}
           </Button>
         </div>
       ) : null}
@@ -232,6 +250,17 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
           Can't return item from this order
         </Typography>
       ) : null}
+      {page === "return" &&
+      borrowItems?.length &&
+      !borrowItemsFulfilled.length ? (
+        <Typography
+          variant="error"
+          className="mx-auto text-center w-5/6 break-words my-2 "
+        >
+          Borrow Item not fulfilled from this order. So, can't return item from
+          this order
+        </Typography>
+      ) : null}
       {isUser.value ? (
         <div
           className={`flex justify-center items-center  gap-4 p-4 border-t ${
@@ -240,13 +269,15 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
               : "border-gray-200"
           }`}
         >
-          <Button link={`/orders/${order?.id}`}>View Details</Button>
+          <Button link={`/orders/${order?.id}`}>View Order</Button>
           {page === "return" && borrowItems.length ? (
             <Button
               link={`/return/${order?.id}`}
               variant="secondary"
               className="!py-3 disabled:bg-gray-200 disabled:text-gray-500 disabled:!border-none"
-              disabled={order?.returns?.length >= 1}
+              disabled={
+                order?.returns?.length >= 1 || !borrowItemsFulfilled?.length
+              }
             >
               Return
             </Button>

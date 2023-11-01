@@ -71,6 +71,11 @@ const OrderInfo = ({ id }: Props) => {
     fulfilledItemId?.includes(item.id)
   );
 
+  // if item fulfilled then only it can return
+  const borrowItemsFulfilled = fulfilledItem?.filter(
+    (item) => item.metadata?.cartType === "borrow"
+  );
+
   const notFulfilledItem = order.value?.items.filter(
     (item) => !fulfilledItemId?.includes(item.id)
   );
@@ -154,7 +159,7 @@ const OrderInfo = ({ id }: Props) => {
                   </div>
                   <Button
                     link={`/user/${order.value?.customer_id}`}
-                    className="!px-3"
+                    className="!px-3 capitalize"
                   >
                     View profile
                   </Button>
@@ -311,6 +316,21 @@ const OrderInfo = ({ id }: Props) => {
                     </Button>
                   </div>
                 ) : null}
+              </div>
+            ) : null}
+
+            {isUser.value &&
+            borrowItemsFulfilled?.length &&
+            order.value?.returns?.at(0)?.status !== "requested" ? (
+              <div className="w-full flex justify-center items-center my-4">
+                <Button
+                  link={`/return/${order.value?.id}`}
+                  variant="secondary"
+                  className="!py-3 capitalize disabled:bg-gray-200 disabled:text-gray-500 disabled:!border-none"
+                  disabled={order.value?.returns?.length >= 1}
+                >
+                  Return Borrow item
+                </Button>
               </div>
             ) : null}
 
