@@ -183,7 +183,14 @@ const UserProfile = ({ id }: Props) => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { first_name, last_name, phone, dob, gender } = formDataObj;
+        const { first_name, last_name, gender, dob, phone } = formDataObj;
+        const phonePattern =
+          /^\+\d{1,3}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
+        if (!phonePattern.test(phone.toString())) {
+          throw Error(
+            "Invalid phone number! Phone number length should be of minimum 8 characters including country code."
+          );
+        }
         if (isUser.value) {
           await user.updateUser({
             first_name: first_name.toString(),
@@ -211,6 +218,7 @@ const UserProfile = ({ id }: Props) => {
         isPopUp.value = true;
       }
     } catch (error) {
+      console.log(error);
       if (error instanceof Error) {
         errorMessage.value = error.message;
       }

@@ -26,7 +26,10 @@ const Select = ({
       ) : null}
       <select
         id={id}
-        class={cx("rounded-md border-gray-300", className)}
+        class={cx(
+          "rounded-md border-0 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 focus-visible:outline-none",
+          className
+        )}
         {...rest}
       >
         {options.map((opt) => (

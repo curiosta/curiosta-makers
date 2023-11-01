@@ -109,13 +109,13 @@ const CreateUserInfo = ({ handleBasicInfo }: TCreateUserInfo) => {
             autocomplete="tel"
             required={{ message: "Phone number is required!", value: true }}
             validator={(value) =>
-              !/^(?:(?:\+|0{0,2})91(\s*|[\-])?|[0]?)?([6789]\d{2}([ -]?)\d{3}([ -]?)\d{4})$/.test(
+              !/^\+\d{1,3}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
                 value
               )
                 ? "Invalid phone number!"
                 : true
             }
-            placeholder="Phone number of the user *"
+            placeholder={"+91 9876543210"}
           />
           <Input
             type="email"

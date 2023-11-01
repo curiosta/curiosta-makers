@@ -314,7 +314,9 @@ class CartStore {
       (address) => address.country_code
     );
     const regionId = regions?.find((region) =>
-      shippingCountryCodes.includes(region.countries[0]?.iso_2)
+      region.countries.find((country) =>
+        shippingCountryCodes.includes(country.iso_2)
+      )
     )?.id;
     await cart.updateCart({
       region_id: regionId,

@@ -9,6 +9,7 @@ import { ChangeEvent, useEffect } from "preact/compat";
 import cart from "@/api/cart";
 import user from "@/api/user";
 import { listRegion } from "@/api/user/region/listRegion";
+import countryList from "@/utils/countryList";
 
 type Props = {
   address: Signal<Address[]>;
@@ -42,7 +43,9 @@ const AddressList = ({ address }: Props) => {
         (address) => address.country_code
       );
       const regionId = regions?.find((region) =>
-        shippingCountryCodes.includes(region.countries[0]?.iso_2)
+        region.countries.find((country) =>
+          shippingCountryCodes.includes(country.iso_2)
+        )
       )?.id;
       await cart.updateCart({
         region_id: regionId,
