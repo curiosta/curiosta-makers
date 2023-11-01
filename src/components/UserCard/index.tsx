@@ -1,16 +1,20 @@
 import Typography from "../Typography";
 import Chip from "../Chip";
 import Button from "../Button";
-import { Customer } from "@medusajs/medusa";
 import Radio from "../Radio";
-import { Signal } from "@preact/signals";
+import { Signal, useSignal } from "@preact/signals";
+import { isUser } from "@/store/userState";
+import { TCustomer } from "@/api/user";
+import { adminGetProtectedUploadFile } from "@/api/admin/upload/getProtectedUpload";
+import { useEffect } from "preact/hooks";
+import { route } from "preact-router";
 
 type TUserCard = {
-  user: Customer;
+  user: TCustomer;
   activeToggle?: "active" | "inactive";
   handleEdit?: (id: string) => void;
-  handleActiveInactive?: (user: Customer) => void;
-  selectedUser?: Signal<Customer>;
+  handleActiveInactive?: (user: TCustomer) => void;
+  selectedUser?: Signal<TCustomer>;
 };
 
 const UserCard = ({
@@ -20,9 +24,35 @@ const UserCard = ({
   handleActiveInactive,
   selectedUser,
 }: TUserCard) => {
+  const isLoading = useSignal<boolean>(false);
+  const profileImageUrl = useSignal<string | null>(null);
+
+  const getPrfileImage = async () => {
+    isLoading.value = true;
+    try {
+      if (!isUser.value) {
+        if (!user?.metadata?.profile_image_key) return;
+        const { profile_image_key } = user?.metadata;
+        const profileImageUploadRes = await adminGetProtectedUploadFile({
+          file_key: profile_image_key,
+        });
+        profileImageUrl.value = profileImageUploadRes?.download_url;
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  useEffect(() => {
+    getPrfileImage();
+  }, []);
+
   const handleSelectedUser = () => {
     selectedUser.value = user;
     localStorage.setItem("draftUser", JSON.stringify(selectedUser.value));
+    route("/create-requests");
   };
 
   return (
@@ -36,14 +66,22 @@ const UserCard = ({
       <div className="flex flex-col gap-4 w-10/12">
         <div className="flex flex-col gap-2">
           <div className="flex gap-2 items-center">
-            <Chip
-              variant="primary2"
-              className="!bg-third-600 !rounded-full uppercase h-10 w-10 !text-white"
-            >
-              {user.first_name
-                ? user.first_name.charAt(0)
-                : user.email.charAt(0)}
-            </Chip>
+            {user?.metadata?.profile_image_key ? (
+              <img
+                src={profileImageUrl.value ?? "/images/placeholderImg.svg"}
+                alt="profile"
+                className="object-fit h-10 w-10 border rounded-full shadow"
+              />
+            ) : (
+              <Chip
+                variant="primary2"
+                className="!bg-third-600 !rounded-full uppercase h-10 w-10 !text-white"
+              >
+                {user.first_name
+                  ? user.first_name.charAt(0)
+                  : user.email.charAt(0)}
+              </Chip>
+            )}
 
             {user?.first_name ? (
               <Typography className="capitalize">{`${user?.first_name} ${user?.last_name}`}</Typography>
@@ -94,7 +132,7 @@ const UserCard = ({
               <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
             </svg>
 
-            {user.billing_address_id ? (
+            {user.billing_address ? (
               <Typography className="text-start w-10/12 break-words">
                 {user?.billing_address?.city}
                 {", "}

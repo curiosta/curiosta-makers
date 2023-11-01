@@ -103,15 +103,6 @@ const IssueInventory = () => {
               {errorMessage.value}
             </Typography>
           ) : null}
-          <div className="w-full flex justify-end items-center border-t pt-4">
-            <Button
-              type="button"
-              onClick={() => route("/create-requests")}
-              disabled={!selectedUser.value}
-            >
-              Next step
-            </Button>
-          </div>
         </div>
         {isLoading.value === "draftOrder:create" ? (
           <LoadingPopUp loadingText="Please wait" />

@@ -57,11 +57,14 @@ const RequestItems = ({ id }: Props) => {
 
   // handle dialog
   const handleDialog = (index: number, product: PricedProduct) => {
-    const { shipping_addresses, phone } = user.customer.value;
-    const isProfileComplete = shipping_addresses?.length > 0 && phone !== null;
+    if (isUser.value) {
+      const { shipping_addresses, phone } = user.customer.value;
+      const isProfileComplete =
+        shipping_addresses?.length > 0 && phone !== null;
 
-    if (!isProfileComplete) {
-      return (isProfileCompletePopUp.value = true);
+      if (!isProfileComplete) {
+        return (isProfileCompletePopUp.value = true);
+      }
     }
     dialogRef.current.map((val, i) => i != index && val?.close());
     if (dialogRef.current[index]?.open) {

@@ -1,9 +1,9 @@
 import { adminListRegion } from "@/api/admin/customers/listRegion";
 import { adminCreateDraftOrder } from "@/api/admin/orders/createDraftOrder";
 import { adminMarkPaidDraftOrder } from "@/api/admin/orders/markPaidDraftOrder";
+import { adminGetProtectedUploadFile } from "@/api/admin/upload/getProtectedUpload";
 import cart from "@/api/cart";
 import user from "@/api/user";
-import { listRegion } from "@/api/user/region/listRegion";
 import AddressCard from "@/components/AddressList/AddressCard";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
@@ -25,7 +25,7 @@ import PopUp from "@components/Popup";
 import { LineItem, Order, Region } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
 import { Link } from "preact-router";
-import { ChangeEvent } from "preact/compat";
+import { ChangeEvent, useEffect } from "preact/compat";
 
 const Cart = () => {
   const cartIssuedItem = isUser.value
@@ -62,6 +62,31 @@ const Cart = () => {
   const draftOrderInfo = useSignal<Order | null>(null);
   const errorMessage = useSignal<string | undefined>(undefined);
   const userNotSelected = useSignal<boolean>(false);
+
+  const isLoading = useSignal<boolean>(false);
+  const profileImageUrl = useSignal<string | null>(null);
+
+  const getPrfileImage = async () => {
+    isLoading.value = true;
+    try {
+      if (!isUser.value) {
+        if (!selectedUser.value?.metadata?.profile_image_key) return;
+        const { profile_image_key } = selectedUser.value?.metadata;
+        const profileImageUploadRes = await adminGetProtectedUploadFile({
+          file_key: profile_image_key,
+        });
+        profileImageUrl.value = profileImageUploadRes?.download_url;
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  useEffect(() => {
+    getPrfileImage();
+  }, []);
 
   const handleSelectDate = async (e: ChangeEvent<HTMLInputElement>) => {
     const { value, checked, name } = e.currentTarget;
@@ -126,7 +151,7 @@ const Cart = () => {
         }
         const { email, billing_address, billing_address_id, id } =
           selectedUser.value;
-        if (!billing_address_id) {
+        if (!billing_address) {
           isCartComplete.value = false;
           throw new Error(
             "This user don't have any default address!\n Ask user to add default address first."
@@ -221,22 +246,35 @@ const Cart = () => {
                   </Typography>
                   <div className="flex justify-between items-center px-4 py-2 shadow-sm border rounded-lg my-2">
                     <div className="flex items-center gap-3">
-                      <Chip
-                        variant="primary2"
-                        className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
-                      >
-                        {selectedUser.value?.email.charAt(0)}
-                      </Chip>
+                      {profileImageUrl.value ? (
+                        <img
+                          src={
+                            profileImageUrl.value ??
+                            "/images/placeholderImg.svg"
+                          }
+                          alt="profile"
+                          className="object-fit h-10 w-10 border rounded-full shadow"
+                        />
+                      ) : (
+                        <Chip
+                          variant="primary2"
+                          className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+                        >
+                          {selectedUser.value?.email.charAt(0)}
+                        </Chip>
+                      )}
                       <Typography
                         size="body2/normal"
                         className="truncate w-36 sm:w-96"
                       >
-                        {selectedUser.value?.email}
+                        {isLoading.value
+                          ? "loading..."
+                          : `${selectedUser.value?.first_name} ${selectedUser.value?.last_name}`}
                       </Typography>
                     </div>
                     <Button
                       link={`/user/${selectedUser.value?.id}`}
-                      className="!px-3"
+                      className="!px-3 capitalize"
                     >
                       View profile
                     </Button>
@@ -389,11 +427,10 @@ const Cart = () => {
                   <div className="flex items-center justify-around w-full mx-auto max-w-2xl">
                     <Button
                       type="button"
-                      variant="primary"
-                      onClick={handleCartComplete}
-                      disabled={cart.loading.value === "cart:complete"}
+                      variant="danger"
+                      onClick={handleDiscard}
                     >
-                      Request
+                      Discard
                     </Button>
                     <Button
                       link="/create-requests"
@@ -415,13 +452,13 @@ const Cart = () => {
                         />
                       </svg>
                     </Button>
-
                     <Button
                       type="button"
-                      variant="danger"
-                      onClick={handleDiscard}
+                      variant="primary"
+                      onClick={handleCartComplete}
+                      disabled={cart.loading.value === "cart:complete"}
                     >
-                      Discard
+                      Request
                     </Button>
                   </div>
                 </div>
