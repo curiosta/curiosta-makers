@@ -18,16 +18,23 @@ import { ordersList } from "@/api/user/orders/ordersList";
 import { Link } from "preact-router";
 import AddressCard from "../AddressList/AddressCard";
 import Chip from "../Chip";
+import { adminGetProtectedUploadFile } from "@/api/admin/upload/getProtectedUpload";
+import { TCustomer } from "@/api/user";
 
 interface Props {
   id: string;
 }
-type TLoadableOptions = "order:get" | "order:approve" | "order:cancel";
+type TLoadableOptions =
+  | "order:get"
+  | "order:approve"
+  | "order:cancel"
+  | "user:profileImage";
 
 const OrderInfo = ({ id }: Props) => {
   const order = useSignal<Order | null>(null);
   const isLoading = useSignal<TLoadableOptions | undefined>(undefined);
   const isPopup = useSignal<boolean>(false);
+  const profileImageUrl = useSignal<string | null>(null);
 
   const getOrderInfo = async () => {
     isLoading.value = "order:get";
@@ -36,6 +43,15 @@ const OrderInfo = ({ id }: Props) => {
         ? await ordersList({ id, limit: 0, offset: 0 })
         : await adminGetOrders(id);
       order.value = isUser.value ? res?.orders?.at(0) : res?.order;
+      if (!isUser.value) {
+        if (!res?.order?.customer?.metadata?.profile_image_key) return;
+        const { profile_image_key } = (order.value?.customer as TCustomer)
+          ?.metadata;
+        const profileImageUploadRes = await adminGetProtectedUploadFile({
+          file_key: profile_image_key,
+        });
+        profileImageUrl.value = profileImageUploadRes?.download_url;
+      }
     } catch (error) {
     } finally {
       isLoading.value = undefined;
@@ -91,7 +107,7 @@ const OrderInfo = ({ id }: Props) => {
     <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Order items</Typography>
+        <Typography size="h6/normal">Order info</Typography>
       </div>
       <div className="w-full flex flex-col gap-4 mb-12 max-w-2xl">
         {isLoading.value !== "order:get" ? (
@@ -112,17 +128,28 @@ const OrderInfo = ({ id }: Props) => {
               {!isUser.value ? (
                 <div className="flex justify-between items-center px-2 py-2 shadow-sm border rounded-lg my-2">
                   <div className="flex items-center gap-3">
-                    <Chip
-                      variant="primary2"
-                      className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
-                    >
-                      {order.value?.email.charAt(0)}
-                    </Chip>
+                    {order.value?.customer?.metadata?.profile_image_key ? (
+                      <img
+                        src={
+                          profileImageUrl.value ?? "/images/placeholderImg.svg"
+                        }
+                        alt="profile"
+                        className="object-fit h-10 w-10 border rounded-full shadow"
+                      />
+                    ) : (
+                      <Chip
+                        variant="primary2"
+                        className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+                      >
+                        {order.value?.email.charAt(0)}
+                      </Chip>
+                    )}
                     <Typography
                       size="body2/normal"
                       className="truncate w-36 max-[321px]:w-28 sm:w-96"
                     >
-                      {order.value?.email}
+                      {order.value?.customer?.first_name}{" "}
+                      {order.value?.customer?.last_name}
                     </Typography>
                   </div>
                   <Button

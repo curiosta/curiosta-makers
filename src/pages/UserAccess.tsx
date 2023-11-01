@@ -4,7 +4,7 @@ import { adminDeactivateCustomer } from "@/api/admin/customers/deactivateCustome
 import { adminCustomersList } from "@/api/admin/customers/listCustomers";
 import { adminListDeactivateCustomers } from "@/api/admin/customers/listDeactivateCustomers";
 import { adminUpdateCustomer } from "@/api/admin/customers/updateCustomer";
-import user from "@/api/user";
+import user, { TCustomer } from "@/api/user";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
 import Dialog from "@/components/Dialog";
@@ -49,7 +49,7 @@ const UserAccess = () => {
   const isDeletePopup = useSignal<boolean>(false);
   const searchTerm = useSignal<string | undefined>(undefined);
   const activeToggle = useSignal<"active" | "inactive">("active");
-  const selectedUser = useSignal<Customer | null>(null);
+  const selectedUser = useSignal<TCustomer | null>(null);
 
   const getUsers = async () => {
     isLoading.value = "user:get";
@@ -182,7 +182,7 @@ const UserAccess = () => {
     selectedId.value = id;
     isUserEditPopUp.value = true;
   };
-  const handleActiveInactive = (user: Customer) => {
+  const handleActiveInactive = (user: TCustomer) => {
     isDeletePopup.value = true;
     selectedUser.value = user;
   };

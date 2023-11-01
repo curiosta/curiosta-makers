@@ -1,4 +1,4 @@
-import { Customer } from "@medusajs/medusa";
+import { TCustomer } from "@/api/user";
 import { signal } from "@preact/signals";
 
 export type TDraftOrderItems = {
@@ -10,10 +10,10 @@ export type TDraftOrderItems = {
   thumbnail: string | null;
   metadata: { cartType: string; borrowReturnDate?: string };
 };
-const draftUser: Customer = JSON.parse(localStorage.getItem("draftUser"));
+const draftUser: TCustomer = JSON.parse(localStorage.getItem("draftUser"));
 const draftOrderItem: TDraftOrderItems[] = JSON.parse(
   localStorage.getItem("draftOrderItems")
 );
 
-export const selectedUser = signal<Customer | null>(draftUser ?? null);
+export const selectedUser = signal<TCustomer | null>(draftUser ?? null);
 export const draftOrderItems = signal<TDraftOrderItems[]>(draftOrderItem ?? []);
