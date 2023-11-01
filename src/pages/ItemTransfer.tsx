@@ -1,3 +1,6 @@
+import { adminExportGsheets } from "@/api/admin/product/exportGsheets";
+import { adminGsheetsSyncCategory } from "@/api/admin/product/gSheetsSyncCategory";
+import { adminGsheetsSyncLocation } from "@/api/admin/product/gSheetsSyncLoaction";
 import { adminImportGsheets } from "@/api/admin/product/importGsheets";
 import Button from "@/components/Button";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
@@ -17,28 +20,37 @@ type TActiveOptions =
 const ItemTransfer = () => {
   const isLoading = useSignal<boolean>(false);
   const errorMessage = useSignal<string | null>(null);
-  const successMessage = useSignal<string | null>(null);
   const isPopup = useSignal<boolean>(false);
   const isActiveTask = useSignal<TActiveOptions | undefined>(undefined);
+  const isSuccessPopup = useSignal<boolean>(false);
 
   const handleGsheetsImport = async () => {
     isLoading.value = true;
     isPopup.value = false;
     try {
-      // const importGsheets = await adminImportGsheets();
-      // successMessage.value = importGsheets;
+      await adminImportGsheets();
+      isSuccessPopup.value = true;
     } catch (error) {
       console.log(error);
+      if (error instanceof Error) {
+        errorMessage.value = error.message;
+      }
     } finally {
       isLoading.value = false;
     }
   };
+
   const handleGsheetsExport = async () => {
     isLoading.value = true;
     isPopup.value = false;
     try {
+      await adminExportGsheets();
+      isSuccessPopup.value = true;
     } catch (error) {
       console.log(error);
+      if (error instanceof Error) {
+        errorMessage.value = error.message;
+      }
     } finally {
       isLoading.value = false;
     }
@@ -47,8 +59,13 @@ const ItemTransfer = () => {
     isLoading.value = true;
     isPopup.value = false;
     try {
+      await adminGsheetsSyncLocation();
+      isSuccessPopup.value = true;
     } catch (error) {
       console.log(error);
+      if (error instanceof Error) {
+        errorMessage.value = error.message;
+      }
     } finally {
       isLoading.value = false;
     }
@@ -57,8 +74,13 @@ const ItemTransfer = () => {
     isLoading.value = true;
     isPopup.value = false;
     try {
+      await adminGsheetsSyncCategory();
+      isSuccessPopup.value = true;
     } catch (error) {
       console.log(error);
+      if (error instanceof Error) {
+        errorMessage.value = error.message;
+      }
     } finally {
       isLoading.value = false;
     }
@@ -74,13 +96,21 @@ const ItemTransfer = () => {
       <div className="flex flex-col gap-4 mt-4 mb-28">
         <Link
           href="/import-export-csv"
-          className="flex justify-center items-center p-4  bg-primary-700 text-secondray rounded-xl"
+          className="flex justify-center items-center p-3  bg-primary-700 text-secondray rounded-md"
         >
-          <Typography className="text-center ">
+          <Typography size="body2/semi-bold" className="text-center">
             Import/Export from CSV
           </Typography>
         </Link>
         <span className="border my-4"></span>
+        {errorMessage.value ? (
+          <Typography
+            variant="error"
+            className="text-center my-2 whitespace-break-spaces"
+          >
+            {errorMessage.value}
+          </Typography>
+        ) : null}
         <div className="flex flex-col gap-2">
           <Button
             type="button"
@@ -146,15 +176,6 @@ const ItemTransfer = () => {
           </svg>
           View/Edit Google Sheet
         </Link>
-
-        {errorMessage.value ? (
-          <Typography
-            variant="error"
-            className="text-center my-8 whitespace-break-spaces"
-          >
-            {errorMessage.value}
-          </Typography>
-        ) : null}
       </div>
 
       {isLoading.value ? <LoadingPopUp loadingText="Please wait" /> : null}
@@ -174,6 +195,13 @@ const ItemTransfer = () => {
         title="Are you sure and want to perform this action ?"
         subtitle="This action will delete/update database data"
       />
+
+      <PopUp
+        isPopup={isSuccessPopup}
+        title="Google sheets updated successfully!"
+        subtitle="You can check google sheets"
+      />
+
       <BottomNavbar />
     </div>
   );
