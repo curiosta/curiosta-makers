@@ -89,39 +89,6 @@ const UserAccess = () => {
     getUsers();
   }, [offset.value, searchTerm.value, addUser.value, activeToggle.value]);
 
-  const handleAddUser = async (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    isLoading.value = "user:add";
-    if (errorMessage.value) {
-      errorMessage.value = null;
-    }
-    try {
-      if (formRef.current) {
-        const formData = new FormData(formRef.current);
-        const formDataObj = Object.fromEntries(formData.entries());
-        const { first_name, last_name, email, password } = formDataObj;
-
-        const addUserRes = await adminCreateCustomer({
-          first_name: first_name.toString(),
-          last_name: last_name.toString(),
-          email: email.toString(),
-          password: password.toString(),
-        });
-        addUser.value = addUserRes?.customer;
-        isUserPopUp.value = false;
-        isPopUp.value = true;
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message.includes("422")) {
-          return (errorMessage.value = "User already exists with this email");
-        }
-        errorMessage.value = error.message;
-      }
-    } finally {
-      isLoading.value = undefined;
-    }
-  };
   const handleUpdateUser = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     isLoading.value = "user:edit";
@@ -132,13 +99,17 @@ const UserAccess = () => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { first_name, last_name, phone } = formDataObj;
+        const { first_name, last_name, phone, dob, gender } = formDataObj;
         if (!selectedId.value) return;
         const addUserRes = await adminUpdateCustomer({
           customerId: selectedId.value,
           first_name: first_name.toString(),
           last_name: last_name.toString(),
           phone: phone.toString(),
+          metadata: {
+            gender: gender.toString(),
+            dob: new Date(dob.toString()),
+          },
         });
         addUser.value = addUserRes?.customer;
         isUserEditPopUp.value = false;
@@ -209,15 +180,7 @@ const UserAccess = () => {
         <div className="text-center my-2 w-full mb-20">
           {activeToggle.value === "active" ? (
             <div className="flex justify-end">
-              <Button
-                type="button"
-                className="gap-2"
-                onClick={() => {
-                  (isUserPopUp.value = true),
-                    (selectedId.value = undefined),
-                    (errorMessage.value = null);
-                }}
-              >
+              <Button className="gap-2" link="/add-user">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -251,7 +214,13 @@ const UserAccess = () => {
                     handleActiveInactive={handleActiveInactive}
                   />
                 ))}
-                <OffsetPagination limit={limit} offset={offset} count={count} />
+                {activeToggle.value === "active" ? (
+                  <OffsetPagination
+                    limit={limit}
+                    offset={offset}
+                    count={count}
+                  />
+                ) : null}
               </div>
             ) : !users.value?.length && count.value ? (
               <div className="w-full h-40 ">
@@ -266,19 +235,6 @@ const UserAccess = () => {
             </div>
           )}
         </div>
-        {isLoading.value === "user:add" ? (
-          <LoadingPopUp loadingText="Please wait" />
-        ) : isUserPopUp.value ? (
-          <UserPopUp
-            isPopup={isUserPopUp}
-            handlePopupAction={handleAddUser}
-            actionText="Save"
-            type="add"
-            formRef={formRef}
-            errorMessage={errorMessage}
-            variant="user"
-          />
-        ) : null}
 
         {isLoading.value === "user:edit" ? (
           <LoadingPopUp loadingText="Please wait" />
