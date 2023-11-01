@@ -1,18 +1,10 @@
 import Button from "@components/Button";
-import FormControl from "@components/FormControl";
-import Input from "@components/Input";
-import type {
-  Address,
-  AddressCreatePayload,
-  AddressPayload,
-  Region,
-} from "@medusajs/medusa";
+import type { Address } from "@medusajs/medusa";
 import user from "@api/user";
 import { Signal, useSignal } from "@preact/signals";
 import { useRef } from "preact/hooks";
 import { addAddress } from "@/api/user/address/addAddress";
 import Typography from "../Typography";
-import Select from "../Select";
 import countryList from "@/utils/countryList";
 import { ChangeEvent } from "preact/compat";
 import NewInput from "../Input/NewInput";
@@ -52,7 +44,7 @@ const AddressForm = ({
         const phoneCode = countryList.find(
           (country) => country.code === selectedCountryCode.value
         )?.dial_code;
-        const phonePattern = /^\S*$/;
+        const phonePattern = /^\d+\S*$/;
         if (!phonePattern.test(phone.toString())) {
           throw Error("Invalid phone number!");
         }
@@ -66,16 +58,15 @@ const AddressForm = ({
           country_code: selectedCountryCode.value,
           phone: phoneCode + phone.toString(),
         };
-        // const addressRes = await addAddress(payloadAddress);
-        // address.value = addressRes?.customer?.shipping_addresses;
-        // const latestAddress: Address = [
-        //   ...addressRes.customer.shipping_addresses,
-        // ].pop();
-        // selectedAddressId.value = latestAddress?.id;
-        // isNewAddress.value = false;
+        const addressRes = await addAddress(payloadAddress);
+        address.value = addressRes?.customer?.shipping_addresses;
+        const latestAddress: Address = [
+          ...addressRes.customer.shipping_addresses,
+        ].pop();
+        selectedAddressId.value = latestAddress?.id;
+        isNewAddress.value = false;
         resetButtonRef.current?.click();
         selectedCountryCode.value = undefined;
-        console.log(payloadAddress);
       }
     } catch (error) {
       if (error instanceof Error) {

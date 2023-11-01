@@ -2,7 +2,6 @@ import { Signal, useSignal } from "@preact/signals";
 import { cx } from "class-variance-authority";
 import { type ChangeEvent, type HTMLAttributes } from "preact/compat";
 import Button from "../Button";
-import { Customer } from "@medusajs/medusa";
 import Typography from "../Typography";
 import Radio from "../Radio";
 
@@ -19,7 +18,7 @@ interface Props extends Omit<HTMLAttributes<HTMLInputElement>, "class"> {
 
 const MultiRadio = ({ className, options, selectedValue, ...rest }: Props) => {
   const searchTerm = useSignal<string | null>(null);
-  const dropDownOpen = useSignal<boolean>(true);
+  const dropDownOpen = useSignal<boolean>(false);
 
   const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
     const { checked, value } = e.currentTarget;
