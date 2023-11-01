@@ -302,7 +302,10 @@ const CreateUser = () => {
             <div className="w-full flex justify-between items-center my-4">
               <Button
                 type="button"
-                onClick={() => (activeStep.value = activeStep.value - 1)}
+                onClick={() => {
+                  (activeStep.value = activeStep.value - 1),
+                    (errorMessage.value = null);
+                }}
               >
                 Back
               </Button>
