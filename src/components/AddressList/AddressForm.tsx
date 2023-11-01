@@ -24,12 +24,6 @@ type TAddressForm = {
   selectedAddressId: Signal<string>;
 };
 
-type TCountryList = {
-  name: string;
-  dial_code: string;
-  code: string;
-};
-
 const AddressForm = ({
   isNewAddress,
   address,
@@ -38,35 +32,51 @@ const AddressForm = ({
   const isLoading = useSignal<boolean>(false);
   const resetButtonRef = useRef<HTMLButtonElement>(null);
   const errorMessage = useSignal<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const selectedCountryCode = useSignal<string | undefined>(undefined);
 
-  const handleAddAddress = async (data: AddressCreatePayload) => {
+  const handleAddAddress = async (e: ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
     isLoading.value = true;
     if (errorMessage.value) {
       errorMessage.value = null;
     }
     try {
-      if (!selectedCountryCode.value) {
-        throw Error("Please select country");
+      if (formRef.current) {
+        const formData = new FormData(formRef.current);
+        const formDataObj = Object.fromEntries(formData.entries());
+        const { address_1, city, province, postal_code, phone } = formDataObj;
+        if (!selectedCountryCode.value) {
+          throw Error("Please select country");
+        }
+        const phoneCode = countryList.find(
+          (country) => country.code === selectedCountryCode.value
+        )?.dial_code;
+        const phonePattern = /^\S*$/;
+        if (!phonePattern.test(phone.toString())) {
+          throw Error("Invalid phone number!");
+        }
+        const payloadAddress = {
+          first_name: user.customer.value?.first_name,
+          last_name: user.customer.value?.last_name,
+          address_1: address_1.toString(),
+          city: city.toString(),
+          province: province.toString(),
+          postal_code: postal_code.toString(),
+          country_code: selectedCountryCode.value,
+          phone: phoneCode + phone.toString(),
+        };
+        // const addressRes = await addAddress(payloadAddress);
+        // address.value = addressRes?.customer?.shipping_addresses;
+        // const latestAddress: Address = [
+        //   ...addressRes.customer.shipping_addresses,
+        // ].pop();
+        // selectedAddressId.value = latestAddress?.id;
+        // isNewAddress.value = false;
+        resetButtonRef.current?.click();
+        selectedCountryCode.value = undefined;
+        console.log(payloadAddress);
       }
-      const phoneCode = countryList.find(
-        (country) => country.code === selectedCountryCode.value
-      )?.dial_code;
-      const payloadAddress = { ...data };
-      payloadAddress.first_name = user.customer.value?.first_name;
-      payloadAddress.last_name = user.customer.value?.last_name;
-      payloadAddress.country_code = selectedCountryCode?.value;
-      payloadAddress.phone = phoneCode + data.phone;
-      console.log(data);
-      // const addressRes = await addAddress(payloadAddress);
-      // address.value = addressRes?.customer?.shipping_addresses;
-      // const latestAddress: Address = [
-      //   ...addressRes.customer.shipping_addresses,
-      // ].pop();
-      // selectedAddressId.value = latestAddress?.id;
-      // isNewAddress.value = false;
-      selectedCountryCode.value = undefined;
-      resetButtonRef.current?.click();
     } catch (error) {
       if (error instanceof Error) {
         errorMessage.value = error.message;
@@ -85,47 +95,48 @@ const AddressForm = ({
         Add new address
       </Typography>
       <div class="relative mx-auto max-w-2xl">
-        <FormControl
+        <form
           class="sm:px-6 mt-4 flex flex-col gap-5 lg:col-start-1 lg:row-start-1 lg:px-0 lg:pb-4"
-          noValidate
-          mode="onSubmit"
           onSubmit={handleAddAddress}
+          ref={formRef}
         >
-          <Input
+          <NewInput
             type="text"
             label="Address"
             name="address_1"
             autocomplete="street-address"
-            required={{ message: "Address is required!", value: true }}
+            className="capitalize"
+            required
           />
           <div class=" grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-3">
-            <Input
+            <NewInput
               type="text"
               name="city"
               label="City"
               autocomplete="address-level2"
-              required={{ message: "City is required!", value: true }}
+              className="capitalize"
+              required
             />
-            <Input
+            <NewInput
               type="text"
               name="province"
               label="State"
               autocomplete="address-level1"
-              required={{ message: "State is required!", value: true }}
+              className="capitalize"
+              required
             />
 
-            <Input
+            <NewInput
               type="text"
               name="postal_code"
               label="Postal code"
-              required={{
-                message: "Postal code is required!",
-                value: true,
-              }}
+              required
               minLength={5}
               autocomplete="postal-code"
             />
-            <div className="">
+          </div>
+          <div class=" grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+            <div>
               <Typography
                 size="body2/medium"
                 className="leading-6 text-gray-900 flex gap-1 mb-1"
@@ -133,14 +144,12 @@ const AddressForm = ({
                 Select Country
               </Typography>
               <MultiRadio
-                name="country_code"
                 options={countryList}
                 placeholder="Search country..."
                 selectedValue={selectedCountryCode}
-                required
               />
             </div>
-            <Input
+            <NewInput
               name="phone"
               type="tel"
               label="Phone Number"
@@ -152,20 +161,18 @@ const AddressForm = ({
                     )?.dial_code
                   : "N/A"
               }
-              required={{ message: "Phone number is required!", value: true }}
+              required
               placeholder={"9876543210"}
-              validator={(value) =>
-                !/\d{1,3}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
-                  value
-                )
-                  ? "Invalid phone number!"
-                  : true
-              }
               minLength={5}
               maxLength={15}
             />
           </div>
 
+          {errorMessage.value ? (
+            <Typography variant="error" className="text-center mt-2">
+              {errorMessage.value}
+            </Typography>
+          ) : null}
           <div class="flex justify-between items-center gap-3 mt-5 border-t border-gray-200 pt-6">
             <Button
               variant="danger"
@@ -194,12 +201,7 @@ const AddressForm = ({
               </Button>
             </div>
           </div>
-          {errorMessage.value ? (
-            <Typography variant="error" className="text-center mt-2">
-              {errorMessage.value}
-            </Typography>
-          ) : null}
-        </FormControl>
+        </form>
       </div>
     </div>
   );
