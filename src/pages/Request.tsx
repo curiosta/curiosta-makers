@@ -11,6 +11,7 @@ import { useEffect } from "preact/hooks";
 import { ProductCategory } from "@medusajs/medusa";
 import Loading from "@/components/Loading";
 import OffsetPagination from "@components/OffsetPagination";
+import ViewCartLayer from "@/components/ViewCartLayer";
 
 const Request = () => {
   const categories = useSignal<ProductCategory[]>([]);
@@ -59,7 +60,7 @@ const Request = () => {
       <div className="w-full mb-12 max-w-2xl">
         <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 
-        <div className="text-center my-2 w-full mb-12">
+        <div className="text-center my-2 w-full mb-20">
           <Typography size="h6/normal">Choose Category</Typography>
 
           {!isLoading.value ? (
@@ -96,6 +97,7 @@ const Request = () => {
               <Loading loadingText="loading" />
             </div>
           )}
+          <ViewCartLayer actionText="View Cart" actionLink="/cart" />
         </div>
         <BottomNavbar />
       </div>

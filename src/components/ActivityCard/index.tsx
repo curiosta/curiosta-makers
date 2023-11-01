@@ -38,7 +38,7 @@ const ActivityCard = () => {
     {
       title: "Issue Inventory",
       icon: issue_inventory_icon,
-      link: "/create-draft-order",
+      link: "/issue-inventory",
     },
     {
       title: "Add User",

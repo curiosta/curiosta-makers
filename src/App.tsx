@@ -41,10 +41,10 @@ import UserProfile from "@pages/UserProfile";
 import { useEffect } from "preact/hooks";
 import ErrorBanner from "./components/ErrorBanner";
 import { categoriesList } from "./api/product/categoriesList";
-import CreateDraftOrder from "@pages/CreateDraftOrder";
 import CreateUser from "@pages/CreateUser";
 import ChangePassword from "@pages/ChangePassword";
 import ChangePasswordBanner from "./components/ChangePasswordBanner";
+import IssueInventory from "@pages/IssueInventory";
 
 const App = () => {
   const isServerDown = useSignal<boolean>(false);
@@ -136,9 +136,9 @@ const App = () => {
       <Route path="/access-master/admin-access" component={AdminUserAccess} />
       <Route path="/search" component={SearchResult} />
       <Route path="/user/:id" component={UserProfile} />
-      <Route path="/create-draft-order" component={CreateDraftOrder} />
       <Route path="/add-user" component={CreateUser} />
       <Route path="/change-password" component={ChangePassword} />
+      <Route path="/issue-inventory" component={IssueInventory} />
     </Router>
   );
 };

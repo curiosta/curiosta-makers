@@ -15,6 +15,8 @@ import ViewCartLayer from "@/components/ViewCartLayer";
 import { Link } from "preact-router";
 import user from "@/api/user";
 import PopUp from "@/components/Popup";
+import { isUser } from "@/store/userState";
+import { draftOrderItems } from "@/store/draftOrderStore";
 
 interface Props {
   id: string;
@@ -28,9 +30,9 @@ const RequestItems = ({ id }: Props) => {
   const offset = useSignal<number>(0);
   const dialogRef = useRef<HTMLDialogElement[]>([]);
   const selectedCartType = useSignal<string | null>(null);
-  const selectedVariantId = useSignal<string | null>(null);
   const selectedRefIndex = useSignal<number | null>(null);
   const isProfileCompletePopUp = useSignal<boolean>(false);
+  const selectedProduct = useSignal<PricedProduct | null>(null);
 
   const getProducts = async () => {
     isLoading.value = true;
@@ -68,7 +70,7 @@ const RequestItems = ({ id }: Props) => {
       dialogRef.current[index]?.show();
     }
     selectedRefIndex.value = index;
-    selectedVariantId.value = product.variants[0].id;
+    selectedProduct.value = product;
   };
 
   // handle radio input and add line items with selected cart type value
@@ -77,13 +79,29 @@ const RequestItems = ({ id }: Props) => {
     if (checked) {
       selectedCartType.value = value;
     }
-
-    if (selectedVariantId.value && selectedCartType.value) {
+    const selectedVariantId = selectedProduct.value?.variants[0]?.id;
+    if (selectedVariantId && selectedCartType.value) {
       try {
-        await cart.addItem({
-          id: selectedVariantId.value,
-          metadata: { cartType: selectedCartType.value },
-        });
+        if (isUser.value) {
+          await cart.addItem({
+            id: selectedVariantId,
+            metadata: { cartType: selectedCartType.value },
+          });
+        } else {
+          draftOrderItems.value = [
+            ...draftOrderItems.value,
+            {
+              quantity: 1,
+              product_id: selectedProduct.value?.id,
+              variant_id: selectedVariantId,
+              thumbnail: selectedProduct.value?.thumbnail,
+              title: selectedProduct.value?.title,
+              inventoryQty:
+                selectedProduct.value?.variants[0]?.inventory_quantity,
+              metadata: { cartType: selectedCartType.value },
+            },
+          ];
+        }
       } catch (error) {
         console.log(error);
       } finally {
@@ -91,6 +109,13 @@ const RequestItems = ({ id }: Props) => {
       }
     }
   };
+
+  // set draft order data on local storage
+  localStorage.setItem(
+    "draftOrderItems",
+    JSON.stringify(draftOrderItems.value)
+  );
+
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
