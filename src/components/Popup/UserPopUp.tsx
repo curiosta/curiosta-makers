@@ -3,12 +3,13 @@ import Button from "../Button";
 import Typography from "../Typography";
 import { ChangeEvent } from "preact/compat";
 import { MutableRef, useEffect } from "preact/hooks";
-import { Customer, User } from "@medusajs/medusa";
+import { User } from "@medusajs/medusa";
 import NewInput from "../Input/NewInput";
 import { adminGetCustomer } from "@/api/admin/customers/getCustomer";
 import { adminGetuser } from "@/api/admin/adminUsers/getAdminUser";
 import { isUser } from "@/store/userState";
 import user, { TCustomer } from "@/api/user";
+import Select from "../Select";
 
 type PopUp = {
   isPopup: Signal<boolean>;
@@ -117,10 +118,9 @@ const UserPopUp = ({
                 type="tel"
                 label="Phone Number"
                 autocomplete="phone"
-                pattern="(\+91)?(-)?\s*?(91)?\s*?(\d{3})-?\s*?(\d{3})-?\s*?(\d{4})"
-                placeholder={"+91 9876543210"}
-                title="Invalid phone number"
+                placeholder={"+1 9876543210"}
                 defaultValue={type === "edit" ? userData.value?.phone : ""}
+                minLength={8}
                 required
               />
             ) : null}

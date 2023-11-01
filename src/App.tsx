@@ -21,7 +21,7 @@ import Orders from "@pages/Orders";
 import OrderInfo from "@components/Orders/OrderInfo";
 import Return from "@pages/Return";
 import ReturnItems from "@pages/ReturnItems";
-import Inbound from "@pages/Inbound";
+import ImportExportCSV from "@pages/ImportExportCSV";
 import Fulfill from "@pages/Fulfill";
 import Approve from "@pages/Approve";
 import Master from "@pages/Master";
@@ -41,7 +41,11 @@ import UserProfile from "@pages/UserProfile";
 import { useEffect } from "preact/hooks";
 import ErrorBanner from "./components/ErrorBanner";
 import { categoriesList } from "./api/product/categoriesList";
+import CreateUser from "@pages/CreateUser";
+import ChangePassword from "@pages/ChangePassword";
+import ChangePasswordBanner from "./components/ChangePasswordBanner";
 import IssueInventory from "@pages/IssueInventory";
+import ItemTransfer from "@pages/ItemTransfer";
 
 const App = () => {
   const isServerDown = useSignal<boolean>(false);
@@ -71,6 +75,15 @@ const App = () => {
         </div>
       );
     }
+  }
+
+  if (
+    userState === "authenticated" &&
+    user.customer.value?.metadata?.new_account &&
+    !publicRoute.includes(currentUrl.value) &&
+    currentUrl.value !== "/change-password"
+  ) {
+    return <ChangePasswordBanner link="/change-password" />;
   }
 
   // if user not authenticated then redirect to /login page
@@ -107,7 +120,8 @@ const App = () => {
       <Route path="/orders/:id" component={OrderInfo} />
       <Route path="/return" component={Return} />
       <Route path="/return/:order_id/:return_id?" component={ReturnItems} />
-      <Route path="/inbound" component={Inbound} />
+      <Route path="/item-transfer" component={ItemTransfer} />
+      <Route path="/import-export-csv" component={ImportExportCSV} />
       <Route path="/fulfill" component={Fulfill} />
       <Route path="/approve" component={Approve} />
       <Route path="/master" component={Master} />
@@ -124,6 +138,8 @@ const App = () => {
       <Route path="/access-master/admin-access" component={AdminUserAccess} />
       <Route path="/search" component={SearchResult} />
       <Route path="/user/:id" component={UserProfile} />
+      <Route path="/add-user" component={CreateUser} />
+      <Route path="/change-password" component={ChangePassword} />
       <Route path="/issue-inventory" component={IssueInventory} />
     </Router>
   );
