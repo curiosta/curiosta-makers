@@ -63,10 +63,10 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
 
   // filter out fulfilled items
   const fulfilledItemId = order?.fulfillments?.flatMap((fulfill) =>
-    fulfill.items.map((item) => item.item_id)
+    fulfill?.items?.map((item) => item.item_id)
   );
-  const fulfilledItem = order?.items.filter((item) =>
-    fulfilledItemId.includes(item.id)
+  const fulfilledItem = order?.items?.filter((item) =>
+    fulfilledItemId?.includes(item.id)
   );
 
   // if item fulfilled then only it can return
@@ -227,10 +227,10 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
                     >
                       {item.title}
                     </Typography>
-                    <Typography variant="secondary">
-                      Qty: {item.quantity}
+                    <Typography variant="secondary" className="lowercase">
+                      quantity: {item.quantity}
                     </Typography>
-                    <Typography variant="secondary">
+                    <Typography variant="secondary" className="lowercase">
                       order Type: {item.metadata?.cartType}
                     </Typography>
                   </div>

@@ -211,11 +211,15 @@ const OrderInfo = ({ id }: Props) => {
                           {item.title}
                         </Typography>
                       </Link>
-                      <Typography size="body2/normal" variant="secondary">
+                      <Typography
+                        size="body2/normal"
+                        variant="secondary"
+                        className="lowercase"
+                      >
                         order Type: {item.metadata?.cartType}
                       </Typography>
                       {!item.returned_quantity ? (
-                        <Typography size="body2/normal">
+                        <Typography size="body2/normal" className="lowercase">
                           fulfilled Qty: {item.fulfilled_quantity}
                         </Typography>
                       ) : (
@@ -256,7 +260,11 @@ const OrderInfo = ({ id }: Props) => {
                         {item.title}
                       </Typography>
                     </Link>
-                    <Typography size="body2/normal" variant="secondary">
+                    <Typography
+                      size="body2/normal"
+                      variant="secondary"
+                      className="lowercase"
+                    >
                       order Type: {item.metadata?.cartType}
                     </Typography>
                     {returnItemIds && returnItemIds.includes(item.id) ? (
@@ -302,7 +310,11 @@ const OrderInfo = ({ id }: Props) => {
                           {item.title}
                         </Typography>
                       </Link>
-                      <Typography size="body2/normal" variant="secondary">
+                      <Typography
+                        size="body2/normal"
+                        variant="secondary"
+                        className="lowercase"
+                      >
                         order Type: {item.metadata?.cartType}
                       </Typography>
                     </div>
