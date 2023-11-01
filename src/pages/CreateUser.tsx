@@ -35,8 +35,15 @@ const CreateUser = () => {
   const addUser = useSignal<TCustomer | null>(null);
   const errorMessage = useSignal<string | undefined>(undefined);
   const isUserPopUp = useSignal<boolean>(false);
+  const selectedGender = useSignal<string | undefined>(undefined);
 
   const handleBasicInfo = (data: TBasicInfo) => {
+    if (errorMessage.value) {
+      errorMessage.value = null;
+    }
+    if (!selectedGender.value) {
+      return (errorMessage.value = "Select gender!");
+    }
     basicInfo.value = data;
     activeStep.value = activeStep.value + 1;
   };
@@ -56,6 +63,9 @@ const CreateUser = () => {
 
   const handleCreateUser = async () => {
     isLoading.value = true;
+    if (errorMessage.value) {
+      errorMessage.value = null;
+    }
     try {
       if (!basicInfo.value) return;
       const { first_name, last_name, email, phone, dob, gender } =
@@ -100,7 +110,11 @@ const CreateUser = () => {
         <UserCreationProgress activeStep={activeStep.value} />
 
         {activeStep.value === 1 ? (
-          <CreateUserInfo handleBasicInfo={handleBasicInfo} />
+          <CreateUserInfo
+            handleBasicInfo={handleBasicInfo}
+            selectedGender={selectedGender}
+            errorMessage={errorMessage}
+          />
         ) : activeStep.value === 2 ? (
           <UserBiometricInfo
             documentInfo={documentInfo}

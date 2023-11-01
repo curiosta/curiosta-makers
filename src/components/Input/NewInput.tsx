@@ -8,7 +8,7 @@ interface Props extends HTMLAttributes<HTMLInputElement> {
 }
 
 const NewInput = ({ label, leftAdornment, className, ...rest }: Props) => {
-  const id = label.replaceAll(" ", "-").toLowerCase();
+  const id = label?.replaceAll(" ", "-").toLowerCase();
 
   return (
     <div className="w-full">

@@ -1,4 +1,4 @@
-import { useSignal } from "@preact/signals";
+import { Signal, useSignal } from "@preact/signals";
 import Button from "../Button";
 import FormControl from "../FormControl";
 import Input from "../Input";
@@ -11,11 +11,15 @@ import { TBasicInfo } from "@pages/CreateUser";
 
 type TCreateUserInfo = {
   handleBasicInfo: (data: TBasicInfo) => void;
+  selectedGender: Signal<string>;
+  errorMessage: Signal<string>;
 };
 
-const CreateUserInfo = ({ handleBasicInfo }: TCreateUserInfo) => {
-  const selectedGender = useSignal<string | undefined>(undefined);
-
+const CreateUserInfo = ({
+  handleBasicInfo,
+  selectedGender,
+  errorMessage,
+}: TCreateUserInfo) => {
   const genderList = [
     {
       title: "male",
@@ -177,6 +181,11 @@ const CreateUserInfo = ({ handleBasicInfo }: TCreateUserInfo) => {
             </label>
           ))}
         </div>
+        {errorMessage.value ? (
+          <Typography variant="error" className="text-center my-4">
+            {errorMessage.value}
+          </Typography>
+        ) : null}
       </div>
       <div className="w-full flex justify-end items-center my-4">
         <Button type="submit">Next</Button>
