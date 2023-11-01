@@ -110,7 +110,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
             </div>
           )}
           <div>
-            <dt class="font-medium text-gray-900">Requested date</dt>
+            <dt class="font-medium text-gray-900 capitalize">Requested date</dt>
             <dd class="mt-1 text-gray-700">
               <time dateTime="2021-07-06">
                 {page !== "adminReturn" && page !== "return"

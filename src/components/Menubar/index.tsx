@@ -99,7 +99,9 @@ const Menubar = ({ isMenuOpen }: Props) => {
                   className="gap-4"
                 >
                   {item.icon}
-                  <Typography size="body2/normal">{item.title}</Typography>
+                  <Typography size="body2/normal" className="capitalize">
+                    {item.title}
+                  </Typography>
                 </Button>
               ))
             : menubarAdminItems.map((item, index) => (
@@ -110,7 +112,9 @@ const Menubar = ({ isMenuOpen }: Props) => {
                   className="gap-4"
                 >
                   {item.icon}
-                  <Typography size="body2/normal">{item.title}</Typography>
+                  <Typography size="body2/normal" className="capitalize">
+                    {item.title}
+                  </Typography>
                 </Button>
               ))}
         </div>
