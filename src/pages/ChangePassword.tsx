@@ -1,17 +1,11 @@
-import { useSignal } from "@preact/signals";
 import user from "@/api/user";
-import { isUser } from "@/store/userState";
-import admin from "@/api/admin";
 import PasswordResetForm from "@/components/PasswordResetFrom";
+import { useSignal } from "@preact/signals";
 
-const PasswordReset = () => {
+const ChangePassword = () => {
   const isLoading = useSignal<boolean>(false);
   const errorMessage = useSignal<string>("");
   const successMessage = useSignal<string>("");
-
-  const currentUrl = new URL(window.location.href);
-  const token = currentUrl.searchParams.get("token");
-  const email = currentUrl.searchParams.get("email");
 
   const handlePasswordReset = async (data: any) => {
     isLoading.value = true;
@@ -21,14 +15,9 @@ const PasswordReset = () => {
       successMessage.value = "";
     }
     try {
-      if (!token || !email) {
-        return (errorMessage.value = "Email or Token not found in url params");
-      }
-
       if (password === cpassword) {
-        isUser.value
-          ? await user.passwordReset({ email, password, token })
-          : await admin.passwordReset({ email, password, token });
+        await user.updateUser({ password, metadata: { new_account: false } });
+        await user.logout();
         successMessage.value = "Your password has been changed successfully!";
       } else {
         errorMessage.value = "Password and confirmation password do not match.";
@@ -44,7 +33,6 @@ const PasswordReset = () => {
   };
   return (
     <PasswordResetForm
-      email={email}
       handleSubmit={handlePasswordReset}
       errorMessage={errorMessage}
       successMessage={successMessage}
@@ -53,4 +41,4 @@ const PasswordReset = () => {
   );
 };
 
-export default PasswordReset;
+export default ChangePassword;

@@ -3,12 +3,13 @@ import Button from "../Button";
 import Typography from "../Typography";
 import { ChangeEvent } from "preact/compat";
 import { MutableRef, useEffect } from "preact/hooks";
-import { Customer, User } from "@medusajs/medusa";
+import { User } from "@medusajs/medusa";
 import NewInput from "../Input/NewInput";
 import { adminGetCustomer } from "@/api/admin/customers/getCustomer";
 import { adminGetuser } from "@/api/admin/adminUsers/getAdminUser";
 import { isUser } from "@/store/userState";
 import user, { TCustomer } from "@/api/user";
+import Select from "../Select";
 
 type PopUp = {
   isPopup: Signal<boolean>;

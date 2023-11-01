@@ -27,7 +27,11 @@ const FileInput = ({ selectedFile, acceptFileType }: TFileInput) => {
       <label for={id} className="font-semibold underline">
         Browse
       </label>
-      {selectedFile.value ? <span>{selectedFile.value?.name}</span> : null}
+      {selectedFile.value ? (
+        <Typography className="break-all">
+          {selectedFile.value?.name}
+        </Typography>
+      ) : null}
       <input
         type="file"
         name="file"

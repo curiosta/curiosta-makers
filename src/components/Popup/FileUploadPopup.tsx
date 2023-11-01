@@ -54,6 +54,7 @@ const FileUploadPopup = ({
             <Button
               type="submit"
               className={`capitalize ${actionText ? "flex" : "hidden"}`}
+              disabled={!selectedFile.value}
             >
               {actionText}
             </Button>

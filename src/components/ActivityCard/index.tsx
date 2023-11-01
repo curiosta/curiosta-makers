@@ -43,7 +43,7 @@ const ActivityCard = () => {
     {
       title: "Add User",
       icon: add_user_icon,
-      link: "/access-master/user-access",
+      link: "/add-user",
     },
   ];
 

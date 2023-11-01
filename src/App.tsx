@@ -41,6 +41,9 @@ import UserProfile from "@pages/UserProfile";
 import { useEffect } from "preact/hooks";
 import ErrorBanner from "./components/ErrorBanner";
 import { categoriesList } from "./api/product/categoriesList";
+import CreateUser from "@pages/CreateUser";
+import ChangePassword from "@pages/ChangePassword";
+import ChangePasswordBanner from "./components/ChangePasswordBanner";
 import IssueInventory from "@pages/IssueInventory";
 
 const App = () => {
@@ -71,6 +74,15 @@ const App = () => {
         </div>
       );
     }
+  }
+
+  if (
+    userState === "authenticated" &&
+    user.customer.value?.metadata?.new_account &&
+    !publicRoute.includes(currentUrl.value) &&
+    currentUrl.value !== "/change-password"
+  ) {
+    return <ChangePasswordBanner link="/change-password" />;
   }
 
   // if user not authenticated then redirect to /login page
@@ -124,6 +136,8 @@ const App = () => {
       <Route path="/access-master/admin-access" component={AdminUserAccess} />
       <Route path="/search" component={SearchResult} />
       <Route path="/user/:id" component={UserProfile} />
+      <Route path="/add-user" component={CreateUser} />
+      <Route path="/change-password" component={ChangePassword} />
       <Route path="/issue-inventory" component={IssueInventory} />
     </Router>
   );

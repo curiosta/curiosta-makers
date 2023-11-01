@@ -3,7 +3,7 @@ import { ComponentChildren } from "preact";
 import { HTMLAttributes } from "preact/compat";
 
 interface Props extends HTMLAttributes<HTMLInputElement> {
-  label: string;
+  label?: string;
   leftAdornment?: ComponentChildren | ComponentChildren[];
 }
 
@@ -12,12 +12,14 @@ const NewInput = ({ label, leftAdornment, className, ...rest }: Props) => {
 
   return (
     <div className="w-full">
-      <label
-        htmlFor={id}
-        className="text-sm font-medium leading-6 text-gray-900 flex gap-1 mb-1"
-      >
-        {label}
-      </label>
+      {label ? (
+        <label
+          htmlFor={id}
+          className="text-sm font-medium leading-6 text-gray-900 flex gap-1 mb-1"
+        >
+          {label}
+        </label>
+      ) : null}
       <div className="flex rounded-md">
         {leftAdornment ? (
           <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-3 text-gray-500 sm:text-sm">
