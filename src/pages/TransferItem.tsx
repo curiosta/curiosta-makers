@@ -17,7 +17,7 @@ type TActiveOptions =
   | "Gsheets:syncLocation"
   | "Gsheets:syncCategory";
 
-const ItemTransfer = () => {
+const TransferItem = () => {
   const isLoading = useSignal<boolean>(false);
   const errorMessage = useSignal<string | null>(null);
   const isPopup = useSignal<boolean>(false);
@@ -178,7 +178,15 @@ const ItemTransfer = () => {
         </Link>
       </div>
 
-      {isLoading.value ? <LoadingPopUp loadingText="Please wait" /> : null}
+      {isLoading.value ? (
+        <LoadingPopUp
+          loadingText={
+            isActiveTask.value === "Gsheets:import"
+              ? "Please wait,this may take a while"
+              : "Please wait"
+          }
+        />
+      ) : null}
 
       <PopUp
         isPopup={isPopup}
@@ -192,14 +200,24 @@ const ItemTransfer = () => {
             ? handleSyncLoaction
             : handleSyncCategory
         }
-        title="Are you sure and want to perform this action ?"
+        title="Are you sure and want to perform this action?"
         subtitle="This action will delete/update database data"
       />
 
       <PopUp
         isPopup={isSuccessPopup}
-        title="Google sheets updated successfully!"
-        subtitle="You can check google sheets"
+        title={
+          isActiveTask.value === "Gsheets:import"
+            ? "Importing finished"
+            : isActiveTask.value === "Gsheets:export"
+            ? "Exporting finished"
+            : "Google sheets updated successfully!"
+        }
+        subtitle={
+          isActiveTask.value === "Gsheets:import"
+            ? "Products have been created/updated"
+            : "You can check google sheets"
+        }
       />
 
       <BottomNavbar />
@@ -207,4 +225,4 @@ const ItemTransfer = () => {
   );
 };
 
-export default ItemTransfer;
+export default TransferItem;

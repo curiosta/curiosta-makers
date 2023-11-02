@@ -1,7 +1,7 @@
 import Typography from "@components/Typography";
 import TopNavbar from "@components/Navbar/TopNavbar";
 import SearchInput from "@components/SearchInput";
-import ActivityCard from "@components/ActivityCard";
+import QuickActions from "@components/QuickActions";
 import IssuedItems from "@components/IssuedItems";
 import BottomNavbar from "@components/Navbar/BottomNavbar";
 import { isUser } from "@/store/userState";
@@ -42,7 +42,7 @@ const Home = () => {
           placeholder="Search products..."
           isSearchSort={false}
         />
-        <ActivityCard />
+        <QuickActions />
         {!isUser.value ? <MiddleContent /> : null}
         <IssuedItems />
         {/* {!isUser.value ? <Snapshot /> : null} */}

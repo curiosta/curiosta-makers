@@ -181,13 +181,15 @@ const AdminUserAccess = () => {
               {adminUsers.value.map((user, index) => (
                 <div className="w-full flex justify-between items-center relative">
                   <div className="flex items-center gap-4 w-10/12">
-                    <div className="w-9 h-9 flex">
-                      <Chip className="!bg-primary-700 uppercase text-white">
-                        {user.first_name
-                          ? user.first_name.charAt(0)
-                          : user.email.charAt(0)}
-                      </Chip>
-                    </div>
+                    <Chip
+                      variant="primary2"
+                      className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+                    >
+                      {user.first_name
+                        ? user.first_name.charAt(0)
+                        : user.email.charAt(0)}
+                    </Chip>
+
                     {user?.first_name ? (
                       <Typography
                         variant="secondary"

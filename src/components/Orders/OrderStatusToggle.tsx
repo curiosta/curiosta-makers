@@ -45,7 +45,7 @@ const OrderStatusToggle = ({
           onClick={() => {
             activeToggle.value = item.fulfillStatus;
           }}
-          className={`!rounded-2xl items-center capitalize ${
+          className={`!rounded-2xl items-center capitalize px-3 ${
             JSON.stringify(activeToggle.value) ===
             JSON.stringify(item.fulfillStatus)
               ? "!bg-primary-700 text-white"

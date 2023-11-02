@@ -100,7 +100,7 @@ export const menubarItems = [
 ];
 export const menubarAdminItems = [
   {
-    title: "Item transfer",
+    title: "Transfer Item",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -115,7 +115,7 @@ export const menubarAdminItems = [
         />
       </svg>
     ),
-    link: "/item-transfer",
+    link: "/transfer-item",
   },
   {
     title: "Approve Requests",

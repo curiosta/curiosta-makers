@@ -45,7 +45,7 @@ import CreateUser from "@pages/CreateUser";
 import ChangePassword from "@pages/ChangePassword";
 import ChangePasswordBanner from "./components/ChangePasswordBanner";
 import IssueInventory from "@pages/IssueInventory";
-import ItemTransfer from "@pages/ItemTransfer";
+import TransferItem from "@pages/TransferItem";
 
 const App = () => {
   const isServerDown = useSignal<boolean>(false);
@@ -120,7 +120,7 @@ const App = () => {
       <Route path="/orders/:id" component={OrderInfo} />
       <Route path="/return" component={Return} />
       <Route path="/return/:order_id/:return_id?" component={ReturnItems} />
-      <Route path="/item-transfer" component={ItemTransfer} />
+      <Route path="/transfer-item" component={TransferItem} />
       <Route path="/import-export-csv" component={ImportExportCSV} />
       <Route path="/fulfill" component={Fulfill} />
       <Route path="/approve" component={Approve} />

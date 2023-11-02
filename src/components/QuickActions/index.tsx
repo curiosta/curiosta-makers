@@ -8,8 +8,8 @@ import add_user_icon from "@assets/add-user.svg";
 import { Link } from "preact-router/match";
 import { isUser } from "@/store/userState";
 
-const ActivityCard = () => {
-  const activities = [
+const QuickActions = () => {
+  const actions = [
     {
       title: "Create Requests",
       icon: request_icon,
@@ -50,34 +50,34 @@ const ActivityCard = () => {
   return (
     <div className="w-full flex flex-col items-center">
       <Typography className="w-full">Quick Actions</Typography>
-      <div className="flex flex-wrap justify-center items-center gap-4 my-3 ">
+      <div className="grid grid-cols-3 gap-4 my-3 text-center">
         {isUser.value
-          ? activities?.slice(0, 2).map((activity, index) => (
+          ? actions?.slice(0, 2).map((action, index) => (
               <Link
                 key={index}
-                href={activity.link}
+                href={action.link}
                 className="flex flex-col items-center gap-2"
               >
                 <img
-                  src={activity.icon}
-                  alt={activity.title}
+                  src={action.icon}
+                  alt={action.title}
                   className="bg-primary-600/20 p-2 rounded-2xl w-16 h-16"
                 />
-                <Typography>{activity.title}</Typography>
+                <Typography>{action.title}</Typography>
               </Link>
             ))
-          : activities?.slice(1).map((activity, index) => (
+          : actions?.slice(1).map((action, index) => (
               <Link
                 key={index}
-                href={activity.link}
+                href={action.link}
                 className="flex flex-col items-center gap-2"
               >
                 <img
-                  src={activity.icon}
-                  alt={activity.title}
+                  src={action.icon}
+                  alt={action.title}
                   className="bg-primary-600/20 p-2 rounded-2xl w-16 h-16"
                 />
-                <Typography>{activity.title}</Typography>
+                <Typography>{action.title}</Typography>
               </Link>
             ))}
       </div>
@@ -85,4 +85,4 @@ const ActivityCard = () => {
   );
 };
 
-export default ActivityCard;
+export default QuickActions;

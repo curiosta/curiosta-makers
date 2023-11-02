@@ -74,13 +74,15 @@ const TopNavbar = () => {
             {totalCartItems ?? 0}
           </Button>
         ) : null}
-        <div className="w-9 h-9 flex">
-          <Chip className="!bg-primary-700 uppercase text-white">
-            {currentUser?.first_name
-              ? currentUser?.first_name.charAt(0)
-              : currentUser?.email.charAt(0)}
-          </Chip>
-        </div>
+
+        <Chip
+          variant="primary2"
+          className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+        >
+          {currentUser?.first_name
+            ? currentUser?.first_name.charAt(0)
+            : currentUser?.email.charAt(0)}
+        </Chip>
       </div>
       <Menubar isMenuOpen={isMenuOpen} />
     </div>
