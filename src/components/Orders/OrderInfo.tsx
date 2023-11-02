@@ -87,7 +87,7 @@ const OrderInfo = ({ id }: Props) => {
   const hanldeApprove = async () => {
     isLoading.value = "order:approve";
     try {
-      await adminUpdateOrder(id);
+      await adminUpdateOrder({ orderId: id, regionId: order.value?.region_id });
       const payment = await adminPaymentCapture(id);
       order.value = payment?.order;
       isPopup.value = true;

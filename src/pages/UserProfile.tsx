@@ -187,9 +187,7 @@ const UserProfile = ({ id }: Props) => {
         const phonePattern =
           /^\+\d{1,3}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
         if (!phonePattern.test(phone.toString())) {
-          throw Error(
-            "Invalid phone number! Phone number length should be of minimum 8 characters including country code."
-          );
+          throw Error("Invalid phone number!");
         }
         if (isUser.value) {
           await user.updateUser({
