@@ -221,7 +221,7 @@ const LocationMaster = () => {
         ) : null}
         {isLoading.value !== "locationCategory:get" ? (
           <div className="w-full">
-            <div className="flex flex-col  my-2 items-start gap-4">
+            <div className="flex flex-col  my-2 items-start gap-4 mb-28">
               {locationCategory.value ? (
                 locationCategory.value?.category_children?.map(
                   (category, index) => (
