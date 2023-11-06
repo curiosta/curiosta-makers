@@ -322,10 +322,10 @@ const CreateUser = () => {
       ) : (
         <PopUp
           isPopup={isUserPopUp}
-          title="User is created successfully"
+          title="User is created successfully. Please save login credentials"
           actionLink={`/user/${addUser.value?.id}`}
           actionText="Check Profile"
-          subtitle={`User ID: ${addUser.value?.id} `}
+          subtitle={`Email: ${addUser.value?.email}, Password: ${addUser.value?.metadata?.temp_password}`}
         />
       )}
       <BottomNavbar />
