@@ -45,7 +45,6 @@ const ProductEdit = ({ id }: Props) => {
   const productImages = useSignal<TProductImages[]>([]);
   const isImagesUpload = useSignal<boolean>(false);
   const locationCategory = useSignal<ProductCategory[]>([]);
-  const flattenLocations = useSignal<ProductCategory[]>([]);
 
   const getProduct = async () => {
     isLoading.value = "product:get";
@@ -94,22 +93,6 @@ const ProductEdit = ({ id }: Props) => {
       isLoading.value = undefined;
     }
   };
-
-  const flatten = (routes: ProductCategory[]) => {
-    routes.map((r) => {
-      if (r.category_children && r.category_children.length) {
-        flatten(r.category_children);
-        return (flattenLocations.value = [...flattenLocations.value, r]);
-      }
-    });
-  };
-
-  useEffect(() => {
-    if (flattenLocations.value?.length) {
-      flattenLocations.value = [];
-    }
-    flatten(locationCategory.value);
-  }, [locationCategory.value]);
 
   useEffect(() => {
     getCategories();
@@ -165,22 +148,6 @@ const ProductEdit = ({ id }: Props) => {
 
         const categories: { id: string }[] = [{ id: location.toString() }];
 
-        let parentLocations: ProductCategory[] = [];
-
-        const getParentLocations = (categoryId: string) => {
-          flattenLocations.value?.map((cate) => {
-            if (cate.category_children.some((cate) => cate.id === categoryId)) {
-              getParentLocations(cate.id);
-              return (parentLocations = [...parentLocations, cate]);
-            }
-          });
-        };
-        getParentLocations(location.toString());
-
-        if (parentLocations?.length) {
-          parentLocations?.map((cate) => categories.push({ id: cate.id }));
-        }
-
         if (selectedCategoryIds.value?.length) {
           selectedCategoryIds.value?.map((val) => categories.push({ id: val }));
         }
@@ -195,7 +162,7 @@ const ProductEdit = ({ id }: Props) => {
           variantId: product.value?.variants[0]?.id,
           inventory_quantity: parseInt(quantity.toString()),
           categories:
-            selectedCategoryIds.value?.length || parentLocations?.length
+            selectedCategoryIds.value?.length || location.toString()
               ? categories
               : null,
           thumbnail: thumbnail.value ? thumbnail.value : null,
