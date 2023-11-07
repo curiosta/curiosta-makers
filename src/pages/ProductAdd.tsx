@@ -39,6 +39,7 @@ const ProductAdd = () => {
   const productImages = useSignal<TProductImages[]>([]);
   const isImagesUpload = useSignal<boolean>(false);
   const locationCategory = useSignal<ProductCategory[]>([]);
+  const selectedLocationId = useSignal<string | null>(null);
 
   const getCategories = async () => {
     isLoading.value = "category:get";
@@ -121,7 +122,7 @@ const ProductAdd = () => {
         const formDataObj = Object.fromEntries(formData.entries());
         const { title, description, status, location, quantity } = formDataObj;
 
-        const categories: { id: string }[] = [{ id: location.toString() }];
+        const categories: { id: string }[] = [{ id: selectedLocationId.value }];
 
         if (selectedCategoryIds.value?.length) {
           selectedCategoryIds.value?.map((val) => categories.push({ id: val }));
@@ -133,7 +134,7 @@ const ProductAdd = () => {
           status: status.toString(),
           inventory_quantity: parseInt(quantity.toString()),
           categories:
-            selectedCategoryIds.value?.length || location.toString()
+            selectedCategoryIds.value?.length || selectedLocationId.value
               ? categories
               : null,
           thumbnail: thumbnail.value ? thumbnail.value : null,
@@ -178,6 +179,7 @@ const ProductAdd = () => {
         product={product}
         variant="add"
         locationCategory={locationCategory}
+        selectedLocationId={selectedLocationId}
       />
 
       {isLoading.value === "product:image:upload" ? (

@@ -1,7 +1,9 @@
+import { adminListCategory } from "@/api/admin/category/listCategory";
 import { adminGetProduct } from "@/api/admin/product/getProduct";
 import cart from "@/api/cart";
 import { getProductInfo } from "@/api/product/getProductInfo";
 import user from "@/api/user";
+import Category from "@/components/Accordion/Category";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import ManageQty from "@/components/ManageQty";
@@ -13,6 +15,8 @@ import Radio from "@/components/Radio";
 import Typography from "@/components/Typography";
 import ViewCartLayer from "@/components/ViewCartLayer";
 import { isUser } from "@/store/userState";
+import nestedSet from "@/utils/convertIntoNestedLocations";
+import { ProductCategory } from "@medusajs/medusa";
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
@@ -25,13 +29,17 @@ interface Props {
 
 const ProductInfo = ({ id }: Props) => {
   const product = useSignal<PricedProduct | null>(null);
-  const isLoading = useSignal<boolean>(false);
+  const isLoading = useSignal<"product:get" | "locations:get" | undefined>(
+    undefined
+  );
   const cartTypeOpen = useSignal<boolean>(false);
   const selectedCartType = useSignal<string | null>(null);
   const isProfileCompletePopUp = useSignal<boolean>(false);
+  const locationCategory = useSignal<ProductCategory[]>([]);
+  const locationsWithParent = useSignal<{ name: string; id: string }[]>([]);
 
   const getProduct = async () => {
-    isLoading.value = true;
+    isLoading.value = "product:get";
     try {
       const res = isUser.value
         ? await getProductInfo({ productId: id })
@@ -39,11 +47,31 @@ const ProductInfo = ({ id }: Props) => {
       product.value = res?.product;
     } catch (error) {
     } finally {
-      isLoading.value = false;
+      isLoading.value = undefined;
     }
   };
+
+  const getLocationCategory = async () => {
+    isLoading.value = "locations:get";
+    try {
+      const categoryRes = await adminListCategory({
+        q: "location-master",
+        limit: 0,
+        offset: 0,
+      });
+      locationCategory.value =
+        categoryRes?.product_categories?.at(0)?.category_children;
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
   useEffect(() => {
     getProduct();
+    if (!isUser.value) {
+      getLocationCategory();
+    }
   }, []);
 
   const handleAddToCart = () => {
@@ -83,12 +111,44 @@ const ProductInfo = ({ id }: Props) => {
   const categories = product.value?.categories?.filter(
     (cate) => !cate.handle.startsWith("loc:")
   );
-  const locations = product.value?.categories
-    ?.filter((cate) => cate.handle.startsWith("loc:"))
-    .sort(
-      (a, b) =>
-        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-    );
+
+  // set location tree
+  const setNodes = (location: ProductCategory[]) => {
+    location?.forEach((parent) => {
+      if (parent.category_children?.length) {
+        parent.category_children.forEach((child) => {
+          nestedSet.addNode(child?.name, parent.name, child.id);
+          if (child.category_children?.length) {
+            setNodes(child.category_children);
+          }
+        });
+      }
+      setNodes(parent.category_children);
+    });
+  };
+
+  useEffect(() => {
+    setNodes(locationCategory.value);
+  }, [locationCategory.value]);
+
+  const chidLocation = product.value?.categories?.filter(
+    (location: ProductCategory) => location.handle.startsWith("loc:")
+  );
+
+  // show locations in this format "Zone A / Aisle A / Rack A / Bin CA01"
+  if (Object.keys(nestedSet.nodes)?.length) {
+    const locations = chidLocation?.map((location) => {
+      return {
+        name: nestedSet
+          .getAllParents(location.name)
+          .reverse()
+          .concat(location.name)
+          .join(" / "),
+        id: location.id,
+      };
+    });
+    locationsWithParent.value = locations;
+  }
 
   return (
     <div className="flex flex-col justify-center items-center p-4 w-full ">
@@ -151,13 +211,11 @@ const ProductInfo = ({ id }: Props) => {
                   Location
                 </Typography>
                 <ul className="w-full ml-4">
-                  {locations?.length ? (
-                    locations?.map((category) => (
-                      <li className="list-disc">
-                        <Typography className="text-base capitalize ">
-                          {category.name}
-                        </Typography>
-                      </li>
+                  {locationsWithParent.value?.length ? (
+                    locationsWithParent.value?.map((location) => (
+                      <Typography size="body2/normal">
+                        {location.name}
+                      </Typography>
                     ))
                   ) : (
                     <Typography size="body2/normal" variant="error">

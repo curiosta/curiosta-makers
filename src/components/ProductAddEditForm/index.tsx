@@ -11,6 +11,8 @@ import { Signal, useSignal } from "@preact/signals";
 import { TProductImages } from "@pages/ProductAdd";
 import { ProductCategory } from "@medusajs/medusa";
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import MultiRadio from "../MultiRadio";
+import nestedSet from "@/utils/convertIntoNestedLocations";
 
 type TProductAddEditForm = {
   formRef: MutableRef<HTMLFormElement>;
@@ -26,6 +28,12 @@ type TProductAddEditForm = {
   product: Signal<PricedProduct | null>;
   variant: "add" | "edit";
   locationCategory: Signal<ProductCategory[]>;
+  selectedLocationId: Signal<string>;
+};
+
+export type TLocationsWithParent = {
+  name: string;
+  id: string;
 };
 
 const ProductAddEditForm = ({
@@ -42,8 +50,10 @@ const ProductAddEditForm = ({
   product,
   variant,
   locationCategory,
+  selectedLocationId,
 }: TProductAddEditForm) => {
   const binLocations = useSignal<ProductCategory[]>([]);
+  const locationsWithParent = useSignal<TLocationsWithParent[]>([]);
 
   const getLowesetLocation = (category: ProductCategory[]) => {
     category.map((cate) => {
@@ -55,12 +65,43 @@ const ProductAddEditForm = ({
     });
   };
 
+  // set location tree
+  const setNodes = (location: ProductCategory[]) => {
+    location?.forEach((parent) => {
+      if (parent.category_children?.length) {
+        parent.category_children.forEach((child) => {
+          nestedSet.addNode(child?.name, parent.name, child.id);
+          if (child.category_children?.length) {
+            setNodes(child.category_children);
+          }
+        });
+      }
+      setNodes(parent.category_children);
+    });
+  };
+
   useEffect(() => {
     if (binLocations.value?.length) {
       binLocations.value = [];
     }
+    setNodes(locationCategory.value);
     getLowesetLocation(locationCategory.value);
   }, [locationCategory.value]);
+
+  // show locations in this format "Zone A / Aisle A / Rack A / Bin CA01"
+  if (Object.keys(nestedSet.nodes)?.length) {
+    const locations = binLocations.value?.map((location) => {
+      return {
+        name: nestedSet
+          .getAllParents(location.name)
+          .reverse()
+          .concat(location.name)
+          .join(" / "),
+        id: location.id,
+      };
+    });
+    locationsWithParent.value = locations;
+  }
 
   const categoriesWithoutLocations = categories.value?.filter(
     (category) =>
@@ -94,19 +135,25 @@ const ProductAddEditForm = ({
           label="Status"
           options={["draft", "published"]}
         />
-        <Select
-          name="location"
-          defaultValue={
-            product.value?.categories?.find((cate) =>
-              cate.handle.startsWith("loc:bin")
-            )?.id
-          }
-          label="Location"
-          options={binLocations.value?.map((bin) => ({
-            label: bin.name,
-            value: bin.id,
-          }))}
-        />
+        <div>
+          <Typography
+            size="body2/medium"
+            className="leading-6 text-gray-900 flex gap-1 mb-1"
+          >
+            Select Location
+          </Typography>
+          {isLoading ? (
+            <Loading loadingText="loading" />
+          ) : (
+            <MultiRadio
+              options={locationsWithParent.value}
+              placeholder="Search location..."
+              selectedValue={selectedLocationId}
+              variant="locations"
+            />
+          )}
+        </div>
+
         <Typography size="body1/medium">Product images</Typography>
         <Typography size="body2/medium">Product thumbnail</Typography>
         {thumbnail.value ? (

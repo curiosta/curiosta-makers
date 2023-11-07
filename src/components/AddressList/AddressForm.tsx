@@ -138,6 +138,7 @@ const AddressForm = ({
                 options={countryList}
                 placeholder="Search country..."
                 selectedValue={selectedCountryCode}
+                variant="countries"
               />
             </div>
             <NewInput

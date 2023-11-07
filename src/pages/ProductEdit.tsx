@@ -45,6 +45,7 @@ const ProductEdit = ({ id }: Props) => {
   const productImages = useSignal<TProductImages[]>([]);
   const isImagesUpload = useSignal<boolean>(false);
   const locationCategory = useSignal<ProductCategory[]>([]);
+  const selectedLocationId = useSignal<string | null>(null);
 
   const getProduct = async () => {
     isLoading.value = "product:get";
@@ -59,6 +60,14 @@ const ProductEdit = ({ id }: Props) => {
         )
         .map((cate: PricedProduct) => cate.id);
       selectedCategoryIds.value = categoryIds;
+
+      const locationId = productRes?.product?.categories
+        ?.filter((location: ProductCategory) =>
+          location.handle.startsWith("loc:")
+        )
+        .map((loc: PricedProduct) => loc.id)[0];
+
+      selectedLocationId.value = locationId;
     } catch (error) {
     } finally {
       isLoading.value = undefined;
@@ -93,7 +102,6 @@ const ProductEdit = ({ id }: Props) => {
       isLoading.value = undefined;
     }
   };
-
   useEffect(() => {
     getCategories();
     getLocationCategory();
@@ -144,9 +152,9 @@ const ProductEdit = ({ id }: Props) => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { title, description, status, location, quantity } = formDataObj;
+        const { title, description, status, quantity } = formDataObj;
 
-        const categories: { id: string }[] = [{ id: location.toString() }];
+        const categories: { id: string }[] = [{ id: selectedLocationId.value }];
 
         if (selectedCategoryIds.value?.length) {
           selectedCategoryIds.value?.map((val) => categories.push({ id: val }));
@@ -162,7 +170,7 @@ const ProductEdit = ({ id }: Props) => {
           variantId: product.value?.variants[0]?.id,
           inventory_quantity: parseInt(quantity.toString()),
           categories:
-            selectedCategoryIds.value?.length || location.toString()
+            selectedCategoryIds.value?.length || selectedCategoryIds.value
               ? categories
               : null,
           thumbnail: thumbnail.value ? thumbnail.value : null,
@@ -203,6 +211,7 @@ const ProductEdit = ({ id }: Props) => {
         thumbnail={thumbnail}
         uploadPopup={uploadPopup}
         product={product}
+        selectedLocationId={selectedLocationId}
         variant="edit"
       />
       {isLoading.value === "product:image:upload" ? (

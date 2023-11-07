@@ -4,6 +4,8 @@ import { type ChangeEvent, type HTMLAttributes } from "preact/compat";
 import Button from "../Button";
 import Typography from "../Typography";
 import Radio from "../Radio";
+import { ProductCategory } from "@medusajs/medusa";
+import { TLocationsWithParent } from "../ProductAddEditForm";
 
 type TCountryList = {
   name: string;
@@ -12,11 +14,20 @@ type TCountryList = {
 };
 
 interface Props extends Omit<HTMLAttributes<HTMLInputElement>, "class"> {
-  options: TCountryList[];
+  options: TCountryList[] | TLocationsWithParent[];
   selectedValue: Signal<string>;
+  variant: "countries" | "locations";
+  defaultLocation?: TLocationsWithParent;
 }
 
-const MultiRadio = ({ className, options, selectedValue, ...rest }: Props) => {
+const MultiRadio = ({
+  className,
+  options,
+  variant,
+  selectedValue,
+  defaultLocation,
+  ...rest
+}: Props) => {
   const searchTerm = useSignal<string | null>(null);
   const dropDownOpen = useSignal<boolean>(false);
 
@@ -24,15 +35,21 @@ const MultiRadio = ({ className, options, selectedValue, ...rest }: Props) => {
     const { checked, value } = e.currentTarget;
     if (checked) {
       selectedValue.value = value;
+      dropDownOpen.value = false;
+      searchTerm.value = "";
     } else {
       selectedValue.value = undefined;
     }
   };
 
-  const searchResult = options.filter((opt) =>
-    opt.name.toLowerCase().includes(searchTerm.value?.toLowerCase())
-  );
-
+  const searchResult =
+    variant === "countries"
+      ? options.filter((opt: TCountryList) =>
+          opt.name.toLowerCase().includes(searchTerm.value?.toLowerCase())
+        )
+      : options.filter((opt: ProductCategory) =>
+          opt.name.toLowerCase().includes(searchTerm.value?.toLowerCase())
+        );
   return (
     <div class="flex flex-col gap-2">
       {selectedValue.value ? (
@@ -42,7 +59,13 @@ const MultiRadio = ({ className, options, selectedValue, ...rest }: Props) => {
             className="gap-2 !items-center py-1 bg-gray-200"
             variant="icon"
           >
-            {options.find((opt) => opt.code === selectedValue.value)?.name}
+            {variant === "countries"
+              ? options.find(
+                  (opt: TCountryList) => opt.code === selectedValue.value
+                )?.name
+              : options.find(
+                  (opt: TLocationsWithParent) => opt.id === selectedValue.value
+                )?.name}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -130,14 +153,18 @@ const MultiRadio = ({ className, options, selectedValue, ...rest }: Props) => {
       >
         {searchTerm.value?.length ? (
           searchResult?.length ? (
-            searchResult.map((opt) => (
+            searchResult.map((opt: TCountryList & TLocationsWithParent) => (
               <li>
                 <Radio
-                  value={opt.code}
-                  label={opt.name}
+                  value={variant === "countries" ? opt.code : opt.id}
+                  label={variant === "countries" ? opt.name : opt.name}
                   className="!w-5 !h-5"
                   onChange={handleCheck}
-                  checked={selectedValue.value === opt.code}
+                  checked={
+                    variant === "countries"
+                      ? selectedValue.value === opt.code
+                      : selectedValue.value === opt.id
+                  }
                 />
               </li>
             ))
@@ -145,14 +172,18 @@ const MultiRadio = ({ className, options, selectedValue, ...rest }: Props) => {
             <Typography>No Result Found</Typography>
           )
         ) : (
-          options.map((opt) => (
+          options.map((opt: TCountryList & TLocationsWithParent) => (
             <li>
               <Radio
-                value={opt.code}
-                label={opt.name}
+                value={variant === "countries" ? opt.code : opt.id}
+                label={variant === "countries" ? opt.name : opt.name}
                 className="!w-5 !h-5"
                 onChange={handleCheck}
-                checked={selectedValue.value === opt.code}
+                checked={
+                  variant === "countries"
+                    ? selectedValue.value === opt.code
+                    : selectedValue.value === opt.id
+                }
               />
             </li>
           ))
