@@ -119,7 +119,7 @@ const TransferItem = () => {
               (isPopup.value = true), (isActiveTask.value = "Gsheets:import");
             }}
           >
-            Import from google sheet
+            Sync Plateform Data
           </Button>
           <Button
             type="button"
@@ -128,7 +128,7 @@ const TransferItem = () => {
               (isPopup.value = true), (isActiveTask.value = "Gsheets:export");
             }}
           >
-            Export to google sheet
+            Sync Google Sheet
           </Button>
         </div>
         <div className="flex items-center gap-4">
@@ -201,7 +201,9 @@ const TransferItem = () => {
             : handleSyncCategory
         }
         title="Are you sure and want to perform this action?"
-        subtitle="This action will delete/update database data"
+        subtitle={`This action will update ${
+          isActiveTask.value !== "Gsheets:import" ? "google sheet" : "plateform"
+        } data`}
       />
 
       <PopUp
