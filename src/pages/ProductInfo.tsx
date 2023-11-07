@@ -41,6 +41,7 @@ const ProductInfo = ({ id }: Props) => {
 
   const getProduct = async () => {
     isLoading.value = "product:get";
+    isLoading.value = "product:get";
     try {
       const res = isUser.value
         ? await getProductInfo({ productId: id })
@@ -70,6 +71,9 @@ const ProductInfo = ({ id }: Props) => {
 
   useEffect(() => {
     getProduct();
+    if (!isUser.value) {
+      getLocationCategory();
+    }
     if (!isUser.value) {
       getLocationCategory();
     }
