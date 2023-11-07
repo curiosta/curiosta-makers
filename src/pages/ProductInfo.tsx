@@ -37,6 +37,7 @@ const ProductInfo = ({ id }: Props) => {
   const isProfileCompletePopUp = useSignal<boolean>(false);
   const locationCategory = useSignal<ProductCategory[]>([]);
   const locationsWithParent = useSignal<{ name: string; id: string }[]>([]);
+  const objEmpty = useSignal<boolean>(true);
 
   const getProduct = async () => {
     isLoading.value = "product:get";
@@ -135,8 +136,23 @@ const ProductInfo = ({ id }: Props) => {
     (location: ProductCategory) => location.handle.startsWith("loc:")
   );
 
+  function isObjEmpty(obj: Object) {
+    for (let property in obj) {
+      if (obj.hasOwnProperty(property)) {
+        // object is not empty
+        objEmpty.value = false;
+        return false;
+      }
+    }
+    objEmpty.value = true;
+    return true;
+  }
+  useEffect(() => {
+    isObjEmpty(nestedSet.nodes);
+  }, [Object.keys(nestedSet.nodes)]);
+
   // show locations in this format "Zone A / Aisle A / Rack A / Bin CA01"
-  if (Object.keys(nestedSet.nodes)?.length) {
+  if (!objEmpty.value) {
     const locations = chidLocation?.map((location) => {
       return {
         name: nestedSet
@@ -154,7 +170,8 @@ const ProductInfo = ({ id }: Props) => {
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="w-full mb-12 max-w-2xl">
-        {!isLoading.value ? (
+        {isLoading.value !== "product:get" &&
+        isLoading.value !== "locations:get" ? (
           <div className="flex flex-col gap-4  justify-center w-full mb-28 mt-4">
             <ProductImage
               productImages={product.value?.images}
@@ -213,9 +230,9 @@ const ProductInfo = ({ id }: Props) => {
                 <ul className="w-full ml-4">
                   {locationsWithParent.value?.length ? (
                     locationsWithParent.value?.map((location) => (
-                      <Typography size="body2/normal">
-                        {location.name}
-                      </Typography>
+                      <li className="list-disc">
+                        <Typography>{location.name}</Typography>
+                      </li>
                     ))
                   ) : (
                     <Typography size="body2/normal" variant="error">
