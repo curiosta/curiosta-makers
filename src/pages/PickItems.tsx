@@ -1,3 +1,4 @@
+import { adminListCategory } from "@/api/admin/category/listCategory";
 import { adminGetOrders } from "@/api/admin/orders/getOrder";
 import { adminFulfillment } from "@/api/admin/orders/orderFulfil";
 import { TShortItem } from "@/api/admin/orders/updateItemsQty";
@@ -11,8 +12,10 @@ import PopUp from "@/components/Popup";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import ShortClosePopup from "@/components/Popup/ShortClosePopup";
 import Typography from "@/components/Typography";
+import nestedSet from "@/utils/convertIntoNestedLocations";
 import { LineItem, Order, ProductCategory, Product } from "@medusajs/medusa";
 import { useSignal } from "@preact/signals";
+import { Link } from "preact-router";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
 
@@ -29,7 +32,8 @@ type TLoadableOptions =
   | "order:get"
   | "order:update"
   | "order:fulfill"
-  | "category:get";
+  | "category:get"
+  | "locations:get";
 
 const PickItems = ({ id }: Props) => {
   const order = useSignal<Order | null>(null);
@@ -48,20 +52,57 @@ const PickItems = ({ id }: Props) => {
   const shortItems = useSignal<TShortItem[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
   const productsList = useSignal<
-    (Product & { locations?: ProductCategory[] })[]
+    (Product & { locations?: { name: string; id: string }[] })[]
   >([]);
+  const locationCategory = useSignal<ProductCategory[]>([]);
 
   const getOrderInfo = async () => {
     isLoading.value = "order:get";
     try {
       const res = await adminGetOrders(id);
       order.value = res?.order;
+      getLocationCategory();
+    } catch (error) {
+    } finally {
+      isLoading.value = undefined;
+    }
+  };
+
+  const getLocationCategory = async () => {
+    isLoading.value = "locations:get";
+    try {
+      const categoryRes = await adminListCategory({
+        q: "location-master",
+        limit: 0,
+        offset: 0,
+      });
+      locationCategory.value =
+        categoryRes?.product_categories?.at(0)?.category_children;
       getProductInfo();
     } catch (error) {
     } finally {
       isLoading.value = undefined;
     }
   };
+
+  // set location tree
+  const setNodes = (location: ProductCategory[]) => {
+    location?.forEach((parent) => {
+      if (parent.category_children?.length) {
+        parent.category_children.forEach((child) => {
+          nestedSet.addNode(child?.name, parent.name, child.id);
+          if (child.category_children?.length) {
+            setNodes(child.category_children);
+          }
+        });
+      }
+      setNodes(parent.category_children);
+    });
+  };
+
+  useEffect(() => {
+    setNodes(locationCategory.value);
+  }, [locationCategory.value]);
 
   const getProductInfo = async () => {
     const productIds = order.value?.items?.map(
@@ -77,18 +118,30 @@ const PickItems = ({ id }: Props) => {
 
     const products = res
       .filter((response) => response.status === "fulfilled")
-      ?.map<Product & { locations?: ProductCategory[] }>(
+      ?.map<Product & { locations?: { name: string; id: string }[] }>(
         (response: any) => response.value.product
       );
 
     productsList.value = products?.map((product) => {
       // location categories
-      product.locations = product.categories
-        .filter((c) => c.handle.startsWith("loc:"))
-        .sort(
-          (a, b) =>
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
+      const chidLocation = product.categories.filter((c) =>
+        c.handle.startsWith("loc:")
+      );
+
+      // show locations in this format "Zone A / Aisle A / Rack A / Bin CA01"
+      if (Object.keys(nestedSet.nodes)?.length) {
+        const locations = chidLocation?.map((location) => {
+          return {
+            name: nestedSet
+              .getAllParents(location.name)
+              .reverse()
+              .concat(location.name)
+              .join(" / "),
+            id: location.id,
+          };
+        });
+        product.locations = locations;
+      }
 
       // actual categories
       product.categories = product.categories.filter(
@@ -188,7 +241,10 @@ const PickItems = ({ id }: Props) => {
                     <Typography size="small/normal">
                       Item {index + 1}
                     </Typography>
-                    <div className="flex gap-2 border-b">
+                    <Link
+                      href={`/product/${item.variant.product_id}`}
+                      className="flex gap-2 border-b"
+                    >
                       <img
                         src={item.thumbnail ?? "/images/placeholderImg.svg"}
                         alt={item.title}
@@ -200,8 +256,8 @@ const PickItems = ({ id }: Props) => {
                       >
                         {item.title}
                       </Typography>
-                    </div>
-                    <div className="grid grid-cols-5 gap-2 w-full items-center my-2">
+                    </Link>
+                    <div className="flex gap-2 w-full items-center my-2">
                       <Button type="button" variant="icon">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"

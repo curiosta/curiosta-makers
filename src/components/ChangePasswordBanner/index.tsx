@@ -1,7 +1,15 @@
+import { isUser } from "@/store/userState";
 import Button from "../Button";
 import Typography from "../Typography";
+import user from "@/api/user";
+import admin from "@/api/admin";
 
 const ChangePasswordBanner = ({ link }: { link: string }) => {
+  const handleLogout = async () => {
+    isUser.value ? await user.logout() : await admin.logout();
+    window.location.href = "/login";
+  };
+
   return (
     <div className="flex flex-col h-screen justify-center items-center gap-2 bg-neutral-50">
       <div className="border bg-secondray flex flex-col gap-3 items-center p-6 rounded-2xl shadow-lg sm:w-full sm:max-w-md w-11/12">
@@ -25,7 +33,17 @@ const ChangePasswordBanner = ({ link }: { link: string }) => {
         <Typography size="small/semi-bold" className="text-center">
           Without password change, you will not able to use this app.
         </Typography>
-        <Button link={link}>Change password</Button>
+        <div className="flex items-center gap-4">
+          <Button
+            type="button"
+            variant="secondary"
+            className="!py-3"
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+          <Button link={link}>Change password</Button>
+        </div>
       </div>
     </div>
   );

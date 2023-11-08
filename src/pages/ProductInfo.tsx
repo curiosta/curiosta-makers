@@ -74,9 +74,6 @@ const ProductInfo = ({ id }: Props) => {
     if (!isUser.value) {
       getLocationCategory();
     }
-    if (!isUser.value) {
-      getLocationCategory();
-    }
   }, []);
 
   const handleAddToCart = () => {
