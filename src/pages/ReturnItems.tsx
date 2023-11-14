@@ -105,7 +105,7 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
         {isLoading.value !== "order:get" ? (
           borrowItems?.length ? (
             <div className="w-full">
-              <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondray">
+              <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondary">
                 <Typography size="h6/normal">Items</Typography>
                 <Typography size="h6/normal">Quantity</Typography>
               </div>

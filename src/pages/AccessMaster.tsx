@@ -20,7 +20,7 @@ const AccessMaster = () => {
           <Link
             key={index}
             href={item.link}
-            className="flex justify-center items-center p-4 h-24 bg-primary-700 text-secondray rounded-xl"
+            className="flex justify-center items-center p-4 h-24 bg-primary-700 text-secondary rounded-xl"
           >
             <Typography className="text-center ">{item.title}</Typography>
           </Link>

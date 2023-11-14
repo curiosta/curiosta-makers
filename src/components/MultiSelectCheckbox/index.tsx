@@ -65,7 +65,7 @@ const MultiSelectCheckbox = ({
           </Button>
         ))}
       </div>
-      <div className="w-full flex items-center bg-secondray border rounded-md border-gray-300">
+      <div className="w-full flex items-center bg-secondary border rounded-md border-gray-300">
         <input
           type="search"
           class={cx(
@@ -128,7 +128,7 @@ const MultiSelectCheckbox = ({
       <ul
         className={`w-full  flex-col gap-3 ${
           dropDownOpen.value || searchTerm.value?.length ? "flex" : "hidden"
-        } bg-secondray my-1 p-3 overflow-y-auto max-h-44 shadow-lg rounded-lg`}
+        } bg-secondary my-1 p-3 overflow-y-auto max-h-44 shadow-lg rounded-lg`}
       >
         {searchTerm.value?.length ? (
           searchResult?.length ? (

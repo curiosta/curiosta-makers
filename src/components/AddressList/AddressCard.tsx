@@ -35,7 +35,7 @@ const AddressCard = ({
   return (
     <label
       class={cx(
-        "relative flex flex-col cursor-pointer rounded-lg border bg-secondray p-4 shadow-sm ",
+        "relative flex flex-col cursor-pointer rounded-lg border bg-secondary p-4 shadow-sm ",
         variant === "userProfile" && selectedAddressId.value === address.id
           ? "ring-1 ring-primary-600"
           : "",

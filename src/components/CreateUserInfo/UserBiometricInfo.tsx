@@ -156,7 +156,7 @@ const UserBiometricInfo = ({
                     : ""
                 }
               />
-              <div className="flex items-center justify-between border border-gray-400 bg-secondray p-4 rounded-lg">
+              <div className="flex items-center justify-between border border-gray-400 bg-secondary p-4 rounded-lg">
                 <div>
                   <Typography>Take a picture of the ID Proof</Typography>
                   {documentInfo.value?.length &&
@@ -260,7 +260,7 @@ const UserBiometricInfo = ({
         </div>
       </form>
 
-      <div className="flex items-center justify-between border border-gray-400 bg-secondray p-4 rounded-lg">
+      <div className="flex items-center justify-between border border-gray-400 bg-secondary p-4 rounded-lg">
         <div>
           <Typography>Take a picture of the User</Typography>
           {profileImageKey.value ? (

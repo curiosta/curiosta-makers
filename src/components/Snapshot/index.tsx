@@ -24,7 +24,7 @@ const Snapshot = () => {
       <Typography>Snapshot</Typography>
       <div className="flex gap-8 py-2 my-2 overflow-x-auto">
         {itemsSnapshots.map((Snapshot) => (
-          <div className="bg-secondray p-4 shadow-lg rounded-2xl">
+          <div className="bg-secondary p-4 shadow-lg rounded-2xl">
             <input type="date" name="date" value={defaultDate} />
             <div className="flex justify-between items-center gap-2 p-2 border-b">
               <Typography size="h4/normal">{Snapshot.issuedItems}</Typography>
@@ -47,7 +47,7 @@ const Snapshot = () => {
           </div>
         ))}
         {usersSnapshots.map((Snapshot) => (
-          <div className="bg-secondray p-4 shadow-lg rounded-2xl">
+          <div className="bg-secondary p-4 shadow-lg rounded-2xl">
             <input type="date" name="date" value={defaultDate} />
             <div className="flex justify-between items-center gap-2 p-2 border-b">
               <Typography size="h4/normal">{Snapshot.issuedUsers}</Typography>

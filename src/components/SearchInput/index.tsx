@@ -131,7 +131,7 @@ const SearchInput = ({
         <Button
           type="sumbit"
           variant="icon"
-          className="absolute right-0 w-12 !p-3.5 rounded-2xl rounded-l-none text-secondray bg-primary-700"
+          className="absolute right-0 w-12 !p-3.5 rounded-2xl rounded-l-none text-secondary bg-primary-700"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

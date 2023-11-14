@@ -43,7 +43,7 @@ const Progressbar = ({ status }: { status: string }) => {
                 </div>
                 <div
                   class={`first-letter:relative flex h-6 w-6 items-center justify-center border border-primary-600 rounded-full shadow-lg
-            ${currentStep < step.step ? "bg-secondray" : "bg-primary-600"} `}
+            ${currentStep < step.step ? "bg-secondary" : "bg-primary-600"} `}
                 >
                   <Typography
                     size="small/normal"
@@ -56,7 +56,7 @@ const Progressbar = ({ status }: { status: string }) => {
                     class={`h-5 w-5 ${
                       currentStep < step.step
                         ? "text-app-primary-700"
-                        : "text-secondray"
+                        : "text-secondary"
                     }`}
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -83,7 +83,7 @@ const Progressbar = ({ status }: { status: string }) => {
                 <div
                   class={`first-letter:relative flex h-6 w-6 items-center justify-center border
                    border-primary-600 rounded-full shadow-lg ${
-                     currentStep < step.step ? "bg-secondray" : "bg-primary-600"
+                     currentStep < step.step ? "bg-secondary" : "bg-primary-600"
                    }
                     ${
                       step.stepText === "canceled"
@@ -102,7 +102,7 @@ const Progressbar = ({ status }: { status: string }) => {
                       class={`h-5 w-5 ${
                         currentStep < step.step
                           ? "text-app-primary-700"
-                          : "text-secondray"
+                          : "text-secondary"
                       }`}
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -124,7 +124,7 @@ const Progressbar = ({ status }: { status: string }) => {
                       class={`h-5 w-5 ${
                         currentStep < step.step
                           ? "text-app-primary-700"
-                          : "text-secondray"
+                          : "text-secondary"
                       }`}
                     >
                       <path

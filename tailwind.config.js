@@ -7,7 +7,7 @@ export default {
       colors: {
         primary: colors.teal,
         danger: colors.red,
-        secondray: colors.white,
+        secondary: colors.white,
         success: colors.green,
         third: colors.sky,
       },

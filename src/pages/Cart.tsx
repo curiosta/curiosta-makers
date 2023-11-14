@@ -415,7 +415,7 @@ const Cart = () => {
                 />
               ) : (
                 // confirm order or discard buttons
-                <div className="fixed bottom-16 left-0 p-4 w-full z-10 bg-secondray border shadow-sm">
+                <div className="fixed bottom-16 left-0 p-4 w-full z-10 bg-secondary border shadow-sm">
                   {errorMessage.value ? (
                     <Typography
                       variant="error"

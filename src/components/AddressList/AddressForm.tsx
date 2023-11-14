@@ -78,7 +78,7 @@ const AddressForm = ({
   };
 
   return (
-    <div class="w-full bg-secondray shadow-sm rounded-lg border p-4">
+    <div class="w-full bg-secondary shadow-sm rounded-lg border p-4">
       <Typography
         size="body1/semi-bold"
         className="my-2 text-center capitalize"

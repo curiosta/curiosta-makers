@@ -34,7 +34,7 @@ const ViewCartLayer = ({
 
   return (
     <div
-      className={`fixed left-0 bottom-16 z-10  w-full bg-secondray transition-all shadow-lg ${
+      className={`fixed left-0 bottom-16 z-10  w-full bg-secondary transition-all shadow-lg ${
         isCartLayer.value ? "translate-x-0" : "translate-x-full"
       } `}
     >

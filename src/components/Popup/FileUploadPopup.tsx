@@ -35,7 +35,7 @@ const FileUploadPopup = ({
         className="block w-full h-full"
         onClick={() => (isPopup.value = false)}
       />
-      <div className="absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6 max-w-sm">
+      <div className="absolute w-10/12 bg-secondary  rounded-2xl transition-all p-6 max-w-sm">
         <Typography className="capitalize">Upload File</Typography>
 
         <form

@@ -80,7 +80,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
         returnVal?.status === "received" ||
         (page === "return" && !borrowItems.length)
           ? "bg-gray-200/80"
-          : "bg-secondray"
+          : "bg-secondary"
       } shadow-sm rounded-lg border`}
     >
       <div

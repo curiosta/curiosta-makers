@@ -61,7 +61,7 @@ const Login = () => {
               class={`${
                 isUser.value ? "translate-x-0" : "translate-x-full"
               }  pointer-events-none flex items-center justify-center h-full w-1/2 transform rounded-full
-               bg-primary-700 text-secondray shadow ring-0 transition duration-200 ease-in-out`}
+               bg-primary-700 text-secondary shadow ring-0 transition duration-200 ease-in-out`}
             >
               {isUser.value ? "User" : "Admin"}
             </span>

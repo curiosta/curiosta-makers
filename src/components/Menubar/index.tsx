@@ -41,7 +41,7 @@ const Menubar = ({ isMenuOpen }: Props) => {
         onClick={() => (isMenuOpen.value = false)}
       />
       <div
-        className={`absolute top-0 left-0 bg-secondray h-full w-full max-w-xs transition-all -translate-x-full p-4 ${
+        className={`absolute top-0 left-0 bg-secondary h-full w-full max-w-xs transition-all -translate-x-full p-4 ${
           isMenuOpen.value ? "!translate-x-0" : ""
         }`}
       >

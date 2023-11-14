@@ -180,7 +180,7 @@ const ImportExportCSV = () => {
             <Loading loadingText="Generating downloding link" />
           ) : downloadLink.value ? (
             <a
-              className="flex gap-2 items-center text-secondray bg-primary-600 rounded-xl p-3 "
+              className="flex gap-2 items-center text-secondary bg-primary-600 rounded-xl p-3 "
               href={downloadLink.value}
             >
               <svg

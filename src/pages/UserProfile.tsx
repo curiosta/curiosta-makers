@@ -305,7 +305,7 @@ const UserProfile = ({ id }: Props) => {
       <div className="w-full mb-12 max-w-2xl">
         {isLoading.value !== "user:get" ? (
           <div className="w-full flex flex-col gap-2 ">
-            <div className="w-full bg-secondray shadow-sm rounded-lg border p-4">
+            <div className="w-full bg-secondary shadow-sm rounded-lg border p-4">
               <div className="flex justify-between items-center w-full relative">
                 <div className=" w-full flex items-center gap-4">
                   <div className="w-full max-w-[5rem] h-20 flex relative">
@@ -447,7 +447,7 @@ const UserProfile = ({ id }: Props) => {
                           placeholder="Enter Identification Proof Number"
                           className="!p-2"
                         />
-                        <div className="flex items-center justify-between border border-gray-400 bg-secondray p-4 rounded-lg">
+                        <div className="flex items-center justify-between border border-gray-400 bg-secondary p-4 rounded-lg">
                           <Typography>
                             Take a picture of the ID Proof
                           </Typography>
@@ -478,7 +478,7 @@ const UserProfile = ({ id }: Props) => {
                     </form>
                   ) : (
                     userDocumentInfo.value?.map((document) => (
-                      <div className="w-full flex flex-col items-center gap-4 border bg-secondray p-4 rounded-lg">
+                      <div className="w-full flex flex-col items-center gap-4 border bg-secondary p-4 rounded-lg">
                         <div className="w-full flex flex-wrap items-center gap-4 sm:justify-around p-4  ">
                           <div>
                             <Typography size="body1/normal">

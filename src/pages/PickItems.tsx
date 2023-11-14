@@ -237,7 +237,7 @@ const PickItems = ({ id }: Props) => {
             {ordersWithCategory?.length ? (
               <div className="flex flex-col gap-4 my-2 mb-12">
                 {ordersWithCategory?.map((item, index) => (
-                  <div className="w-full bg-secondray shadow-lg rounded-2xl p-4">
+                  <div className="w-full bg-secondary shadow-lg rounded-2xl p-4">
                     <Typography size="small/normal">
                       Item {index + 1}
                     </Typography>

@@ -73,7 +73,7 @@ const ProfileImageEdit = ({
   return (
     <div>
       <div
-        className={`fixed left-0 bottom-14 z-10  w-full bg-secondray border transition-all shadow-lg ${
+        className={`fixed left-0 bottom-14 z-10  w-full bg-secondary border transition-all shadow-lg ${
           isProfileImageEdit.value ? "translate-y-0" : "translate-y-full"
         } `}
       >

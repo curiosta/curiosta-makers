@@ -57,7 +57,7 @@ const PopUp = ({
           onClick={() => (isPopup.value = false)}
         />
       )}
-      <div className="absolute w-10/12 bg-secondray  rounded-2xl transition-all p-6 max-w-sm">
+      <div className="absolute w-10/12 bg-secondary  rounded-2xl transition-all p-6 max-w-sm">
         <div className="flex flex-col text-center gap-2 mb-4">
           <Typography size="body1/semi-bold">{title}</Typography>
           {subtitle ? (

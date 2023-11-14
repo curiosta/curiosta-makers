@@ -24,7 +24,7 @@ const UserCreationProgress = ({ activeStep }: { activeStep: number }) => {
             </div>
             <div
               class={`first-letter:relative flex h-5 w-5 items-center justify-center border border-primary-600 rounded-full shadow-lg
-            ${currentStep < step.step ? "bg-secondray" : "bg-primary-600"} `}
+            ${currentStep < step.step ? "bg-secondary" : "bg-primary-600"} `}
             >
               <Typography
                 size="small/normal"
@@ -37,7 +37,7 @@ const UserCreationProgress = ({ activeStep }: { activeStep: number }) => {
                 class={`h-5 w-5 ${
                   currentStep < step.step
                     ? "text-app-primary-700"
-                    : "text-secondray"
+                    : "text-secondary"
                 }`}
                 viewBox="0 0 20 20"
                 fill="currentColor"

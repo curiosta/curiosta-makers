@@ -66,7 +66,7 @@ const CreateUserInfo = ({
           </svg>
           <Typography>Basic information</Typography>
         </div>
-        <div className="flex flex-col p-4 border-2 bg-secondray divide-y divide-gray-600 rounded-lg">
+        <div className="flex flex-col p-4 border-2 bg-secondary divide-y divide-gray-600 rounded-lg">
           <Input
             type="text"
             name="first_name"
@@ -105,7 +105,7 @@ const CreateUserInfo = ({
           </svg>
           <Typography>Contact information</Typography>
         </div>
-        <div className="flex flex-col p-4 border-2 bg-secondray divide-y divide-gray-600 rounded-lg">
+        <div className="flex flex-col p-4 border-2 bg-secondary divide-y divide-gray-600 rounded-lg">
           <Input
             type="tel"
             name="phone"
@@ -162,7 +162,7 @@ const CreateUserInfo = ({
         <div className="flex items-center justify-evenly">
           {genderList.map((gender) => (
             <label
-              className={`flex flex-col gap-2 items-center bg-secondray w-20 border shadow-sm rounded-lg cursor-pointer relative ${
+              className={`flex flex-col gap-2 items-center bg-secondary w-20 border shadow-sm rounded-lg cursor-pointer relative ${
                 selectedGender.value === gender.title.toLowerCase()
                   ? "ring-1 ring-primary-600"
                   : ""

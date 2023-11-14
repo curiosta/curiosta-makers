@@ -249,7 +249,7 @@ const UserCard = ({
               />
             </svg>
           ) : (
-            <div className="border border-primary-600 bg-secondray rounded-full w-5 h-5"></div>
+            <div className="border border-primary-600 bg-secondary rounded-full w-5 h-5"></div>
           )}
         </label>
       )}

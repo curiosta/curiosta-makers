@@ -96,7 +96,7 @@ const TransferItem = () => {
       <div className="flex flex-col gap-4 mt-4 mb-28">
         <Link
           href="/import-export-csv"
-          className="flex justify-center items-center p-3  bg-primary-700 text-secondray rounded-md"
+          className="flex justify-center items-center p-3  bg-primary-700 text-secondary rounded-md"
         >
           <Typography size="body2/semi-bold" className="text-center">
             Import/Export from CSV

@@ -184,7 +184,7 @@ const Account = () => {
       <div className="w-full mb-12 max-w-2xl">
         <Link
           href={`/user/${currentUser.id}`}
-          className="flex items-center gap-4 w-full rounded-2xl bg-secondray p-4 my-4"
+          className="flex items-center gap-4 w-full rounded-2xl bg-secondary p-4 my-4"
         >
           <div className="w-9 h-9 flex">
             <Chip className="!bg-primary-700 uppercase text-white">
@@ -213,7 +213,7 @@ const Account = () => {
           >
             Account setting
           </Typography>
-          <div className="flex flex-col items-start bg-secondray my-3">
+          <div className="flex flex-col items-start bg-secondary my-3">
             {accountSettings.map((item, index) => (
               <div className="flex justify-between items-center w-full p-3 border-b last:border-none">
                 <Button
@@ -248,7 +248,7 @@ const Account = () => {
         <Typography size="h6/normal" variant="secondary" className="uppercase">
           PREFERENCES
         </Typography>
-        <div className="flex flex-col items-start bg-secondray my-3">
+        <div className="flex flex-col items-start bg-secondary my-3">
           {prefrenceList.map((item, index) => (
             <div className="flex justify-between items-center w-full p-3 border-b last:border-none">
               <Button

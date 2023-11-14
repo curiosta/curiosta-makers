@@ -247,7 +247,7 @@ const ProductInfo = ({ id }: Props) => {
             {isUser.value ? (
               <div className="w-full mb-12  relative border-t-2">
                 <div
-                  className={`absolute top-16 w-full p-2 shadow-lg rounded-md z-10 transition-all bg-secondray
+                  className={`absolute top-16 w-full p-2 shadow-lg rounded-md z-10 transition-all bg-secondary
               ${
                 cartTypeOpen.value
                   ? "translate-x-0 left-0"

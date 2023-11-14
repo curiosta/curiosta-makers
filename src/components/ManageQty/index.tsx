@@ -262,7 +262,7 @@ const ManageQty = ({
       <div
         className={`absolute ${
           page !== "cart" ? "bottom-full" : "top-full"
-        }  rounded-lg shadow-xl p-1.5 bg-secondray z-10 ${
+        }  rounded-lg shadow-xl p-1.5 bg-secondary z-10 ${
           errorMessage.value ? "block" : "hidden"
         }`}
       >

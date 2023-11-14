@@ -74,7 +74,7 @@ const Request = () => {
                       variant="icon"
                       className={"flex-col items-center gap-2 !p-0"}
                     >
-                      <div className="border border-black rounded-full bg-secondray shadow-lg">
+                      <div className="border border-black rounded-full bg-secondary shadow-lg">
                         <img src={leser_icon} alt="icon" className="p-3" />
                       </div>
                       <Typography size="body2/normal">
