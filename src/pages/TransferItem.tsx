@@ -90,7 +90,7 @@ const TransferItem = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Item transfer</Typography>
+        <Typography size="h6/normal">Transfer Item</Typography>
       </div>
 
       <div className="flex flex-col gap-4 mt-4 mb-28">
@@ -119,7 +119,7 @@ const TransferItem = () => {
               (isPopup.value = true), (isActiveTask.value = "Gsheets:import");
             }}
           >
-            Sync Plateform Data
+            Sync Platform Data
           </Button>
           <Button
             type="button"
@@ -202,7 +202,7 @@ const TransferItem = () => {
         }
         title="Are you sure and want to perform this action?"
         subtitle={`This action will update ${
-          isActiveTask.value !== "Gsheets:import" ? "google sheet" : "plateform"
+          isActiveTask.value !== "Gsheets:import" ? "google sheet" : "platform"
         } data`}
       />
 
