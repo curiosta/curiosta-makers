@@ -115,6 +115,7 @@ const UserPopUp = ({
             {variant === "user" ? (
               <div className="w-full flex flex-col gap-4">
                 <Select
+                  label="Gender"
                   name="gender"
                   options={["male", "female", "other"]}
                   defaultValue={userData.value?.metadata?.gender as string}
@@ -122,6 +123,7 @@ const UserPopUp = ({
                 <NewInput
                   type="date"
                   name="dob"
+                  label="Date of birth"
                   max={new Date().toISOString().split("T")[0]}
                   required
                 />

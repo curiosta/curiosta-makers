@@ -177,7 +177,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
             )}
             <Typography
               size="body2/normal"
-              className="truncate w-36 capitalize"
+              className="truncate  max-[321px]:w-28 w-36 capitalize"
             >
               {isLoading.value
                 ? "loading..."
@@ -186,7 +186,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
           </Link>
 
           <Button
-            className="capitalize"
+            className="capitalize whitespace-nowrap"
             link={
               page !== "adminReturn"
                 ? `/orders/${order.id}`

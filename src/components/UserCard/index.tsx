@@ -228,9 +228,9 @@ const UserCard = ({
           </Button>
         </div>
       ) : (
-        <label className="p-4">
+        <label className="p-4 cursor-pointer ">
           <Radio
-            name="address"
+            name="user"
             className="sr-only"
             value={user.email}
             onClick={handleSelectedUser}
