@@ -245,80 +245,91 @@ const ProductInfo = ({ id }: Props) => {
             ) : null}
 
             {isUser.value ? (
-              <div className="w-full mb-12  relative border-t-2">
-                <div
-                  className={`absolute top-16 w-full p-2 shadow-lg rounded-md z-10 transition-all bg-secondary
+              <div className="w-full  border-t-2 ">
+                {/* buy product from curiosta website */}
+                <a
+                  href="https://curiosta.com/products"
+                  target="_blank"
+                  className="rounded-lg bg-secondary border-2 border-primary-700 flex font-semibold  justify-center mt-4 px-4 py-2 text-app-primary-700 text-sm"
+                >
+                  Buy Now
+                </a>
+                <div className="w-full  mb-12 relative ">
+                  <div
+                    className={`absolute top-16 w-full p-2 shadow-lg rounded-md z-10
+                     transition-all bg-secondary
               ${
                 cartTypeOpen.value
                   ? "translate-x-0 left-0"
                   : "-translate-x-full -left-full"
               }`}
-                >
-                  {cart.loading.value === "cart:line_items:add" ? (
-                    <Typography
-                      size="body2/normal"
-                      className="flex flex-col items-center"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class={
-                          "animate-spin w-6 stroke-primary-600 duration-500"
-                        }
+                  >
+                    {cart.loading.value === "cart:line_items:add" ? (
+                      <Typography
+                        size="body2/normal"
+                        className="flex flex-col items-center"
                       >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class={
+                            "animate-spin w-6 stroke-primary-600 duration-500"
+                          }
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                          />
+                        </svg>
+                        Please Wait...
+                      </Typography>
+                    ) : (
+                      <div className="flex justify-evenly items-center">
+                        <Radio
+                          name="add-method"
+                          label="Issue"
+                          value="issue"
+                          onChange={handleRadioInput}
                         />
-                      </svg>
-                      Please Wait...
-                    </Typography>
+                        <Radio
+                          name="add-method"
+                          label="Borrow"
+                          value="borrow"
+                          onChange={handleRadioInput}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {cart.loading.value === "cart:get" ? (
+                    <div className="pt-4">
+                      <Loading loadingText="loading" />
+                    </div>
+                  ) : !isProductItemInCart ? (
+                    <Button
+                      type="button"
+                      variant="primary"
+                      className="!w-full border-2 !rounded-lg mt-4"
+                      onClick={handleAddToCart}
+                    >
+                      Add to cart
+                    </Button>
                   ) : (
-                    <div className="flex justify-evenly items-center">
-                      <Radio
-                        name="add-method"
-                        label="Issue"
-                        value="issue"
-                        onChange={handleRadioInput}
-                      />
-                      <Radio
-                        name="add-method"
-                        label="Borrow"
-                        value="borrow"
-                        onChange={handleRadioInput}
+                    <div className="flex justify-between mt-4">
+                      <Typography size="body1/semi-bold">
+                        Added to cart
+                      </Typography>
+                      <ManageQty
+                        productItem={isProductItemInCart}
+                        page="request"
                       />
                     </div>
                   )}
+                  <ViewCartLayer actionText="View Cart" actionLink="/cart" />
                 </div>
-                {cart.loading.value === "cart:get" ? (
-                  <div className="pt-4">
-                    <Loading loadingText="loading" />
-                  </div>
-                ) : !isProductItemInCart ? (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="!w-full border-2 !rounded-lg mt-4"
-                    onClick={handleAddToCart}
-                  >
-                    Add to cart
-                  </Button>
-                ) : (
-                  <div className="flex justify-between mt-4">
-                    <Typography size="body1/semi-bold">
-                      Added to cart
-                    </Typography>
-                    <ManageQty
-                      productItem={isProductItemInCart}
-                      page="request"
-                    />
-                  </div>
-                )}
-                <ViewCartLayer actionText="View Cart" actionLink="/cart" />
               </div>
             ) : null}
 
