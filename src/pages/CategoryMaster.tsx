@@ -88,16 +88,13 @@ const CategoryMaster = () => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { categoryName, categoryDescription, status, visibility } =
-          formDataObj;
+        const { categoryName, categoryDescription, status } = formDataObj;
 
         const isActive = status === "active" ? true : false;
-        const isInternal = visibility === "private" ? true : false;
         const addCategoryRes = await adminAddCategory({
           categoryName: categoryName.toString(),
           categoryDescription: categoryDescription.toString(),
           isActive,
-          isInternal,
           parentCategoryId: parentCategory.value
             ? parentCategory.value?.id
             : null,
@@ -128,19 +125,16 @@ const CategoryMaster = () => {
     }
     const formData = new FormData(formRef.current);
     const formDataObj = Object.fromEntries(formData.entries());
-    const { categoryName, categoryDescription, status, visibility } =
-      formDataObj;
+    const { categoryName, categoryDescription, status } = formDataObj;
 
     try {
       const isActive = status === "active" ? true : false;
-      const isInternal = visibility === "private" ? true : false;
       if (!selectedCategory.value) return;
       const updateCategoryRes = await adminUpdateCategory({
         productCategoryId: selectedCategory.value?.id,
         categoryName: categoryName.toString(),
         categoryDescription: categoryDescription.toString(),
         isActive,
-        isInternal,
       });
       addCategory.value = updateCategoryRes?.product_category;
       isCategoryEditPopUp.value = false;

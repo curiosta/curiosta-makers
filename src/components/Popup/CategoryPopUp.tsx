@@ -138,21 +138,13 @@ const CategoryPopup = ({
               placeholder="category Description"
             />
             {variant === "category-master" ? (
-              <div className="w-full flex items-center justify-between ">
+              <div className="w-full  ">
                 <Select
                   name="status"
                   options={["Active", "Inactive"]}
                   label="Status"
                   defaultValue={
                     category.value?.is_active ? "Active" : "Inactive"
-                  }
-                />
-                <Select
-                  name="visibility"
-                  options={["Public", "Private"]}
-                  label="Visibility"
-                  defaultValue={
-                    category.value?.is_internal ? "Private" : "Public"
                   }
                 />
               </div>
