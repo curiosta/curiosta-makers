@@ -56,7 +56,7 @@ const CategoryMaster = () => {
         offset.value = 0;
       }
       categories.value = categoryRes?.product_categories;
-      count.value = categoryRes?.count;
+      count.value = categoryRes?.count - 1;
     } catch (error) {
     } finally {
       isLoading.value = undefined;
