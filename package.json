@@ -27,7 +27,7 @@
     "postcss": "^8.4.26",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.1.6",
-    "vite": "^4.3.2",
+    "vite": "^4.4.12",
     "vite-aliases": "^0.11.2",
     "vite-plugin-pwa": "^0.16.5"
   }
