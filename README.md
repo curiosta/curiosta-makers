@@ -17,7 +17,7 @@ npm run dev                     # http://localhost:5173 (add it to the API's MMS
 npm run build                   # static files in dist/ (host on S3+CloudFront, Netlify, ...)
 ```
 
-* The API is the MMS backend (`makers-backend`, Medusa v1.16.1). It defaults to `https://makers-api.curiosta.com`.
+* The API is the MMS backend (`makers-backend`, Medusa v1.16.1). In production it is served from the same origin as the app (`/store/*`, `/admin/*` on https://makers.curiosta.com), so `VITE_PUBLIC_BASE_URL` is only needed for local development.
 * npm is the package manager; `yarn.lock` was dropped. `.npmrc` sets `legacy-peer-deps`, so the Medusa *server*
   package (an unused peer of `@medusajs/medusa-js`) is not installed. Its types are covered by
   `src/types/medusa-shim.d.ts`.
