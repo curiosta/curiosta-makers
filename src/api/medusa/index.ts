@@ -1,11 +1,8 @@
 import Medusa from "@medusajs/medusa-js";
-
-if (!import.meta.env.VITE_PUBLIC_BASE_URL) {
-  throw new Error("Couldn't find medusa's url!");
-}
+import { baseUrl } from "../config";
 
 const medusa = new Medusa({
-  baseUrl: import.meta.env.VITE_PUBLIC_BASE_URL,
+  baseUrl,
   maxRetries: 3,
 });
 

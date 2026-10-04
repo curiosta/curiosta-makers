@@ -1,5 +1,4 @@
-import medusa from "@api/medusa";
+import { uploadFile } from "./prepareFile";
 
-export const adminProtectedUploadFile = async (file: File) => {
-  return medusa.admin.uploads.createProtected(file);
-};
+/** Private file (ID proofs, member photos, CSV imports): only via presigned URLs. */
+export const adminProtectedUploadFile = async (file: File) => uploadFile(file, true);

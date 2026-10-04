@@ -2,6 +2,7 @@ import { adminExportGsheets } from "@/api/admin/product/exportGsheets";
 import { adminGsheetsSyncCategory } from "@/api/admin/product/gSheetsSyncCategory";
 import { adminGsheetsSyncLocation } from "@/api/admin/product/gSheetsSyncLoaction";
 import { adminImportGsheets } from "@/api/admin/product/importGsheets";
+import { adminGetGsheetsLink } from "@/api/admin/product/gsheetsLink";
 import Button from "@/components/Button";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import TopNavbar from "@/components/Navbar/TopNavbar";
@@ -9,6 +10,7 @@ import PopUp from "@/components/Popup";
 import LoadingPopUp from "@/components/Popup/LoadingPopUp";
 import Typography from "@/components/Typography";
 import { useSignal } from "@preact/signals";
+import { useEffect } from "preact/hooks";
 import { Link } from "preact-router";
 
 type TActiveOptions =
@@ -23,12 +25,23 @@ const TransferItem = () => {
   const isPopup = useSignal<boolean>(false);
   const isActiveTask = useSignal<TActiveOptions | undefined>(undefined);
   const isSuccessPopup = useSignal<boolean>(false);
+  const isImportQueued = useSignal<boolean>(false);
+  const sheetUrl = useSignal<string | null>(null);
+
+  useEffect(() => {
+    // The sheet ID lives on the server now (it used to be baked into the build).
+    adminGetGsheetsLink()
+      .then((url) => (sheetUrl.value = url))
+      .catch(() => (sheetUrl.value = null));
+  }, []);
 
   const handleGsheetsImport = async () => {
     isLoading.value = true;
     isPopup.value = false;
     try {
-      await adminImportGsheets();
+      errorMessage.value = null;
+      const result = await adminImportGsheets();
+      isImportQueued.value = result.queued;
       isSuccessPopup.value = true;
     } catch (error) {
       console.log(error);
@@ -44,6 +57,7 @@ const TransferItem = () => {
     isLoading.value = true;
     isPopup.value = false;
     try {
+      errorMessage.value = null;
       await adminExportGsheets();
       isSuccessPopup.value = true;
     } catch (error) {
@@ -59,6 +73,7 @@ const TransferItem = () => {
     isLoading.value = true;
     isPopup.value = false;
     try {
+      errorMessage.value = null;
       await adminGsheetsSyncLocation();
       isSuccessPopup.value = true;
     } catch (error) {
@@ -74,6 +89,7 @@ const TransferItem = () => {
     isLoading.value = true;
     isPopup.value = false;
     try {
+      errorMessage.value = null;
       await adminGsheetsSyncCategory();
       isSuccessPopup.value = true;
     } catch (error) {
@@ -152,10 +168,9 @@ const TransferItem = () => {
           </Button>
         </div>
 
+        {sheetUrl.value ? (
         <Link
-          href={`https://docs.google.com/spreadsheets/d/${
-            import.meta.env.VITE_PRIVATE_GSHEETS_ID
-          }/view`}
+          href={sheetUrl.value}
           target="_blank"
           rel="noopener noreferrer"
           className="flex justify-center gap-2 items-center text-app-primary-700 my-6"
@@ -176,6 +191,7 @@ const TransferItem = () => {
           </svg>
           View/Edit Google Sheet
         </Link>
+        ) : null}
       </div>
 
       {isLoading.value ? (
@@ -210,14 +226,18 @@ const TransferItem = () => {
         isPopup={isSuccessPopup}
         title={
           isActiveTask.value === "Gsheets:import"
-            ? "Importing finished"
+            ? isImportQueued.value
+              ? "Import started"
+              : "Importing finished"
             : isActiveTask.value === "Gsheets:export"
             ? "Exporting finished"
             : "Google sheets updated successfully!"
         }
         subtitle={
           isActiveTask.value === "Gsheets:import"
-            ? "Products have been created/updated"
+            ? isImportQueued.value
+              ? "This is a large sheet, so it is being imported in the background. Products will appear over the next few minutes."
+              : "Products have been created/updated"
             : "You can check google sheets"
         }
       />
