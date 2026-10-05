@@ -1,7 +1,7 @@
 import { adminCreateBatchJobs } from "@/api/admin/product/createBatchJob";
 import { adminGetBatchJobs } from "@/api/admin/product/getBatchjob";
 import { adminGetProtectedUploadFile } from "@/api/admin/upload/getProtectedUpload";
-import { adminUploadFile } from "@/api/admin/upload/uploadFile";
+import { adminProtectedUploadFile } from "@/api/admin/upload/protectedUploadFile";
 import Button from "@/components/Button";
 import FileInput from "@/components/FileInput";
 import Loading from "@/components/Loading";
@@ -35,7 +35,9 @@ const ImportExportCSV = () => {
       if (selectedFile.value.type !== "text/csv") {
         return (errorMessage.value = "Only .csv file acceptable!");
       }
-      const uploadRes = await adminUploadFile(selectedFile.value);
+      // CSVs are private (they can contain stock/location data) and may exceed the
+      // Lambda payload limit; the helper switches to a direct S3 upload when needed.
+      const uploadRes = await adminProtectedUploadFile(selectedFile.value);
       const key = uploadRes.uploads[0].key;
       const createBatchRes = await adminCreateBatchJobs({
         type: "product-import",
@@ -128,7 +130,8 @@ const ImportExportCSV = () => {
           <FileInput selectedFile={selectedFile} acceptFileType=".csv" />
           <a
             className="flex gap-2 items-center text-app-primary-800 underline"
-            href="https://curiosta-assets.s3.ap-south-1.amazonaws.com/Makers-product-template-1694698296432.csv"
+            href="/makers-product-import-template.csv"
+            download
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

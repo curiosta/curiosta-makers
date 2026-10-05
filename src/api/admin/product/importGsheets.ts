@@ -1,10 +1,11 @@
-const baseUrl = import.meta.env.VITE_PUBLIC_BASE_URL;
+import { apiFetch } from "@/api/http";
 
+export type GsheetsImportResult =
+  | { status: "queued"; rows: number }
+  | { status?: string; [key: string]: unknown };
+
+/** 200 = imported now; 202 = large sheet, import continues in the background. */
 export const adminImportGsheets = async () => {
-  const res = await fetch(`${baseUrl}/admin/sheets`, {
-    method: "GET",
-    credentials: "include",
-  });
-  const data = await res.json();
-  return data;
+  const { status, data } = await apiFetch<GsheetsImportResult>("/admin/sheets");
+  return { queued: status === 202, ...data };
 };

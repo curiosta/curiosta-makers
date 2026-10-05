@@ -1,14 +1,6 @@
-const baseUrl = import.meta.env.VITE_PUBLIC_BASE_URL;
+import { apiFetch } from "@/api/http";
 
 export const adminDeactivateCustomer = async ({ email }: { email: string }) => {
-  const response = await fetch(`${baseUrl}/admin/customers/delete`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ email }),
-  });
-  const data = await response.json();
+  const { data } = await apiFetch("/admin/customers/delete", { method: "POST", body: { email } });
   return data;
 };

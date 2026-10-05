@@ -1,10 +1,7 @@
-const baseUrl = import.meta.env.VITE_PUBLIC_BASE_URL;
+import { apiFetch } from "@/api/http";
 
 export const adminGsheetsSyncLocation = async () => {
-  const res = await fetch(`${baseUrl}/admin/sheets/sync-locations`, {
-    method: "GET",
-    credentials: "include",
-  });
-  const data = await res.json();
+  const { data } = await apiFetch<{ status: string }>("/admin/sheets/sync-locations");
+  if (data?.status && data.status !== "ok") throw new Error(data.status);
   return data;
 };

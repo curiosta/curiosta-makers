@@ -1,5 +1,4 @@
-import medusa from "@api/medusa";
+import { uploadFile } from "./prepareFile";
 
-export const adminUploadFile = async (file: File) => {
-  return medusa.admin.uploads.create(file);
-};
+/** Public file (product images): served via CloudFront. Images are compressed first. */
+export const adminUploadFile = async (file: File) => uploadFile(file, false);
