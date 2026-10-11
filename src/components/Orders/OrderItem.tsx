@@ -76,31 +76,31 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
 
   return (
     <div
-      class={`border-b border-t border-gray-200 ${
+      class={`border-b border-t border-line ${
         returnVal?.status === "received" ||
         (page === "return" && !borrowItems.length)
-          ? "bg-gray-200/80"
-          : "bg-secondary"
+          ? "bg-line/80"
+          : "bg-card"
       } shadow-sm rounded-lg border`}
     >
       <div
         class={`flex items-center border-b p-4 ${
           returnVal?.status === "received" ||
           (page === "return" && !borrowItems.length)
-            ? "border-gray-400"
-            : "border-gray-200"
+            ? "border-muted"
+            : "border-line"
         }`}
       >
         <dl class="grid flex-1 grid-cols-2 gap-x-6 text-sm ">
           {page !== "adminReturn" && page !== "return" ? (
             <div>
-              <dt class="font-medium text-gray-900">Order ID</dt>
-              <dd class="mt-1 text-gray-700 truncate">{order.id}</dd>
+              <dt class="font-medium text-ink">Order ID</dt>
+              <dd class="mt-1 text-ink-2 truncate">{order.id}</dd>
             </div>
           ) : (
             <div>
-              <dt class="font-medium text-gray-900">Return ID</dt>
-              <dd class="mt-1 text-gray-700 truncate">
+              <dt class="font-medium text-ink">Return ID</dt>
+              <dd class="mt-1 text-ink-2 truncate">
                 {page === "adminReturn"
                   ? returnVal?.id
                   : order.returns?.length
@@ -110,8 +110,8 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
             </div>
           )}
           <div>
-            <dt class="font-medium text-gray-900 capitalize">Requested date</dt>
-            <dd class="mt-1 text-gray-700">
+            <dt class="font-medium text-ink capitalize">Requested date</dt>
+            <dd class="mt-1 text-ink-2">
               <time dateTime="2021-07-06">
                 {page !== "adminReturn" && page !== "return"
                   ? new Date(order.created_at).toLocaleDateString("default", {
@@ -147,8 +147,8 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
         <div
           className={`flex justify-between items-center px-4 py-2 border-b ${
             returnVal?.status === "received"
-              ? "border-gray-400"
-              : "border-gray-200"
+              ? "border-muted"
+              : "border-line"
           }`}
         >
           <Link
@@ -168,7 +168,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
             ) : (
               <Chip
                 variant="primary2"
-                className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+                className="!bg-sea-700 !rounded-full uppercase h-10 w-10 !text-white"
               >
                 {page !== "adminReturn"
                   ? order?.email.charAt(0)
@@ -186,7 +186,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
           </Link>
 
           <Button
-            className="capitalize whitespace-nowrap"
+            className="capitalize whitespace-nowrap max-sm:px-3"
             link={
               page !== "adminReturn"
                 ? `/orders/${order.id}`
@@ -208,12 +208,12 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
       <Typography tag="h4" className="sr-only">
         Items
       </Typography>
-      <ul role="list" class="divide-y divide-gray-200">
+      <ul role="list" class="divide-y divide-line">
         {page !== "adminReturn"
           ? order.items.slice(0, 3).map((item) => (
               <li class="p-4 sm:p-6">
                 <div class="flex items-center sm:items-start">
-                  <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 sm:h-40 sm:w-40">
+                  <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-line sm:h-40 sm:w-40">
                     <img
                       src={item.thumbnail ?? "/images/placeholderImg.svg"}
                       alt={item.title}
@@ -265,8 +265,8 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
         <div
           className={`flex justify-center items-center  gap-4 p-4 border-t ${
             page === "return" && !borrowItems.length
-              ? "border-gray-400"
-              : "border-gray-200"
+              ? "border-muted"
+              : "border-line"
           }`}
         >
           <Button link={`/orders/${order?.id}`}>View Order</Button>
@@ -274,7 +274,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
             <Button
               link={`/return/${order?.id}`}
               variant="secondary"
-              className="!py-3 disabled:bg-gray-200 disabled:text-gray-500 disabled:!border-none"
+              className="!py-3 disabled:bg-line disabled:text-muted disabled:!border-none"
               disabled={
                 order?.returns?.length >= 1 || !borrowItemsFulfilled?.length
               }
@@ -307,7 +307,7 @@ const OrderItem: FunctionComponent<TOrderItemProps> = ({
           </Typography>
           {page === "adminReturn" && returnVal?.status === "received" ? (
             <svg
-              class="h-5 w-5 text-app-primary-600"
+              class="h-5 w-5 text-sea-500"
               viewBox="0 0 20 20"
               fill="currentColor"
               aria-hidden="true"

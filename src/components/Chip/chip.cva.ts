@@ -6,14 +6,14 @@ const chip = cva(
     variants: {
       variant: {
         primary: [
-          "bg-primary-600/95",
+          "bg-sea-500",
           "text-white",
-          "hover:bg-primary-600/100",
+          "hover:bg-sea-700",
         ],
-        default: ["bg-gray-50", "text-gray-900", "hover:bg-gray-100"],
+        default: ["bg-sand", "text-ink", "hover:bg-sand"],
         primary2: [
-          "bg-primary-600/10",
-          "text-app-primary-600",
+          "bg-teal-soft",
+          "text-sea-500",
           "text-sm",
           "font-medium",
           "flex items-center justify-center",

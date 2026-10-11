@@ -11,14 +11,14 @@ const ChangePasswordBanner = ({ link }: { link: string }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen justify-center items-center gap-2 bg-neutral-50">
-      <div className="border bg-secondary flex flex-col gap-3 items-center p-6 rounded-2xl shadow-lg sm:w-full sm:max-w-md w-11/12">
-        <div className="bg-primary-700 p-4 rounded-full shadow-lg">
+    <div className="flex flex-col h-screen justify-center items-center gap-2 bg-sand">
+      <div className="border bg-card flex flex-col gap-3 items-center p-6 rounded-2xl shadow-lg sm:w-full sm:max-w-md w-11/12">
+        <div className="bg-sea-900 p-4 rounded-full shadow-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            class="w-8 h-8 fill-secondary"
+            class="w-8 h-8 fill-white"
           >
             <path
               fill-rule="evenodd"

@@ -226,7 +226,7 @@ const PickItems = ({ id }: Props) => {
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Pick Items</Typography>
+        <Typography tag="h1" size="h6/normal">Pick Items</Typography>
       </div>
       <div className="w-full mb-12 max-w-2xl">
         <Typography size="body1/normal" className="w-full truncate">
@@ -237,7 +237,7 @@ const PickItems = ({ id }: Props) => {
             {ordersWithCategory?.length ? (
               <div className="flex flex-col gap-4 my-2 mb-12">
                 {ordersWithCategory?.map((item, index) => (
-                  <div className="w-full bg-secondary shadow-lg rounded-2xl p-4">
+                  <div className="w-full bg-card shadow-lg rounded-2xl p-4">
                     <Typography size="small/normal">
                       Item {index + 1}
                     </Typography>
@@ -290,7 +290,7 @@ const PickItems = ({ id }: Props) => {
                     <div className="flex items-center w-full justify-between gap-2 ">
                       <div className="flex items-center gap-2">
                         <Typography>Qty</Typography>
-                        <Chip className="!bg-gray-100 !rounded-md ">
+                        <Chip className="!bg-sand !rounded-md ">
                           {item.quantity}
                         </Chip>
                       </div>
@@ -299,7 +299,7 @@ const PickItems = ({ id }: Props) => {
                       ) ? (
                         <div className="flex items-center ">
                           <Typography size="small/normal">Short Qty</Typography>
-                          <Chip className="!bg-gray-100 !rounded-md text-sm">
+                          <Chip className="!bg-sand !rounded-md text-sm">
                             {
                               shortItems.value?.find(
                                 (short) => short.item_id === item.id
@@ -331,7 +331,7 @@ const PickItems = ({ id }: Props) => {
                             >
                               <path
                                 d="M4.45455 7.6194L1.11364 4.79851L0 5.73881L4.45455 9.5L14 1.4403L12.8864 0.5L4.45455 7.6194Z"
-                                fill="#0B7278"
+                                className="fill-sea-500"
                               />
                             </svg>
                             Picked
@@ -353,7 +353,7 @@ const PickItems = ({ id }: Props) => {
                           <Button
                             type="button"
                             variant="secondary"
-                            className="items-center gap-3 !ring-danger-600 !border-danger-600 !text-danger-600"
+                            className="items-center gap-3 !ring-bad !border-bad !text-bad"
                             onClick={() =>
                               (shortItems.value = shortItems.value.filter(
                                 (val) => val.item_id !== item.id
@@ -370,7 +370,7 @@ const PickItems = ({ id }: Props) => {
                             >
                               <path
                                 d="M4.45455 7.6194L1.11364 4.79851L0 5.73881L4.45455 9.5L14 1.4403L12.8864 0.5L4.45455 7.6194Z"
-                                fill="#0B7278"
+                                className="fill-sea-500"
                               />
                             </svg>
                             Short Closed

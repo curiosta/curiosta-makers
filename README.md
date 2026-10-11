@@ -25,3 +25,13 @@ npm run build                   # static files in dist/ (host on S3+CloudFront, 
   * Photos are downscaled in the browser to at most 1600 px JPEG.
   * Files over 4 MB go straight to S3 with a presigned URL, because the API runs on Lambda (6 MB request limit). The S3 bucket needs a CORS rule for the app origin (see the backend README).
 * The Google Sheet link comes from the API (`/admin/sheets/link`). It is no longer a build-time variable.
+
+## Brand and styling
+
+The UI follows the shared Curiosta brand skill (rev. 11 Oct 2026):
+* **Tokens:** the shared `:root` tokens (`--ink`, `--sea-900`, `--coral`, `--sand` and the rest) are defined once, in `src/index.css`.
+  `tailwind.config.js` replaces Tailwind's default palette and maps every theme colour to `var(--token)`. Use classes like `bg-coral`, `text-sea-500` and `bg-sea-900/40`, and never hex values. Site-only additions use the `--mms-` prefix.
+* **Fonts:** Fraunces (headings, `font-serif`), Inter (body, `font-sans`) and JetBrains Mono (`font-mono`, `.eyebrow`). They are self-hosted via `@fontsource-variable`, so the PWA keeps its type offline.
+* **Buttons:** the primary button is a coral pill with `--sea-900` text, because white on coral fails AA. Small accent text uses `--sea-500` on light surfaces; `--teal` is only for dark bands.
+* **Navigation:** a sticky dark-sea top bar plus a bottom tab bar that stays visible at every width.
+* **Before a release:** check axe and Lighthouse accessibility at 320/360/390 px and desktop, with no horizontal overflow.

@@ -39,7 +39,7 @@ const MultiSelectCheckbox = ({
         {selectedValues.value.map((val) => (
           <Button
             type="button"
-            className="gap-2 !items-center py-1 bg-gray-200"
+            className="gap-2 !items-center py-1 bg-line"
             variant="icon"
           >
             {options.find((opt) => opt.id === val)?.name}
@@ -65,11 +65,11 @@ const MultiSelectCheckbox = ({
           </Button>
         ))}
       </div>
-      <div className="w-full flex items-center bg-secondary border rounded-md border-gray-300">
+      <div className="w-full flex items-center bg-card border rounded-md border-muted/80">
         <input
           type="search"
           class={cx(
-            "rounded-md border-gray-300 w-full border-none focus:border-transparent focus:ring-0 z-10 ",
+            "rounded-md border-line w-full border-none focus:border-transparent focus:ring-0 z-10 ",
             className
           )}
           value={searchTerm.value}
@@ -102,7 +102,7 @@ const MultiSelectCheckbox = ({
         <Button
           type="button"
           variant="icon"
-          className="!text-app-primary-600"
+          className="!text-sea-500"
           onClick={() => (dropDownOpen.value = !dropDownOpen.value)}
         >
           <svg
@@ -128,7 +128,7 @@ const MultiSelectCheckbox = ({
       <ul
         className={`w-full  flex-col gap-3 ${
           dropDownOpen.value || searchTerm.value?.length ? "flex" : "hidden"
-        } bg-secondary my-1 p-3 overflow-y-auto max-h-44 shadow-lg rounded-lg`}
+        } bg-card my-1 p-3 overflow-y-auto max-h-44 shadow-lg rounded-lg`}
       >
         {searchTerm.value?.length ? (
           searchResult?.length ? (

@@ -10,6 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@medusajs/medusa-js": "6.1.2",
     "@preact/signals": "^1.1.5",
     "@tailwindcss/forms": "^0.5.4",

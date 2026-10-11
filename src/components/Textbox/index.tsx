@@ -12,16 +12,16 @@ const Textbox = ({ label, className, ...rest }: Props) => {
     <div className="w-full">
       <label
         htmlFor={id}
-        className="text-sm font-medium leading-6 text-gray-900 flex gap-1 mb-1"
+        className="text-sm font-medium leading-6 text-ink flex gap-1 mb-1"
       >
         {label}
       </label>
       <textarea
         id={id}
         class={cx(
-          `block w-full rounded-md border-0 p-1.5 px-3 text-gray-900 shadow-sm
-      ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2
-      focus:ring-inset focus:ring-primary-600  sm:text-sm sm:leading-6 focus-visible:outline-none`,
+          `block w-full rounded-md border-0 p-1.5 px-3 text-ink shadow-sm
+      ring-1 ring-inset ring-muted/80 placeholder:text-muted focus:ring-2
+      focus:ring-inset focus:ring-sea-500  sm:text-sm sm:leading-6 focus-visible:outline-none`,
           className
         )}
         rows={4}

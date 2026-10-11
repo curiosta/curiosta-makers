@@ -3,20 +3,20 @@ import { cva } from "class-variance-authority";
 const typography = cva("", {
   variants: {
     variant: {
-      primary: ["text-primary-900"],
-      secondary: ["text-primary-600"],
-      button: ["text-white font-semibold"],
-      error: ["text-sm text-danger-600"],
-      "app-primary": ["text-app-primary-700"],
-      success: ["text-success-800"],
+      primary: ["text-ink"],
+      secondary: ["text-ink-2"],
+      button: ["text-sea-900 font-semibold"],
+      error: ["text-sm text-bad"],
+      "app-primary": ["text-sea-500"],
+      success: ["text-ok"],
     },
     size: {
-      h1: "text-6xl",
-      h2: "text-5xl",
-      h3: "text-4xl",
-      h4: "text-3xl",
-      h5: "text-2xl",
-      h6: "text-xl",
+      h1: "text-6xl font-serif",
+      h2: "text-5xl font-serif",
+      h3: "text-4xl font-serif",
+      h4: "text-3xl font-serif",
+      h5: "text-2xl font-serif",
+      h6: "text-xl font-serif",
       subheading: "text-lg",
       body1: "text-base",
       body2: "text-sm",
@@ -30,7 +30,7 @@ const typography = cva("", {
       "semi-bold": ["font-semibold"],
     },
     disabled: {
-      true: ["text-neutral-400 italic"],
+      true: ["text-muted italic"],
     },
   },
   defaultVariants: {

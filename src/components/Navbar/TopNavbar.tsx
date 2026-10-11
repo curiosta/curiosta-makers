@@ -6,6 +6,7 @@ import { isUser } from "@/store/userState";
 import user from "@/api/user";
 import admin from "@/api/admin";
 import cart from "@/api/cart";
+import { Link } from "preact-router";
 
 const TopNavbar = () => {
   const isMenuOpen = useSignal<boolean>(false);
@@ -16,12 +17,16 @@ const TopNavbar = () => {
   const totalCartItems = isUser.value ? cart.store.value?.items?.length : null;
 
   return (
-    <div className="flex justify-between items-center w-full">
+    <header className="sticky top-0 z-30 -mx-4 -mt-4 mb-2 flex min-h-nav w-[calc(100%+2rem)] items-center justify-between gap-2 bg-sea-900 px-4 text-white shadow-brand">
+      <div className="flex min-w-0 items-center gap-3">
       <Button
         type="button"
         variant="icon"
-        title="menu"
-        className="border !rounded-full"
+        title="Menu"
+        aria-label="Open menu"
+        aria-haspopup="dialog"
+        aria-expanded={isMenuOpen.value}
+        className="border border-white/30 !rounded-full text-white hover:bg-white/10"
         onClick={() => (isMenuOpen.value = true)}
       >
         <svg
@@ -39,13 +44,21 @@ const TopNavbar = () => {
           />
         </svg>
       </Button>
+        <Link
+          href="/home"
+          className="truncate font-serif text-lg font-semibold leading-tight text-white"
+        >
+          Curiosta <span className="text-teal">Makers</span>
+        </Link>
+      </div>
 
       <div className="flex items-center gap-2">
         {isUser.value ? (
           <Button
             link="/cart"
             variant="icon"
-            className="!text-lg gap-1 items-center"
+            aria-label={`Cart, ${totalCartItems ?? 0} items`}
+            className="!text-lg gap-1 items-center text-white hover:bg-white/10"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -53,11 +66,12 @@ const TopNavbar = () => {
               height="25"
               viewBox="0 0 24 25"
               fill="none"
+              aria-hidden="true"
             >
               <g clip-path="url(#clip0_356_4461)">
                 <path
                   d="M15.55 13.5C16.3 13.5 16.96 13.09 17.3 12.47L20.88 5.98C21.25 5.32 20.77 4.5 20.01 4.5H5.21L4.27 2.5H1V4.5H3L6.6 12.09L5.25 14.53C4.52 15.87 5.48 17.5 7 17.5H19V15.5H7L8.1 13.5H15.55ZM6.16 6.5H18.31L15.55 11.5H8.53L6.16 6.5ZM7 18.5C5.9 18.5 5.01 19.4 5.01 20.5C5.01 21.6 5.9 22.5 7 22.5C8.1 22.5 9 21.6 9 20.5C9 19.4 8.1 18.5 7 18.5ZM17 18.5C15.9 18.5 15.01 19.4 15.01 20.5C15.01 21.6 15.9 22.5 17 22.5C18.1 22.5 19 21.6 19 20.5C19 19.4 18.1 18.5 17 18.5Z"
-                  fill="black"
+                  fill="currentColor"
                 />
               </g>
               <defs>
@@ -77,7 +91,7 @@ const TopNavbar = () => {
 
         <Chip
           variant="primary2"
-          className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+          className="!bg-teal !rounded-full uppercase h-10 w-10 !text-sea-900 !font-semibold"
         >
           {currentUser?.first_name
             ? currentUser?.first_name.charAt(0)
@@ -85,7 +99,7 @@ const TopNavbar = () => {
         </Chip>
       </div>
       <Menubar isMenuOpen={isMenuOpen} />
-    </div>
+    </header>
   );
 };
 

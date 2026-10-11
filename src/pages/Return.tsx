@@ -50,7 +50,7 @@ const Returns = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Return</Typography>
+        <Typography tag="h1" size="h6/normal">Return</Typography>
       </div>
       <div className="w-full mt-8 mb-12 max-w-2xl">
         {!isLoading.value ? (

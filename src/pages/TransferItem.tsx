@@ -106,13 +106,13 @@ const TransferItem = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Transfer Item</Typography>
+        <Typography tag="h1" size="h6/normal">Transfer Item</Typography>
       </div>
 
       <div className="flex flex-col gap-4 mt-4 mb-28">
         <Link
           href="/import-export-csv"
-          className="flex justify-center items-center p-3  bg-primary-700 text-secondary rounded-md"
+          className="flex justify-center items-center p-3  bg-sea-700 text-white rounded-md"
         >
           <Typography size="body2/semi-bold" className="text-center">
             Import/Export from CSV
@@ -173,7 +173,7 @@ const TransferItem = () => {
           href={sheetUrl.value}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex justify-center gap-2 items-center text-app-primary-700 my-6"
+          className="flex justify-center gap-2 items-center text-sea-500 my-6"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

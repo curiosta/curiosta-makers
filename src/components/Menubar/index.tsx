@@ -31,9 +31,10 @@ const Menubar = ({ isMenuOpen }: Props) => {
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-full opacity-0 bg-primary-100/40 -z-10 overflow-y-auto ${
-        isMenuOpen.value ? "!z-20 opacity-100" : ""
+      className={`fixed top-0 left-0 w-full h-full bg-sea-900/40 overflow-y-auto transition-opacity duration-200 ${
+        isMenuOpen.value ? "z-40 opacity-100 visible" : "-z-10 opacity-0 invisible"
       }`}
+      aria-hidden={!isMenuOpen.value}
     >
       {/* close on outside click */}
       <div
@@ -41,7 +42,10 @@ const Menubar = ({ isMenuOpen }: Props) => {
         onClick={() => (isMenuOpen.value = false)}
       />
       <div
-        className={`absolute top-0 left-0 bg-secondary h-full w-full max-w-xs transition-all -translate-x-full p-4 ${
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu"
+        className={`absolute top-0 left-0 bg-card text-ink h-full w-full max-w-xs transition-transform -translate-x-full p-4 shadow-brand ${
           isMenuOpen.value ? "!translate-x-0" : ""
         }`}
       >
@@ -50,6 +54,8 @@ const Menubar = ({ isMenuOpen }: Props) => {
           <Button
             type="button"
             variant="icon"
+            aria-label="Close menu"
+            className="hover:bg-sand"
             onClick={() => (isMenuOpen.value = false)}
           >
             <svg
@@ -75,7 +81,7 @@ const Menubar = ({ isMenuOpen }: Props) => {
                   key={index}
                   link={item.link}
                   variant="icon"
-                  className="gap-4"
+                  className="gap-4 hover:bg-sand"
                 >
                   {item.icon}
                   <Typography size="body2/normal" className="capitalize">
@@ -88,7 +94,7 @@ const Menubar = ({ isMenuOpen }: Props) => {
                   key={index}
                   link={item.link}
                   variant="icon"
-                  className="gap-4"
+                  className="gap-4 hover:bg-sand"
                 >
                   {item.icon}
                   <Typography size="body2/normal" className="capitalize">
@@ -103,7 +109,7 @@ const Menubar = ({ isMenuOpen }: Props) => {
               type="button"
               key={index}
               variant="icon"
-              className="gap-4"
+              className="gap-4 hover:bg-sand"
               onClick={() => handleClick(item.title)}
             >
               {item.icon}

@@ -59,8 +59,8 @@ const UserCard = ({
     <div
       className={`${
         !activeToggle && selectedUser.value?.email === user.email
-          ? "bg-primary-600/10"
-          : "bg-secondary"
+          ? "bg-teal-soft"
+          : "bg-card"
       }  border flex items-center justify-between p-4 relative rounded-lg shadow-lg w-full`}
     >
       <div className="flex flex-col gap-4 w-10/12">
@@ -75,7 +75,7 @@ const UserCard = ({
             ) : (
               <Chip
                 variant="primary2"
-                className="!bg-third-600 !rounded-full uppercase h-10 w-10 !text-white"
+                className="!bg-sea-500 !rounded-full uppercase h-10 w-10 !text-white"
               >
                 {user.first_name
                   ? user.first_name.charAt(0)
@@ -96,7 +96,7 @@ const UserCard = ({
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              class="w-5 h-5 fill-third-600"
+              class="w-5 h-5 fill-sea-500"
             >
               <path
                 fill-rule="evenodd"
@@ -111,7 +111,7 @@ const UserCard = ({
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              class="w-5 h-5 fill-third-600"
+              class="w-5 h-5 fill-sea-500"
             >
               <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
               <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
@@ -126,7 +126,7 @@ const UserCard = ({
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              class="w-5 h-5 fill-third-600"
+              class="w-5 h-5 fill-sea-500"
             >
               <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
               <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
@@ -153,7 +153,9 @@ const UserCard = ({
               <Button
                 link={`/user/${user.id}`}
                 variant="icon"
-                className="z-10 text-third-500 !rounded-full border gap-2 sm:px-4 !shadow-sm"
+                title="View"
+                aria-label="View profile"
+                className="z-10 text-sea-500 !rounded-full border gap-2 sm:px-4 !shadow-sm"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -176,7 +178,7 @@ const UserCard = ({
                 variant="icon"
                 title="Edit"
                 onClick={() => handleEdit(user.id)}
-                className="z-10 text-third-500 !rounded-full border gap-2 sm:px-4 !shadow-sm"
+                className="z-10 text-sea-500 !rounded-full border gap-2 sm:px-4 !shadow-sm"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -196,7 +198,7 @@ const UserCard = ({
             title={activeToggle === "active" ? "Deactivate" : "Activate"}
             onClick={() => handleActiveInactive(user)}
             className={`z-10 sm:px-4 gap-2 !rounded-full border !shadow-sm ${
-              activeToggle === "active" ? "text-third-500" : "text-danger-600"
+              activeToggle === "active" ? "text-sea-500" : "text-bad"
             }  `}
           >
             {activeToggle === "active" ? (
@@ -232,12 +234,13 @@ const UserCard = ({
           <Radio
             name="user"
             className="sr-only"
+            aria-label={`Select ${[user.first_name, user.last_name].filter(Boolean).join(" ") || user.email}`}
             value={user.email}
             onClick={handleSelectedUser}
           />
           {selectedUser.value?.email === user.email ? (
             <svg
-              class="h-6 w-6 text-app-primary-600"
+              class="h-6 w-6 text-sea-500"
               viewBox="0 0 20 20"
               fill="currentColor"
               aria-hidden="true"
@@ -249,7 +252,7 @@ const UserCard = ({
               />
             </svg>
           ) : (
-            <div className="border border-primary-600 bg-secondary rounded-full w-5 h-5"></div>
+            <div className="border border-sea-500 bg-card rounded-full w-5 h-5"></div>
           )}
         </label>
       )}

@@ -119,7 +119,7 @@ const ImportExportCSV = () => {
     <div className="flex flex-col justify-center gap-4 items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Import/Export from CSV</Typography>
+        <Typography tag="h1" size="h6/normal">Import/Export from CSV</Typography>
       </div>
 
       <div className="w-full flex flex-col justify-center gap-10 items-center max-w-xs mt-8">
@@ -129,7 +129,7 @@ const ImportExportCSV = () => {
         >
           <FileInput selectedFile={selectedFile} acceptFileType=".csv" />
           <a
-            className="flex gap-2 items-center text-app-primary-800 underline"
+            className="flex gap-2 items-center text-sea-500 underline"
             href="/makers-product-import-template.csv"
             download
           >
@@ -183,7 +183,7 @@ const ImportExportCSV = () => {
             <Loading loadingText="Generating downloding link" />
           ) : downloadLink.value ? (
             <a
-              className="flex gap-2 items-center text-secondary bg-primary-600 rounded-xl p-3 "
+              className="flex gap-2 items-center text-white bg-sea-700 hover:bg-sea-800 rounded-xl p-3 "
               href={downloadLink.value}
             >
               <svg

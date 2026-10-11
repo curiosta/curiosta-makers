@@ -233,7 +233,7 @@ const Cart = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Cart</Typography>
+        <Typography tag="h1" size="h6/normal">Cart</Typography>
       </div>
       <div className="w-full mb-12 max-w-2xl">
         {!cartLoading ? (
@@ -258,7 +258,7 @@ const Cart = () => {
                       ) : (
                         <Chip
                           variant="primary2"
-                          className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+                          className="!bg-sea-700 !rounded-full uppercase h-10 w-10 !text-white"
                         >
                           {selectedUser.value?.email.charAt(0)}
                         </Chip>
@@ -303,7 +303,7 @@ const Cart = () => {
                   <div className={`${!cartBorrowItem.length ? "mb-8" : ""}`}>
                     <Typography
                       size="body1/normal"
-                      className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-blue-600 text-white"
+                      className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-sea-500 text-white"
                     >
                       Issues Requests
                     </Typography>
@@ -349,7 +349,7 @@ const Cart = () => {
                     <div className="flex justify-between items-center">
                       <Typography
                         size="body1/normal"
-                        className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-yellow-800 text-white"
+                        className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-coral-soft text-ink"
                       >
                         Borrow Requests
                       </Typography>
@@ -415,7 +415,7 @@ const Cart = () => {
                 />
               ) : (
                 // confirm order or discard buttons
-                <div className="fixed bottom-16 left-0 p-4 w-full z-10 bg-secondary border shadow-sm">
+                <div className="fixed bottom-16 left-0 p-4 w-full z-10 bg-card border shadow-sm">
                   {errorMessage.value ? (
                     <Typography
                       variant="error"
@@ -435,7 +435,8 @@ const Cart = () => {
                     <Button
                       link="/create-requests"
                       variant="icon"
-                      className="!w-12 !h-12 items-center bg-primary-600/10  !rounded-full !p-0"
+                      aria-label="Add more items"
+                      className="!w-12 !h-12 items-center bg-teal-soft  !rounded-full !p-0"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -443,7 +444,7 @@ const Cart = () => {
                         viewBox="0 0 24 24"
                         stroke-width="1.5"
                         stroke="currentColor"
-                        class="w-6 h-6 stroke-primary-600"
+                        class="w-6 h-6 stroke-sea-500"
                       >
                         <path
                           stroke-linecap="round"
@@ -473,7 +474,7 @@ const Cart = () => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  className="w-28 fill-none stroke-gray-300"
+                  className="w-28 fill-none stroke-line"
                 >
                   <path
                     stroke-linecap="round"
@@ -481,7 +482,7 @@ const Cart = () => {
                     d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
                   />
                 </svg>
-                <Typography size="h5/medium" className="text-gray-400">
+                <Typography size="h5/medium" className="text-muted">
                   No items in cart!
                 </Typography>
               </div>

@@ -73,7 +73,7 @@ const ProfileImageEdit = ({
   return (
     <div>
       <div
-        className={`fixed left-0 bottom-14 z-10  w-full bg-secondary border transition-all shadow-lg ${
+        className={`fixed left-0 bottom-14 z-10  w-full bg-card border transition-all shadow-lg ${
           isProfileImageEdit.value ? "translate-y-0" : "translate-y-full"
         } `}
       >
@@ -129,7 +129,7 @@ const ProfileImageEdit = ({
               <Button
                 type="button"
                 variant="icon"
-                className="!text-danger-600 flex-col  gap-2 !items-center"
+                className="!text-bad flex-col  gap-2 !items-center"
                 onClick={() => (isDeletePopup.value = true)}
               >
                 <svg

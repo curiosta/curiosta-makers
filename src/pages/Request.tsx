@@ -54,7 +54,7 @@ const Request = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Request Items</Typography>
+        <Typography tag="h1" size="h6/normal">Request Items</Typography>
       </div>
 
       <div className="w-full mb-12 max-w-2xl">
@@ -74,7 +74,7 @@ const Request = () => {
                       variant="icon"
                       className={"flex-col items-center gap-2 !p-0"}
                     >
-                      <div className="border border-black rounded-full bg-secondary shadow-lg">
+                      <div className="border border-ink rounded-full bg-card shadow-lg">
                         <img src={leser_icon} alt="icon" className="p-3" />
                       </div>
                       <Typography size="body2/normal">

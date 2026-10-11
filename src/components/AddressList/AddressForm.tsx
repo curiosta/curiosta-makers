@@ -78,7 +78,7 @@ const AddressForm = ({
   };
 
   return (
-    <div class="w-full bg-secondary shadow-sm rounded-lg border p-4">
+    <div class="w-full bg-card shadow-sm rounded-lg border p-4">
       <Typography
         size="body1/semi-bold"
         className="my-2 text-center capitalize"
@@ -130,7 +130,7 @@ const AddressForm = ({
             <div>
               <Typography
                 size="body2/medium"
-                className="leading-6 text-gray-900 flex gap-1 mb-1"
+                className="leading-6 text-ink flex gap-1 mb-1"
               >
                 Select Country
               </Typography>
@@ -165,7 +165,7 @@ const AddressForm = ({
               {errorMessage.value}
             </Typography>
           ) : null}
-          <div class="flex justify-between items-center gap-3 mt-5 border-t border-gray-200 pt-6">
+          <div class="flex justify-between items-center gap-3 mt-5 border-t border-line pt-6">
             <Button
               variant="danger"
               type="button"

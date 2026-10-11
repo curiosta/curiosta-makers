@@ -195,7 +195,7 @@ const ProductEdit = ({ id }: Props) => {
     <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Edit Product</Typography>
+        <Typography tag="h1" size="h6/normal">Edit Product</Typography>
       </div>
 
       <ProductAddEditForm

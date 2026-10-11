@@ -54,7 +54,7 @@ const Fulfill = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Fulfill request</Typography>
+        <Typography tag="h1" size="h6/normal">Fulfill request</Typography>
       </div>
       <div className="w-full mb-12 max-w-2xl">
         <SearchInput searchTerm={searchTerm} isSearchSort={false} />

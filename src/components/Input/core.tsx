@@ -62,7 +62,7 @@ const InputCore: FunctionComponent<InputCoreProps> = forwardRef<HTMLInputElement
       {label ? (
         <label
           htmlFor={id}
-          className="text-sm font-medium leading-6 text-gray-900 flex gap-1 mb-1"
+          className="text-sm font-medium leading-6 text-ink flex gap-1 mb-1"
         >
           {label}
           {rules?.required ? <Typography variant="error">*</Typography> : ""}
@@ -70,7 +70,7 @@ const InputCore: FunctionComponent<InputCoreProps> = forwardRef<HTMLInputElement
       ) : null}
       <div className="flex rounded-md">
         {leftAdornment ? (
-          <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-3 text-gray-500 sm:text-sm">
+          <span className="inline-flex items-center rounded-l-md border border-r-0 border-muted/80 px-3 text-muted sm:text-sm">
             {leftAdornment}
           </span>
         ) : null}
@@ -79,10 +79,10 @@ const InputCore: FunctionComponent<InputCoreProps> = forwardRef<HTMLInputElement
           disabled={disabled}
           ref={inputRef}
           className={twMerge(cx(
-            `block w-full rounded-md border-0 p-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600  sm:text-sm sm:leading-6 focus-visible:outline-none`,
+            `block w-full rounded-md border-0 p-1.5 px-3 text-ink shadow-sm ring-1 ring-inset ring-muted/80 placeholder:text-muted focus:ring-2 focus:ring-inset focus:ring-sea-500  sm:text-sm sm:leading-6 focus-visible:outline-none`,
             leftAdornment ? "rounded-l-none" : "rounded-l-md",
             rightAdornment ? "rounded-r-none" : "rounded-r-md",
-            error && "!ring-danger-600 focus:!ring-danger-600 ring-2",
+            error && "!ring-bad focus:!ring-bad ring-2",
             className
           ))}
           placeholder={placeholder || label || ""}

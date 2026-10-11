@@ -152,7 +152,7 @@ const CategoryMaster = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Category Master</Typography>
+        <Typography tag="h1" size="h6/normal">Category Master</Typography>
       </div>
       <div className="w-full mb-12 max-w-2xl">
         <SearchInput searchTerm={searchTerm} isSearchSort={false} />
@@ -174,7 +174,7 @@ const CategoryMaster = () => {
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
                 stroke="currentColor"
-                class="w-6 h-6 stroke-secondary stroke-2"
+                class="w-6 h-6 stroke-white stroke-2"
               >
                 <path
                   stroke-linecap="round"

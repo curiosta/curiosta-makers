@@ -68,8 +68,8 @@ const Guide = () => {
                   <span
                     className={`${
                       activeIndex.value === indicatorIndex
-                        ? "bg-primary-700"
-                        : "bg-primary-100"
+                        ? "bg-sea-500"
+                        : "bg-teal-soft"
                     } w-6 h-1  rounded-2xl`}
                   ></span>
                 ))}
@@ -92,7 +92,7 @@ const Guide = () => {
           </Button>
           <Button
             type="button"
-            className={"!bg-primary-100 text-primary-900 !rounded-xl w-full"}
+            className={"!bg-teal-soft text-ink !rounded-xl w-full"}
             onClick={() => route("/welcome")}
           >
             Skip

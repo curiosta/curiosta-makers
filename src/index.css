@@ -1,7 +1,116 @@
+/* Brand fonts (self-hosted so the PWA works offline): Fraunces / Inter / JetBrains Mono */
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource-variable/inter/wght.css";
+@import "@fontsource-variable/jetbrains-mono/wght.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background: #fafafa;
+/*
+ * Curiosta shared design tokens (brand skill, rev. 11 Oct 2026).
+ * This is the ONLY place colour values live: tailwind.config.js maps its theme
+ * colours and fonts to these vars. Do not rename them or add a parallel palette;
+ * site-only additions must use the --mms- prefix.
+ */
+:root {
+  --ink: #0b1f2e;
+  --ink-2: #2d4354;
+  --muted: #5d7180;
+  --sea-900: #041726;
+  --sea-800: #06243a;
+  --sea-700: #0a3554;
+  --sea-500: #0f6e8c;
+  --teal: #11b5a4;
+  --teal-soft: #d8f3ef;
+  --coral: #ff6b4a;
+  --coral-soft: #ffe7e0;
+  --sand: #f7f4ee;
+  --card: #ffffff;
+  --line: #e4e0d6;
+  --ok: #14866d;
+  --bad: #c2412d;
+  --radius: 16px;
+  --nav-h: 60px;
+  --shadow: 0 1px 2px rgb(4 23 38 / 0.06), 0 8px 24px rgb(4 23 38 / 0.08);
+
+  --serif: "Fraunces Variable", "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* site-only (MMS) */
+  --mms-body-size: 17px;
+  --mms-bottom-nav-h: 64px;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --mms-body-size: 16px;
+    --nav-h: 64px;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--sand);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--mms-body-size);
+    line-height: 1.62;
+    overflow-x: hidden;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted);
+    opacity: 1;
+  }
+  /* @tailwindcss/forms defaults to its own blue; use the brand accent. */
+  [type="checkbox"],
+  [type="radio"] {
+    color: var(--sea-500);
+    border-color: var(--muted);
+  }
+  [type="checkbox"]:focus,
+  [type="radio"]:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    --tw-ring-color: var(--sea-500);
+  }
+  :focus-visible {
+    outline: 2px solid var(--sea-500);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Mono eyebrow / small label on light surfaces (use text-teal only on dark bands). */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sea-500);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
