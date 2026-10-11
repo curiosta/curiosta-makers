@@ -144,7 +144,7 @@ const AdminUserAccess = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Admin User Access Master</Typography>
+        <Typography tag="h1" size="h6/normal">Admin User Access Master</Typography>
       </div>
 
       <div className="text-center my-2 w-full mb-20 max-w-2xl">
@@ -164,7 +164,7 @@ const AdminUserAccess = () => {
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-6 h-6 stroke-secondary stroke-2"
+              class="w-6 h-6 stroke-white stroke-2"
             >
               <path
                 stroke-linecap="round"
@@ -183,7 +183,7 @@ const AdminUserAccess = () => {
                   <div className="flex items-center gap-4 w-10/12">
                     <Chip
                       variant="primary2"
-                      className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+                      className="!bg-sea-700 !rounded-full uppercase h-10 w-10 !text-white"
                     >
                       {user.first_name
                         ? user.first_name.charAt(0)

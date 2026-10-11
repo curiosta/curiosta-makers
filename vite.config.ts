@@ -24,6 +24,10 @@ export default defineConfig({
     preact(),
     VitePWA({
       registerType: "autoUpdate",
+      workbox: {
+        // Precache the latin brand font files so the PWA keeps its type offline.
+        globPatterns: ["**/*.{js,css,html}", "**/*-latin-*.woff2"],
+      },
       includeAssets: [
         "favicon.ico",
         "apple-touch-icon.png",
@@ -34,7 +38,7 @@ export default defineConfig({
         short_name: "curiosta makers",
         description:
           "Curiosta makers is a comprehensive platform for managing makerspaces",
-        theme_color: "#ffffff",
+        theme_color: "#041726", // --sea-900
         icons: [
           {
             src: "android-chrome-192x192.png",
@@ -59,7 +63,7 @@ export default defineConfig({
             purpose: "maskable",
           },
         ],
-        background_color: "#ffffff",
+        background_color: "#f7f4ee", // --sand
         display: "standalone",
         scope: "/",
         start_url: "/",

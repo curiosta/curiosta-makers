@@ -37,7 +37,7 @@ const OrderStatusToggle = ({
     },
   ];
   return (
-    <div className="flex justify-evenly items-center w-full my-2 bg-white p-2 shadow-lg rounded-2xl">
+    <div className="flex justify-evenly items-center w-full my-2 bg-card p-2 shadow-lg rounded-2xl">
       {toggleItems.map((item) => (
         <Button
           type="button"
@@ -48,7 +48,7 @@ const OrderStatusToggle = ({
           className={`!rounded-2xl items-center capitalize px-3 ${
             JSON.stringify(activeToggle.value) ===
             JSON.stringify(item.fulfillStatus)
-              ? "!bg-primary-700 text-white"
+              ? "!bg-sea-700 text-white"
               : ""
           }`}
         >
@@ -56,11 +56,11 @@ const OrderStatusToggle = ({
           <Typography
             size="body2/normal"
             variant="app-primary"
-            className={`bg-primary-600/10 w-6 h-6 mx-1 items-center  justify-center rounded-full 
+            className={`bg-teal-soft w-6 h-6 mx-1 items-center  justify-center rounded-full 
        ${
          JSON.stringify(activeToggle.value) ===
          JSON.stringify(item.fulfillStatus)
-           ? "!bg-white flex"
+           ? "!bg-card flex"
            : "hidden"
        }
     `}

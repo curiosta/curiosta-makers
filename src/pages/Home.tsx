@@ -22,11 +22,11 @@ const Home = () => {
     ? user.customer.value
     : admin.adminData.value;
   return (
-    <div className="flex flex-col justify-center items-center bg-neutral-50 p-4 w-full ">
+    <div className="flex flex-col justify-center items-center bg-sand p-4 w-full ">
       <TopNavbar />
       <div className="w-full mb-12 max-w-2xl">
         <div className="w-full pl-2 my-4">
-          <Typography>
+          <Typography tag="h1">
             Hello{" "}
             {currentUser?.first_name
               ? currentUser?.first_name

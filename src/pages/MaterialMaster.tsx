@@ -85,7 +85,7 @@ const MaterialMaster = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Material Master</Typography>
+        <Typography tag="h1" size="h6/normal">Material Master</Typography>
       </div>
 
       <div className="w-full text-center mb-12 max-w-2xl">
@@ -99,7 +99,7 @@ const MaterialMaster = () => {
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-6 h-6 stroke-secondary stroke-2"
+              class="w-6 h-6 stroke-white stroke-2"
             >
               <path
                 stroke-linecap="round"
@@ -154,6 +154,7 @@ const MaterialMaster = () => {
                     variant="icon"
                     onClick={() => handleDialog(index)}
                     className="z-10"
+                    aria-label={`Actions for ${product.title}`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

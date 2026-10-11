@@ -56,7 +56,7 @@ const MultiRadio = ({
         <div className="w-full flex gap-2 items-center flex-wrap ">
           <Button
             type="button"
-            className="gap-2 !items-center py-1 bg-gray-200"
+            className="gap-2 !items-center py-1 bg-line"
             variant="icon"
           >
             {variant === "countries"
@@ -84,11 +84,11 @@ const MultiRadio = ({
           </Button>
         </div>
       ) : null}
-      <div className="w-full flex items-center bg-secondary border shadow rounded-lg border-gray-300">
+      <div className="w-full flex items-center bg-card border shadow rounded-lg border-muted/80">
         <input
           type="search"
           class={cx(
-            "rounded-md border-gray-300 w-full p-1.5 pl-2 border-none focus:border-transparent focus:ring-0 z-10 ",
+            "rounded-md border-line w-full p-1.5 pl-2 border-none focus:border-transparent focus:ring-0 z-10 ",
             className
           )}
           value={searchTerm.value}
@@ -121,7 +121,7 @@ const MultiRadio = ({
         <Button
           type="button"
           variant="icon"
-          className="!text-app-primary-600 !p-1.5"
+          className="!text-sea-500 !p-1.5"
           onClick={() => {
             dropDownOpen.value = !dropDownOpen.value;
           }}
@@ -149,7 +149,7 @@ const MultiRadio = ({
       <ul
         className={`w-full  flex-col gap-3 ${
           dropDownOpen.value || searchTerm.value?.length ? "flex" : "hidden"
-        } bg-secondary my-1 p-3 overflow-y-auto max-h-48 shadow-lg rounded-lg`}
+        } bg-card my-1 p-3 overflow-y-auto max-h-48 shadow-lg rounded-lg`}
       >
         {searchTerm.value?.length ? (
           searchResult?.length ? (

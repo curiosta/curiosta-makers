@@ -75,8 +75,8 @@ const Dialog = ({
               variant="icon"
               className={`gap-4 !justify-start ${
                 variant === "activate-user"
-                  ? "!text-green-700"
-                  : "!text-danger-600"
+                  ? "!text-ok"
+                  : "!text-bad"
               } `}
               onClick={() => {
                 (isDeletePopup.value = true), (isPopup.value = true);

@@ -24,7 +24,7 @@ const MiddleContent = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center bg-primary-600/10 p-4 px-8 rounded-2xl my-4">
+    <div className="flex flex-col items-center bg-teal-soft p-4 px-8 rounded-2xl my-4">
       <div className="flex flex-wrap justify-center items-center gap-4  ">
         {MiddleContents.map((item, index) => (
           <Link

@@ -23,11 +23,11 @@ const OffsetPagination: FunctionComponent<TOffsetPagination> = ({
     <div
       class={`${
         hidePagination ? "hidden" : "flex"
-      } items-center justify-between border-t border-gray-200 mt-4 py-3 sm:px-6`}
+      } items-center justify-between border-t border-line mt-4 py-3 sm:px-6`}
       aria-label="Pagination"
     >
       <div class="hidden sm:block">
-        <p class="text-sm text-gray-700 flex gap-1">
+        <p class="text-sm text-ink-2 flex gap-1">
           Showing
           <span class="font-medium">{offset.value + 1}</span>-
           <span class="font-medium">
@@ -42,7 +42,7 @@ const OffsetPagination: FunctionComponent<TOffsetPagination> = ({
         <Button
           type="button"
           variant="secondary"
-          className={`!w-fit !px-3 !py-2 !bg-white ${
+          className={`!w-fit !px-3 !py-2 !bg-card ${
             prvBtnDisabled ? "hidden" : "inline-flex"
           }`}
           onClick={() =>
@@ -56,7 +56,7 @@ const OffsetPagination: FunctionComponent<TOffsetPagination> = ({
         <Button
           type="button"
           variant="secondary"
-          className={`!w-fit !px-3 !py-2 !bg-white ${
+          className={`!w-fit !px-3 !py-2 !bg-card ${
             isEndResult ? "hidden" : "inline-flex"
           }`}
           onClick={() =>

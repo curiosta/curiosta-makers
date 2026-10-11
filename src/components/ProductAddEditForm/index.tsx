@@ -138,7 +138,7 @@ const ProductAddEditForm = ({
         <div>
           <Typography
             size="body2/medium"
-            className="leading-6 text-gray-900 flex gap-1 mb-1"
+            className="leading-6 text-ink flex gap-1 mb-1"
           >
             Select Location
           </Typography>
@@ -162,7 +162,7 @@ const ProductAddEditForm = ({
             <Button
               type="button"
               variant="icon"
-              className="!text-danger-600  gap-2 !items-center"
+              className="!text-bad  gap-2 !items-center"
               onClick={() => (thumbnail.value = null)}
             >
               <svg
@@ -205,7 +205,7 @@ const ProductAddEditForm = ({
                   <Button
                     type="button"
                     variant="icon"
-                    className="!text-danger-600  gap-2 !items-center"
+                    className="!text-bad  gap-2 !items-center"
                     onClick={() =>
                       (productImages.value = productImages.value?.filter(
                         (val) => val.url !== image.url

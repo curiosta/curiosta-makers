@@ -31,7 +31,7 @@ const Progressbar = ({ status }: { status: string }) => {
         {status !== "canceled"
           ? progressSteps.map((step, index) => (
               <li
-                class={`relative pr-8 max-[321px]:pr-7  last:pr-0 ${
+                class={`relative pr-8 max-[360px]:pr-6  last:pr-0 ${
                   step.stepText !== "canceled" ? "block" : "hidden"
                 }`}
               >
@@ -39,11 +39,11 @@ const Progressbar = ({ status }: { status: string }) => {
                   class="absolute inset-0 -z-10 flex items-center"
                   aria-hidden="true"
                 >
-                  <div class="h-0.5 w-full bg-primary-600"></div>
+                  <div class="h-0.5 w-full bg-sea-500"></div>
                 </div>
                 <div
-                  class={`first-letter:relative flex h-6 w-6 items-center justify-center border border-primary-600 rounded-full shadow-lg
-            ${currentStep < step.step ? "bg-secondary" : "bg-primary-600"} `}
+                  class={`first-letter:relative flex h-6 w-6 items-center justify-center border border-sea-500 rounded-full shadow-lg
+            ${currentStep < step.step ? "bg-card" : "bg-sea-500"} `}
                 >
                   <Typography
                     size="small/normal"
@@ -55,8 +55,8 @@ const Progressbar = ({ status }: { status: string }) => {
                   <svg
                     class={`h-5 w-5 ${
                       currentStep < step.step
-                        ? "text-app-primary-700"
-                        : "text-secondary"
+                        ? "text-sea-500"
+                        : "text-white"
                     }`}
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -78,18 +78,18 @@ const Progressbar = ({ status }: { status: string }) => {
                   class="absolute inset-0 -z-10 flex items-center"
                   aria-hidden="true"
                 >
-                  <div class="h-0.5 w-full bg-primary-600"></div>
+                  <div class="h-0.5 w-full bg-sea-500"></div>
                 </div>
                 <div
                   class={`first-letter:relative flex h-6 w-6 items-center justify-center border
-                   border-primary-600 rounded-full shadow-lg ${
-                     currentStep < step.step ? "bg-secondary" : "bg-primary-600"
+                   border-sea-500 rounded-full shadow-lg ${
+                     currentStep < step.step ? "bg-card" : "bg-sea-500"
                    }
                     ${
                       step.stepText === "canceled"
-                        ? "!bg-danger-600 !border-danger-600"
+                        ? "!bg-bad !border-bad"
                         : ""
-                    }  hover:bg-primary-900`}
+                    }  hover:bg-sea-700`}
                 >
                   <Typography
                     size="small/normal"
@@ -101,8 +101,8 @@ const Progressbar = ({ status }: { status: string }) => {
                     <svg
                       class={`h-5 w-5 ${
                         currentStep < step.step
-                          ? "text-app-primary-700"
-                          : "text-secondary"
+                          ? "text-sea-500"
+                          : "text-white"
                       }`}
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -123,8 +123,8 @@ const Progressbar = ({ status }: { status: string }) => {
                       stroke="currentColor"
                       class={`h-5 w-5 ${
                         currentStep < step.step
-                          ? "text-app-primary-700"
-                          : "text-secondary"
+                          ? "text-sea-500"
+                          : "text-white"
                       }`}
                     >
                       <path

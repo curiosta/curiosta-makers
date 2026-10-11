@@ -15,7 +15,7 @@ const Master = () => {
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Master</Typography>
+        <Typography tag="h1" size="h6/normal">Master</Typography>
       </div>
       <div className="my-8">
         <Typography size="h6/normal">Select Master</Typography>
@@ -26,7 +26,7 @@ const Master = () => {
           <Link
             key={index}
             href={item.link}
-            className="flex justify-center items-center p-4 h-24 bg-primary-700 text-secondary rounded-xl"
+            className="flex justify-center items-center p-4 h-24 bg-sea-700 text-white rounded-xl hover:bg-sea-800 transition-colors"
           >
             <Typography className="text-center ">{item.title}</Typography>
           </Link>

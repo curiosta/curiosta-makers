@@ -61,7 +61,7 @@ const QuickActions = () => {
                 <img
                   src={action.icon}
                   alt={action.title}
-                  className="bg-primary-600/20 p-2 rounded-2xl w-16 h-16"
+                  className="bg-teal-soft p-2 rounded-2xl w-16 h-16"
                 />
                 <Typography>{action.title}</Typography>
               </Link>
@@ -75,7 +75,7 @@ const QuickActions = () => {
                 <img
                   src={action.icon}
                   alt={action.title}
-                  className="bg-primary-600/20 p-2 rounded-2xl w-16 h-16"
+                  className="bg-teal-soft p-2 rounded-2xl w-16 h-16"
                 />
                 <Typography>{action.title}</Typography>
               </Link>

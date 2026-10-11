@@ -57,7 +57,7 @@ const SearchResult = () => {
       <TopNavbar />
       <div className="w-full mb-12 max-w-2xl">
         <div className="my-2">
-          <Typography size="h6/normal">Search Products</Typography>
+          <Typography tag="h1" size="h6/normal">Search Products</Typography>
         </div>
         <SearchInput searchTerm={searchTerm} isSearchSort={false} />
 

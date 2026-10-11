@@ -131,12 +131,13 @@ const ManageQty = ({
         cart.loading.value === "cart:line_items:remove" && "grayscale"
       }`}
     >
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-1 sm:gap-2 items-center">
         {/* decrease cart quantity */}
         <Button
           type="button"
           variant="icon"
-          className="w-8 h-8 items-center bg-primary-600/10 !rounded-full !p-0"
+          className="w-8 h-8 items-center bg-teal-soft !rounded-full !p-0"
+          aria-label="Decrease quantity"
           onClick={decreaseQty}
           disabled={loadingQty.value}
         >
@@ -146,7 +147,8 @@ const ManageQty = ({
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-6 h-6 stroke-primary-600"
+            class="w-6 h-6 stroke-sea-500"
+            aria-hidden="true"
           >
             <path
               stroke-linecap="round"
@@ -164,7 +166,7 @@ const ManageQty = ({
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class={"animate-spin w-6 stroke-primary-600 duration-500"}
+            class={"animate-spin w-6 stroke-sea-500 duration-500"}
           >
             <path
               stroke-linecap="round"
@@ -173,11 +175,12 @@ const ManageQty = ({
             />
           </svg>
         ) : (
-          <div className="w-12">
+          <div className="w-10 sm:w-12">
             <Input
               type="number"
+              aria-label="Quantity"
               className={`text-center ${
-                loadingInputQty.value ? "bg-gray-100" : ""
+                loadingInputQty.value ? "bg-sand" : ""
               }`}
               value={!isUser.value ? draftItem.quantity : productItem.quantity}
               onBlur={handleQty}
@@ -191,7 +194,8 @@ const ManageQty = ({
         <Button
           type="button"
           variant="icon"
-          className="w-8 h-8 items-center bg-primary-600/10  !rounded-full !p-0"
+          className="w-8 h-8 items-center bg-teal-soft  !rounded-full !p-0"
+          aria-label="Increase quantity"
           onClick={increaseQty}
           disabled={loadingQty.value}
         >
@@ -201,7 +205,8 @@ const ManageQty = ({
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-6 h-6 stroke-primary-600"
+            class="w-6 h-6 stroke-sea-500"
+            aria-hidden="true"
           >
             <path
               stroke-linecap="round"
@@ -217,6 +222,7 @@ const ManageQty = ({
           type="button"
           variant="icon"
           className="!p-0"
+          aria-label="Remove item"
           onClick={() =>
             !isUser.value
               ? handleDeleteDraftItem()
@@ -230,7 +236,8 @@ const ManageQty = ({
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-6 h-6 stroke-danger-600"
+            class="w-6 h-6 stroke-bad"
+            aria-hidden="true"
           >
             <path
               stroke-linecap="round"
@@ -262,7 +269,7 @@ const ManageQty = ({
       <div
         className={`absolute ${
           page !== "cart" ? "bottom-full" : "top-full"
-        }  rounded-lg shadow-xl p-1.5 bg-secondary z-10 ${
+        }  rounded-lg shadow-xl p-1.5 bg-card z-10 ${
           errorMessage.value ? "block" : "hidden"
         }`}
       >

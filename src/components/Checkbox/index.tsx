@@ -16,7 +16,7 @@ const Checkbox = ({ label, labelClassName, className, ...rest }: Props) => {
         type="checkbox"
         id={id}
         class={cx(
-          "h-4 w-4 rounded border-gray-300 text-app-primary-600 focus:ring-primary-600",
+          "h-4 w-4 rounded border-muted text-sea-500 focus:ring-sea-500",
           className
         )}
         {...rest}
@@ -25,7 +25,7 @@ const Checkbox = ({ label, labelClassName, className, ...rest }: Props) => {
         <label
           for={id}
           class={cx(
-            "ml-3 block text-sm leading-6 text-gray-900 cursor-pointer",
+            "ml-3 block text-sm leading-6 text-ink cursor-pointer",
             labelClassName
           )}
         >

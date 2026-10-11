@@ -101,6 +101,8 @@ const Category = ({
                 type="button"
                 variant="icon"
                 className="gap-2 items-center "
+                aria-label={`${activeCategory.value === category.id ? "Collapse" : "Expand"} ${category.name}`}
+                aria-expanded={activeCategory.value === category.id}
                 onClick={handleAccordion}
               >
                 {category.category_children?.length ? (
@@ -139,7 +141,7 @@ const Category = ({
               {!category.handle.startsWith("loc:") ? (
                 <div className="flex gap-2 items-center">
                   {!category.is_active ? (
-                    <span className="w-3 h-3 bg-danger-600 rounded-full"></span>
+                    <span className="w-3 h-3 bg-bad rounded-full"></span>
                   ) : null}
                   {category.is_internal ? (
                     <svg
@@ -163,7 +165,8 @@ const Category = ({
             <Button
               type="button"
               variant="icon"
-              className=" bg-primary-600 rounded-full !p-1 z-[5] "
+              className=" bg-sea-500 rounded-full !p-1 z-[5] "
+              aria-label={`Add sub-category under ${category.name}`}
               onClick={() => {
                 (isCategoryPopUp.value = true),
                   (selectedCategory.value = null),
@@ -180,7 +183,7 @@ const Category = ({
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
                 stroke="currentColor"
-                class="w-6 h-6 stroke-secondary stroke-2"
+                class="w-6 h-6 stroke-white stroke-2"
               >
                 <path
                   stroke-linecap="round"
@@ -195,6 +198,7 @@ const Category = ({
             variant="icon"
             onClick={() => handleDialog(index)}
             className="z-10"
+            aria-label={`Actions for ${category.name}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

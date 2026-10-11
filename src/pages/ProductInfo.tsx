@@ -250,14 +250,14 @@ const ProductInfo = ({ id }: Props) => {
                 <a
                   href="https://curiosta.com/products"
                   target="_blank"
-                  className="rounded-lg bg-secondary border-2 border-primary-700 flex font-semibold  justify-center mt-4 px-4 py-2 text-app-primary-700 text-sm"
+                  className="rounded-lg bg-card border-2 border-sea-500 flex font-semibold  justify-center mt-4 px-4 py-2 text-sea-500 text-sm"
                 >
                   Buy Now
                 </a>
                 <div className="w-full  mb-12 relative ">
                   <div
                     className={`absolute top-16 w-full p-2 shadow-lg rounded-md z-10
-                     transition-all bg-secondary
+                     transition-all bg-card
               ${
                 cartTypeOpen.value
                   ? "translate-x-0 left-0"
@@ -276,7 +276,7 @@ const ProductInfo = ({ id }: Props) => {
                           stroke-width="1.5"
                           stroke="currentColor"
                           class={
-                            "animate-spin w-6 stroke-primary-600 duration-500"
+                            "animate-spin w-6 stroke-sea-500 duration-500"
                           }
                         >
                           <path
@@ -339,7 +339,7 @@ const ProductInfo = ({ id }: Props) => {
                 variant="icon"
                 title="Edit"
                 link={`/material-master/edit/${id}`}
-                className="z-10 text-third-500 !rounded-full border-2 gap-2 sm:px-4 !shadow-sm sm:w-fit"
+                className="z-10 text-sea-500 !rounded-full border-2 gap-2 sm:px-4 !shadow-sm sm:w-fit"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

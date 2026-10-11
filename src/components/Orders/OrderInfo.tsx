@@ -144,7 +144,7 @@ const OrderInfo = ({ id }: Props) => {
                     ) : (
                       <Chip
                         variant="primary2"
-                        className="!bg-primary-700 !rounded-full uppercase h-10 w-10 !text-white"
+                        className="!bg-sea-700 !rounded-full uppercase h-10 w-10 !text-white"
                       >
                         {order.value?.email.charAt(0)}
                       </Chip>
@@ -177,7 +177,7 @@ const OrderInfo = ({ id }: Props) => {
               />
             </div>
 
-            <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondary">
+            <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-card">
               <Typography size="h6/normal">Items</Typography>
               <Typography size="h6/normal">Requested Qty</Typography>
             </div>
@@ -188,7 +188,7 @@ const OrderInfo = ({ id }: Props) => {
               <div className="my-4">
                 <Typography
                   size="body1/normal"
-                  className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-blue-600 text-white"
+                  className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-sea-500 text-white"
                 >
                   Fulfilled
                 </Typography>
@@ -287,7 +287,7 @@ const OrderInfo = ({ id }: Props) => {
               <div className="my-4">
                 <Typography
                   size="body1/normal"
-                  className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-yellow-900 text-white"
+                  className="capitalize w-fit p-2 rounded-tl-2xl rounded-br-2xl bg-coral-soft text-ink"
                 >
                   Not Fullfilled
                 </Typography>
@@ -338,7 +338,7 @@ const OrderInfo = ({ id }: Props) => {
                 <Button
                   link={`/return/${order.value?.id}`}
                   variant="secondary"
-                  className="!py-3 capitalize disabled:bg-gray-200 disabled:text-gray-500 disabled:!border-none"
+                  className="!py-3 capitalize disabled:bg-line disabled:text-muted disabled:!border-none"
                   disabled={order.value?.returns?.length >= 1}
                 >
                   Return Borrow item

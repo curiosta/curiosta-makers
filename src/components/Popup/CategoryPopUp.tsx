@@ -67,7 +67,7 @@ const CategoryPopup = ({
         className="block w-full h-full"
         onClick={() => (isPopup.value = false)}
       />
-      <div className="absolute w-10/12 bg-secondary  rounded-2xl transition-all p-6 max-w-sm">
+      <div className="absolute w-10/12 bg-card  rounded-2xl transition-all p-6 max-w-sm">
         {parentCategory.value && type === "add" ? (
           <div className="flex flex-col gap-2 ">
             <Typography className="capitalize">
@@ -76,7 +76,7 @@ const CategoryPopup = ({
             </Typography>
             <Typography className="capitalize">
               {parentCategory.value?.name} /{" "}
-              <span className="text-gray-400">new</span>
+              <span className="text-muted">new</span>
             </Typography>
           </div>
         ) : (

@@ -101,6 +101,7 @@ const App = () => {
   }
 
   return (
+    <main id="main">
     <Router
       url={currentUrl.value}
       onChange={(e: RouterOnChangeArgs) => {
@@ -142,6 +143,7 @@ const App = () => {
       <Route path="/change-password" component={ChangePassword} />
       <Route path="/issue-inventory" component={IssueInventory} />
     </Router>
+    </main>
   );
 };
 

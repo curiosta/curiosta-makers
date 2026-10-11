@@ -13,6 +13,10 @@ interface Props
 const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
   ({ type, className, children, disabled, link, ...rest }, ref) => {
     const classes = twMerge(cx(button(rest), className));
+    // Accessibility attributes also apply when the button renders as a link.
+    const a11y = Object.fromEntries(
+      Object.entries(rest).filter(([k]) => k.startsWith("aria-") || k === "title")
+    );
     return (
       <>
         {link && !disabled ? (
@@ -20,6 +24,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
             href={link}
             ref={ref as ForwardedRef<HTMLAnchorElement>}
             className={cx(classes, "p-0")}
+            {...a11y}
           >
             {children}
           </Link>

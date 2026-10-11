@@ -46,7 +46,7 @@ const SearchInput = ({
       noValidate
       mode="onSubmit"
       onSubmit={handleSubmit}
-      className={`flex items-center  my-4 w-full bg-white relative border shadow-lg rounded-2xl p-2 ${
+      className={`flex items-center  my-4 w-full bg-card relative border shadow-lg rounded-2xl p-2 ${
         handleSubmit ? "" : "px-4"
       } relative`}
     >
@@ -65,6 +65,7 @@ const SearchInput = ({
             stroke-width="1.5"
             stroke="currentColor"
             class="w-6 h-6"
+            aria-hidden="true"
           >
             <path
               stroke-linecap="round"
@@ -85,6 +86,7 @@ const SearchInput = ({
           <Button
             type="button"
             className={`p-0 w-10 h-10 rounded-l-none flex items-center justify-center !bg-transparent z-10`}
+            aria-label="Sort options"
             onClick={handleDialog}
           >
             <svg
@@ -93,7 +95,7 @@ const SearchInput = ({
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-6 h-6 text-primary-900"
+              class="w-6 h-6 text-ink"
             >
               <path
                 stroke-linecap="round"
@@ -129,9 +131,10 @@ const SearchInput = ({
       ) : null}
       {handleSubmit ? (
         <Button
-          type="sumbit"
+          type="submit"
           variant="icon"
-          className="absolute right-0 w-12 !p-3.5 rounded-2xl rounded-l-none text-secondary bg-primary-700"
+          aria-label="Search"
+          className="absolute right-0 w-12 !p-3.5 rounded-2xl rounded-l-none text-sea-900 bg-coral hover:brightness-95"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -140,6 +143,7 @@ const SearchInput = ({
             stroke-width="2.5"
             stroke="currentColor"
             class="w-6 h-6"
+            aria-hidden="true"
           >
             <path
               stroke-linecap="round"

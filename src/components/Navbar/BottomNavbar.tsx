@@ -124,38 +124,35 @@ const BottomNavbar = () => {
     // },
   ];
 
+  const items = isUser.value ? bottomNavbarItems : adminBottomNavbarItems;
+
+  // Always visible at every width (brand rule: never hide the nav on small screens).
   return (
-    <div className="fixed bottom-0 left-0 flex justify-evenly items-center w-full bg-primary-700 z-10 ">
-      {isUser.value
-        ? bottomNavbarItems.map((item, index) => (
-            <Button
-              key={index}
-              type="button"
-              link={item?.link}
-              variant="icon"
-              className={`flex-col items-center ${
-                activePath === item.link ? "text-white" : "text-primary-300"
-              } `}
-            >
-              {item.icon}
-              <Typography size="body2/normal">{item.title}</Typography>
-            </Button>
-          ))
-        : adminBottomNavbarItems.map((item, index) => (
-            <Button
-              key={index}
-              type="button"
-              link={item?.link}
-              variant="icon"
-              className={`flex-col items-center ${
-                activePath === item.link ? "text-white" : "text-primary-300"
-              } `}
-            >
-              {item.icon}
-              <Typography size="body2/normal">{item.title}</Typography>
-            </Button>
-          ))}
-    </div>
+    <nav
+      aria-label="Primary"
+      className="fixed bottom-0 left-0 z-10 flex w-full items-stretch justify-evenly bg-sea-900 pb-[env(safe-area-inset-bottom)] shadow-[0_-1px_0_rgb(255_255_255/0.08)]"
+    >
+      {items.map((item, index) => {
+        const active = activePath === item.link;
+        return (
+          <Button
+            key={index}
+            type="button"
+            link={item?.link}
+            variant="icon"
+            aria-current={active ? "page" : undefined}
+            className={`flex-col items-center gap-0.5 min-w-[5.5rem] min-h-bottom-nav !rounded-none border-t-2 ${
+              active
+                ? "text-white border-teal"
+                : "text-white/75 border-transparent hover:text-white"
+            }`}
+          >
+            <span aria-hidden="true">{item.icon}</span>
+            <Typography size="body2/medium">{item.title}</Typography>
+          </Button>
+        );
+      })}
+    </nav>
   );
 };
 

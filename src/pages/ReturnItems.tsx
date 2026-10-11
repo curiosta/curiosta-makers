@@ -99,13 +99,13 @@ const ReturnItems = ({ order_id, return_id }: Props) => {
     <div className="flex flex-col justify-center items-center p-4 w-full ">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Return items</Typography>
+        <Typography tag="h1" size="h6/normal">Return items</Typography>
       </div>
       <div className="w-full mb-12 max-w-2xl">
         {isLoading.value !== "order:get" ? (
           borrowItems?.length ? (
             <div className="w-full">
-              <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-secondary">
+              <div className="flex justify-between p-2 px-8 shadow rounded-lg w-full bg-card">
                 <Typography size="h6/normal">Items</Typography>
                 <Typography size="h6/normal">Quantity</Typography>
               </div>

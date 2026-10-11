@@ -8,11 +8,11 @@ type Props = {
 
 const SuccessAlert = ({ alertMessage, link, linkText }: Props) => {
   return (
-    <div class="rounded-md bg-success-50 p-4">
+    <div class="rounded-md bg-teal-soft p-4">
       <div class="flex">
         <div class="flex-shrink-0">
           <svg
-            class="h-5 w-5 text-green-400"
+            class="h-5 w-5 text-ok"
             viewBox="0 0 20 20"
             fill="currentColor"
             aria-hidden="true"
@@ -32,7 +32,7 @@ const SuccessAlert = ({ alertMessage, link, linkText }: Props) => {
             <Typography variant="success">
               <a
                 href={link}
-                class="whitespace-nowrap font-medium text-green-700 hover:text-green-600"
+                class="whitespace-nowrap font-medium text-ok hover:text-ok"
               >
                 {linkText}
                 <span aria-hidden="true"> &rarr;</span>

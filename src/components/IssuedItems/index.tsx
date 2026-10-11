@@ -91,7 +91,7 @@ const IssuedItems = () => {
         ) : (
           <Typography>Recently User's Requests</Typography>
         )}
-        <Link href="/orders" className="text-app-primary-600">
+        <Link href="/orders" className="text-sea-500">
           View All
         </Link>
       </div>

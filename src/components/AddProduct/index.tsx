@@ -30,7 +30,7 @@ const AddProduct = ({ product, index, handleDialog }: TAddProduct) => {
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class={"animate-spin w-6 stroke-primary-600 duration-500"}
+          class={"animate-spin w-6 stroke-sea-500 duration-500"}
         >
           <path
             stroke-linecap="round"

@@ -300,17 +300,17 @@ const UserProfile = ({ id }: Props) => {
     <div className="flex flex-col justify-center items-center p-4 w-full relative">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">User Profile</Typography>
+        <Typography tag="h1" size="h6/normal">User Profile</Typography>
       </div>
       <div className="w-full mb-12 max-w-2xl">
         {isLoading.value !== "user:get" ? (
           <div className="w-full flex flex-col gap-2 ">
-            <div className="w-full bg-secondary shadow-sm rounded-lg border p-4">
+            <div className="w-full bg-card shadow-sm rounded-lg border p-4">
               <div className="flex justify-between items-center w-full relative">
                 <div className=" w-full flex items-center gap-4">
                   <div className="w-full max-w-[5rem] h-20 flex relative">
                     {isUser.value ? (
-                      <Chip className="!bg-primary-700 uppercase text-4xl w-full flex justify-center items-center text-white">
+                      <Chip className="!bg-sea-700 uppercase text-4xl w-full flex justify-center items-center text-white">
                         {userData.value?.first_name
                           ? userData.value?.first_name.charAt(0)
                           : userData.value?.email.charAt(0)}
@@ -327,7 +327,7 @@ const UserProfile = ({ id }: Props) => {
                     {!isUser.value ? (
                       <Button
                         variant="icon"
-                        className="absolute right-0 -bottom-2 !rounded-full bg-gray-200"
+                        className="absolute right-0 -bottom-2 !rounded-full bg-line"
                         onClick={() => (isProfileImageEdit.value = true)}
                       >
                         <svg
@@ -447,14 +447,14 @@ const UserProfile = ({ id }: Props) => {
                           placeholder="Enter Identification Proof Number"
                           className="!p-2"
                         />
-                        <div className="flex items-center justify-between border border-gray-400 bg-secondary p-4 rounded-lg">
+                        <div className="flex items-center justify-between border border-muted bg-card p-4 rounded-lg">
                           <Typography>
                             Take a picture of the ID Proof
                           </Typography>
                           <Button
                             type="button"
                             variant="icon"
-                            className="ring-1 ring-third-500"
+                            className="ring-1 ring-sea-500"
                             onClick={() => {
                               uploadPopup.value = true;
                             }}
@@ -463,7 +463,7 @@ const UserProfile = ({ id }: Props) => {
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 24 24"
                               fill="currentColor"
-                              class="w-14 h-14 fill-third-600"
+                              class="w-14 h-14 fill-sea-500"
                             >
                               <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
                               <path
@@ -478,7 +478,7 @@ const UserProfile = ({ id }: Props) => {
                     </form>
                   ) : (
                     userDocumentInfo.value?.map((document) => (
-                      <div className="w-full flex flex-col items-center gap-4 border bg-secondary p-4 rounded-lg">
+                      <div className="w-full flex flex-col items-center gap-4 border bg-card p-4 rounded-lg">
                         <div className="w-full flex flex-wrap items-center gap-4 sm:justify-around p-4  ">
                           <div>
                             <Typography size="body1/normal">
@@ -508,7 +508,7 @@ const UserProfile = ({ id }: Props) => {
                         <Button
                           type="button"
                           variant="icon"
-                          className="!text-danger-600 border-2  gap-2 !items-center"
+                          className="!text-bad border-2  gap-2 !items-center"
                           onClick={() => {
                             isDeletePopup.value = true;
                             selectedDocumentKey.value = document.idImageKey;

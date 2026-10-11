@@ -32,13 +32,13 @@ const ShortClosePopup = ({
         className="block w-full h-full"
         onClick={() => (isPopup.value = false)}
       />
-      <div className="absolute w-10/12 bg-secondary  rounded-2xl transition-all p-6 max-w-sm">
+      <div className="absolute w-10/12 bg-card  rounded-2xl transition-all p-6 max-w-sm">
         <div className="flex gap-4 items-center justify-center w-full">
           <Typography>To Be Picked</Typography>
           <div className="w-12">
             <Input
               type="number"
-              className="text-center disabled:bg-gray-100"
+              className="text-center disabled:bg-sand"
               value={selectedItem.value?.quantity}
               disabled={true}
             />
@@ -49,7 +49,7 @@ const ShortClosePopup = ({
             <Typography>Actual Picked</Typography>
             <input
               type="number"
-              className="w-12 text-center rounded-lg disabled:bg-gray-100"
+              className="w-12 text-center rounded-lg disabled:bg-sand"
               value={selectedItem.value?.quantity}
               name="actual_qty"
               min={1}

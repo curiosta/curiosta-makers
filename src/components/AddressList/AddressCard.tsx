@@ -35,11 +35,11 @@ const AddressCard = ({
   return (
     <label
       class={cx(
-        "relative flex flex-col cursor-pointer rounded-lg border bg-secondary p-4 shadow-sm ",
+        "relative flex flex-col cursor-pointer rounded-lg border bg-card p-4 shadow-sm ",
         variant === "userProfile" && selectedAddressId.value === address.id
-          ? "ring-1 ring-primary-600"
+          ? "ring-1 ring-sea-500"
           : "",
-        variant === "userProfile" && disabled ? "!bg-gray-100" : ""
+        variant === "userProfile" && disabled ? "!bg-sand" : ""
       )}
     >
       {variant === "userProfile" && selectedAddressId.value === address.id ? (
@@ -51,7 +51,7 @@ const AddressCard = ({
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class={"animate-spin w-6 stroke-primary-600 duration-500"}
+              class={"animate-spin w-6 stroke-sea-500 duration-500"}
             >
               <path
                 stroke-linecap="round"
@@ -63,7 +63,7 @@ const AddressCard = ({
             <>
               <Typography variant="secondary">default</Typography>
               <svg
-                class={`h-5 w-5 text-app-primary-600`}
+                class={`h-5 w-5 text-sea-500`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 aria-hidden="true"

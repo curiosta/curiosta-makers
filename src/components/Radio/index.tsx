@@ -15,7 +15,7 @@ const Radio = ({ label, className, ...rest }: Props) => {
         type="radio"
         id={id}
         class={cx(
-          "h-4 w-4 rounded border-gray-300 text-app-primary-600 focus:ring-primary-600",
+          "h-4 w-4 rounded border-muted text-sea-500 focus:ring-sea-500",
           className
         )}
         {...rest}
@@ -23,7 +23,7 @@ const Radio = ({ label, className, ...rest }: Props) => {
       {label ? (
         <label
           for={id}
-          class="ml-3 block text-sm leading-6 text-gray-900 cursor-pointer"
+          class="ml-3 block text-sm leading-6 text-ink cursor-pointer"
         >
           {label}
         </label>

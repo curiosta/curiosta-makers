@@ -100,7 +100,7 @@ const UserBiometricInfo = ({
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="currentColor"
-          class="w-6 h-6 fill-third-600"
+          class="w-6 h-6 fill-sea-500"
         >
           <path
             fill-rule="evenodd"
@@ -156,7 +156,7 @@ const UserBiometricInfo = ({
                     : ""
                 }
               />
-              <div className="flex items-center justify-between border border-gray-400 bg-secondary p-4 rounded-lg">
+              <div className="flex items-center justify-between border border-muted bg-card p-4 rounded-lg">
                 <div>
                   <Typography>Take a picture of the ID Proof</Typography>
                   {documentInfo.value?.length &&
@@ -166,7 +166,7 @@ const UserBiometricInfo = ({
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         fill="currentColor"
-                        class="w-5 h-5 fill-primary-600"
+                        class="w-5 h-5 fill-sea-500"
                       >
                         <path
                           fill-rule="evenodd"
@@ -180,7 +180,7 @@ const UserBiometricInfo = ({
                       <Button
                         type="button"
                         variant="icon"
-                        className="!text-danger-600  gap-2 !items-center"
+                        className="!text-bad  gap-2 !items-center"
                         onClick={() =>
                           (documentInfo.value = documentInfo.value.filter(
                             (doc) =>
@@ -211,7 +211,7 @@ const UserBiometricInfo = ({
                 <Button
                   type="button"
                   variant="icon"
-                  className="ring-1 ring-third-500"
+                  className="ring-1 ring-sea-500"
                   onClick={() => {
                     (uploadPopup.value = true), (uploadType.value = "idUpload");
                   }}
@@ -220,7 +220,7 @@ const UserBiometricInfo = ({
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    class="w-14 h-14 fill-third-600"
+                    class="w-14 h-14 fill-sea-500"
                   >
                     <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
                     <path
@@ -238,7 +238,7 @@ const UserBiometricInfo = ({
           <Button
             type="button"
             variant="icon"
-            className="gap-2 text-third-600 border ring-2 ring-third-600"
+            className="gap-2 text-sea-500 border ring-2 ring-sea-500"
             onClick={() => (numberOfIds.value = numberOfIds.value + 1)}
           >
             <svg
@@ -260,7 +260,7 @@ const UserBiometricInfo = ({
         </div>
       </form>
 
-      <div className="flex items-center justify-between border border-gray-400 bg-secondary p-4 rounded-lg">
+      <div className="flex items-center justify-between border border-muted bg-card p-4 rounded-lg">
         <div>
           <Typography>Take a picture of the User</Typography>
           {profileImageKey.value ? (
@@ -269,7 +269,7 @@ const UserBiometricInfo = ({
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                class="w-5 h-5 fill-primary-600"
+                class="w-5 h-5 fill-sea-500"
               >
                 <path
                   fill-rule="evenodd"
@@ -283,7 +283,7 @@ const UserBiometricInfo = ({
               <Button
                 type="button"
                 variant="icon"
-                className="!text-danger-600  gap-2 !items-center"
+                className="!text-bad  gap-2 !items-center"
                 onClick={() => (profileImageKey.value = null)}
               >
                 <svg
@@ -308,7 +308,7 @@ const UserBiometricInfo = ({
         <Button
           type="button"
           variant="icon"
-          className="ring-1 ring-third-500"
+          className="ring-1 ring-sea-500"
           onClick={() => {
             (uploadPopup.value = true),
               (uploadType.value = "profileImageUpload");
@@ -318,7 +318,7 @@ const UserBiometricInfo = ({
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            class="w-14 h-14 fill-third-600"
+            class="w-14 h-14 fill-sea-500"
           >
             <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
             <path

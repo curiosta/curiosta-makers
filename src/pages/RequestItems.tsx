@@ -123,7 +123,7 @@ const RequestItems = ({ id }: Props) => {
     <div className="flex flex-col justify-center items-center p-4 w-full">
       <TopNavbar />
       <div className="my-2">
-        <Typography size="h6/normal">Request Items</Typography>
+        <Typography tag="h1" size="h6/normal">Request Items</Typography>
       </div>
 
       <div className="text-center my-2 w-full mb-12 max-w-2xl">
@@ -188,7 +188,7 @@ const RequestItems = ({ id }: Props) => {
                           stroke-width="1.5"
                           stroke="currentColor"
                           class={
-                            "animate-spin w-6 stroke-primary-600 duration-500"
+                            "animate-spin w-6 stroke-sea-500 duration-500"
                           }
                         >
                           <path

@@ -35,7 +35,7 @@ const PasswordResetForm = ({
       </div>
 
       <div class="mt-6 mx-auto sm:w-full sm:max-w-md w-11/12">
-        <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+        <div class="bg-card px-6 py-12 shadow sm:rounded-lg sm:px-12">
           <FormControl
             noValidate
             mode="onSubmit"
