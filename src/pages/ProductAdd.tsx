@@ -133,6 +133,11 @@ const ProductAdd = () => {
           description: description.toString(),
           status: status.toString(),
           inventory_quantity: parseInt(quantity.toString()),
+          metadata: {
+            reorder_level: String(formDataObj.reorder_level ?? "").trim() === "" ? "" : Math.max(0, Number(formDataObj.reorder_level)),
+            unit: String(formDataObj.unit ?? "").trim() || "pcs",
+            spec: String(formDataObj.spec ?? "").trim(),
+          },
           categories:
             selectedCategoryIds.value?.length || selectedLocationId.value
               ? categories

@@ -10,6 +10,7 @@ type TAddProduct = {
   images?: string[];
   thumbnail?: string;
   inventory_quantity: number;
+  metadata?: Record<string, unknown>;
 };
 
 export const adminAddProduct = async ({
@@ -20,6 +21,7 @@ export const adminAddProduct = async ({
   images,
   thumbnail,
   inventory_quantity,
+  metadata,
 }: TAddProduct) => {
   return medusa.admin.products.create({
     title,
@@ -28,6 +30,7 @@ export const adminAddProduct = async ({
     categories,
     images,
     thumbnail,
+    metadata,
     variants: [
       {
         title: "one size",

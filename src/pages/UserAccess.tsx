@@ -1,5 +1,4 @@
 import { adminActivateCustomer } from "@/api/admin/customers/activateCustomer";
-import { adminCreateCustomer } from "@/api/admin/customers/createCustomer";
 import { adminDeactivateCustomer } from "@/api/admin/customers/deactivateCustomer";
 import { adminCustomersList } from "@/api/admin/customers/listCustomers";
 import { adminListDeactivateCustomers } from "@/api/admin/customers/listDeactivateCustomers";
@@ -99,24 +98,13 @@ const UserAccess = () => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { first_name, last_name, phone, dob, gender } = formDataObj;
+        const { first_name, last_name } = formDataObj;
         if (!selectedId.value) return;
-        const phonePattern =
-          /^\+\d{1,3}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
-        if (!phonePattern.test(phone.toString())) {
-          throw Error(
-            "Invalid phone number! Phone number length should be of minimum 8 characters including country code."
-          );
-        }
+        // Data minimisation: only names are edited here (no phone, DOB or gender).
         const addUserRes = await adminUpdateCustomer({
           customerId: selectedId.value,
           first_name: first_name.toString(),
           last_name: last_name.toString(),
-          phone: phone.toString(),
-          metadata: {
-            gender: gender.toString(),
-            dob: new Date(dob.toString()),
-          },
         });
         addUser.value = addUserRes?.customer;
         isUserEditPopUp.value = false;

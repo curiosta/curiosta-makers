@@ -1,3 +1,5 @@
+import FindOnlineLink from "@/components/FindOnlineLink";
+import { productSpec } from "@/utils/findOnline";
 import { listProducts } from "@/api/product/listProducts";
 import Loading from "@/components/Loading";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
@@ -91,6 +93,7 @@ const SearchResult = () => {
                           {product.title}
                         </Typography>
                       </Link>
+                      <FindOnlineLink title={product.title} spec={productSpec(product)} compact />
                     </div>
                   ))}
                 </div>

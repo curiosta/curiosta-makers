@@ -1,5 +1,5 @@
 # A comprehensive platform for managing makerspaces
-Curiosta is a customizable makerspace management platform that caters to both makerspace users and managers.
+Curiosta MINT (Makers Inventory & Tools) is the makerspace inventory app for members and managers. The product name lives in `src/config/brand.ts`.
 It provides a user-friendly, intuitive, and reliable solution for all. Built on Medusa, it ensures robustness and safety.
 
 ### Our Functionalities:
@@ -17,7 +17,7 @@ npm run dev                     # http://localhost:5173 (add it to the API's MMS
 npm run build                   # static files in dist/ (host on S3+CloudFront, Netlify, ...)
 ```
 
-* The API is the MMS backend (`makers-backend`, Medusa v1.16.1). In production it is served from the same origin as the app (`/store/*`, `/admin/*` on https://makers.curiosta.com), so `VITE_PUBLIC_BASE_URL` is only needed for local development.
+* The API is the MINT backend (`makers-backend`, Medusa v1.16.1). In production it is served from the same origin as the app (`/store/*`, `/admin/*` on https://mint.curiosta.com; makers.curiosta.com redirects there), so `VITE_PUBLIC_BASE_URL` is only needed for local development.
 * npm is the package manager; `yarn.lock` was dropped. `.npmrc` sets `legacy-peer-deps`, so the Medusa *server*
   package (an unused peer of `@medusajs/medusa-js`) is not installed. Its types are covered by
   `src/types/medusa-shim.d.ts`.

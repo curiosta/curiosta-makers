@@ -5,6 +5,7 @@ import fulfil_icon from "@assets/fulfil.svg";
 import inbound_icon from "@assets/inbound.svg";
 import issue_inventory_icon from "@assets/issue-inventory.svg";
 import add_user_icon from "@assets/add-user.svg";
+import inventory_icon from "@assets/inventory.svg";
 import { Link } from "preact-router/match";
 import { isUser } from "@/store/userState";
 
@@ -44,6 +45,11 @@ const QuickActions = () => {
       title: "Add User",
       icon: add_user_icon,
       link: "/add-user",
+    },
+    {
+      title: "Purchase Order",
+      icon: inventory_icon,
+      link: "/purchase-orders/new",
     },
   ];
 

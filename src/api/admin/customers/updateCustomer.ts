@@ -4,11 +4,9 @@ import { AdminPostCustomersCustomerReq } from "@medusajs/medusa";
 type TCustomerMetadata = {
   cart_id?: string | null;
   profile_image_key?: string;
-  dob?: Date;
-  gender?: string;
   documentInfo?: {
     idType: string;
-    idNumber: string;
+    idLast4?: string;
     idImageKey?: string;
   }[];
 };

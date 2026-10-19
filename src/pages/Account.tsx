@@ -9,6 +9,8 @@ import user from "@/api/user";
 import admin from "@/api/admin";
 import Chip from "@/components/Chip";
 import { Link } from "preact-router";
+import SiteFooter from "@/components/SiteFooter";
+import { displayLogin } from "@/utils/loginId";
 
 const Account = () => {
   const nightMode = useSignal<boolean>(false);
@@ -73,6 +75,37 @@ const Account = () => {
       ),
       link: "/change-password",
     },
+    ...(isUser.value
+      ? [{ title: "Privacy & my data",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z" className="stroke-sea-500" stroke-width="2" stroke-linejoin="round" />
+        </svg>
+      ),
+          link: "/my-data" }]
+      : [
+          { title: "Purchase orders",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z" className="stroke-sea-500" stroke-width="2" stroke-linejoin="round" />
+        </svg>
+      ),
+            link: "/purchase-orders" },
+          { title: "Privacy requests",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z" className="stroke-sea-500" stroke-width="2" stroke-linejoin="round" />
+        </svg>
+      ),
+            link: "/privacy-requests" },
+          { title: "Settings",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z" className="stroke-sea-500" stroke-width="2" stroke-linejoin="round" />
+        </svg>
+      ),
+            link: "/settings" },
+        ]),
   ];
   const prefrenceList = [
     {
@@ -200,7 +233,7 @@ const Account = () => {
             >{`${currentUser?.first_name} ${currentUser?.last_name}`}</Typography>
           ) : (
             <Typography variant="secondary" className="capitalize">
-              {currentUser?.email}
+              {displayLogin(currentUser as any)}
             </Typography>
           )}
         </Link>
@@ -297,6 +330,7 @@ const Account = () => {
           ))}
         </div>
       </div> */}
+        <SiteFooter className="rounded-brand mb-4" />
         <BottomNavbar />
       </div>
     </div>

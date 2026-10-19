@@ -21,6 +21,8 @@ import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 import { useSignal } from "@preact/signals";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useRef } from "preact/hooks";
+import FindOnlineLink from "@/components/FindOnlineLink";
+import { productSpec } from "@/utils/findOnline";
 
 interface Props {
   id: string;
@@ -201,10 +203,23 @@ const ProductInfo = ({ id }: Props) => {
                   {product.value?.variants?.length
                     ? product.value?.variants?.at(0)?.inventory_quantity
                     : "N/A"}
+                  {product.value?.metadata?.unit ? ` ${product.value?.metadata?.unit}` : ""}
                 </Typography>
+                {product.value?.metadata?.reorder_level !== undefined && product.value?.metadata?.reorder_level !== "" ? (
+                  <Typography size="body1/normal" variant="secondary" className="text-start w-full">
+                    Reorder level: {String(product.value?.metadata?.reorder_level)}
+                    {Number(product.value?.variants?.at(0)?.inventory_quantity ?? 0) <= Number(product.value?.metadata?.reorder_level) ? (
+                      <> · <a href="/purchase-orders/new" className="underline text-sea-900 font-semibold">Low stock: create purchase order</a></>
+                    ) : null}
+                  </Typography>
+                ) : null}
               </>
             ) : null}
+            {product.value?.metadata?.spec ? <Typography variant="secondary">Key spec: {String(product.value?.metadata?.spec)}</Typography> : null}
             <Typography>{product.value?.description}</Typography>
+            {product.value?.title ? (
+              <FindOnlineLink title={product.value.title} spec={productSpec(product.value)} />
+            ) : null}
             {product.value?.categories?.length ? (
               <div className="flex flex-col gap-3">
                 <Typography size="h6/semi-bold" className="text-start w-full">
@@ -246,14 +261,7 @@ const ProductInfo = ({ id }: Props) => {
 
             {isUser.value ? (
               <div className="w-full  border-t-2 ">
-                {/* buy product from curiosta website */}
-                <a
-                  href="https://curiosta.com/products"
-                  target="_blank"
-                  className="rounded-lg bg-card border-2 border-sea-500 flex font-semibold  justify-center mt-4 px-4 py-2 text-sea-500 text-sm"
-                >
-                  Buy Now
-                </a>
+
                 <div className="w-full  mb-12 relative ">
                   <div
                     className={`absolute top-16 w-full p-2 shadow-lg rounded-md z-10

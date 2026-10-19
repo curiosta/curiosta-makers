@@ -29,6 +29,8 @@ import { adminDeleteUploadFile } from "@/api/admin/upload/deleteUpload";
 import DeletePopUp from "@/components/Popup/DeletePopUp";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
+import MemberPrivacyPanel from "@/components/MemberPrivacyPanel";
+import { displayLogin } from "@/utils/loginId";
 
 type Props = {
   id: string;
@@ -70,6 +72,8 @@ const UserProfile = ({ id }: Props) => {
   const uploadPopup = useSignal<boolean>(false);
   const uploadFormRef = useRef<HTMLFormElement>(null);
   const selectedDocumentKey = useSignal<string | null>(null);
+  const idProofAllowed = useSignal<boolean>(false);
+  const photoAllowed = useSignal<boolean>(false);
 
   const getUser = async () => {
     isLoading.value = "user:get";
@@ -183,32 +187,15 @@ const UserProfile = ({ id }: Props) => {
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         const formDataObj = Object.fromEntries(formData.entries());
-        const { first_name, last_name, gender, dob, phone } = formDataObj;
-        const phonePattern =
-          /^\+\d{1,3}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
-        if (!phonePattern.test(phone.toString())) {
-          throw Error("Invalid phone number!");
-        }
+        const { first_name, last_name } = formDataObj;
+        // Data minimisation: only names are editable (no phone, DOB or gender).
         if (isUser.value) {
-          await user.updateUser({
-            first_name: first_name.toString(),
-            last_name: last_name.toString(),
-            phone: phone.toString(),
-            metadata: {
-              gender: gender.toString(),
-              dob: new Date(dob.toString()),
-            },
-          });
+          await user.updateUser({ first_name: first_name.toString(), last_name: last_name.toString() });
         } else {
           const updateRes = await adminUpdateCustomer({
             customerId: id,
             first_name: first_name.toString(),
             last_name: last_name.toString(),
-            phone: phone.toString(),
-            metadata: {
-              gender: gender.toString(),
-              dob: new Date(dob.toString()),
-            },
           });
           userData.value = updateRes?.customer;
         }
@@ -250,13 +237,16 @@ const UserProfile = ({ id }: Props) => {
       }
       const uploadRes = await adminProtectedUploadFile(selectedFile.value);
       const file_key: string = uploadRes?.uploads[0]?.key;
+      const clean = idNumber.replace(/\s+/g, "");
       userDocumentInfo.value = [
         ...userDocumentInfo.value,
         {
           idImageKey: file_key,
-          idNumber: idNumber,
+          // Only the last 4 characters are kept (data minimisation).
+          idLast4: clean.length <= 4 ? "••••" : `••••${clean.slice(-4)}`,
           idType: idType,
-        },
+          uploaded_at: new Date().toISOString(),
+        } as any,
       ];
 
       await adminUpdateCustomer({
@@ -324,9 +314,10 @@ const UserProfile = ({ id }: Props) => {
                         className="w-full border-2 p-1.5 rounded-full shadow"
                       />
                     )}
-                    {!isUser.value ? (
+                    {!isUser.value && (photoAllowed.value || profileImageKey.value) ? (
                       <Button
                         variant="icon"
+                        aria-label="Change or remove photo"
                         className="absolute right-0 -bottom-2 !rounded-full bg-line"
                         onClick={() => (isProfileImageEdit.value = true)}
                       >
@@ -358,18 +349,7 @@ const UserProfile = ({ id }: Props) => {
                       className="capitalize"
                     >{`${userData.value?.first_name} ${userData.value?.last_name}`}</Typography>
                     <Typography variant="secondary" className="break-all">
-                      {userData.value?.email}
-                    </Typography>
-                    <Typography variant="secondary" className="capitalize">
-                      {userData.value?.metadata?.gender}
-                    </Typography>
-                    <Typography variant="secondary" className="break-all">
-                      {"DOB:-"}{" "}
-                      {userData.value?.metadata?.dob
-                        ? new Date(
-                            userData.value?.metadata?.dob
-                          ).toLocaleDateString("en-GB")
-                        : "N/A"}
+                      {displayLogin(userData.value as any)}
                     </Typography>
                   </div>
                 </div>
@@ -378,6 +358,7 @@ const UserProfile = ({ id }: Props) => {
                   variant="icon"
                   onClick={() => handleDialog(0)}
                   className="z-10"
+                  aria-label="Member actions"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -403,9 +384,6 @@ const UserProfile = ({ id }: Props) => {
               </div>
               <div className="flex items-center justify-around gap-4 mt-4">
                 <Typography>
-                  Phone: {userData.value?.phone ? userData.value?.phone : "N/A"}
-                </Typography>
-                <Typography>
                   Orders:{" "}
                   {userData.value?.orders?.length
                     ? userData.value?.orders?.length
@@ -416,7 +394,9 @@ const UserProfile = ({ id }: Props) => {
 
             {isUser.value ? <AddressList address={address} /> : null}
 
-            {!isUser.value ? (
+            {!isUser.value ? <MemberPrivacyPanel customerId={id} onModes={(m) => { idProofAllowed.value = m.id; photoAllowed.value = m.photo; }} /> : null}
+
+            {!isUser.value && (idProofAllowed.value || userDocumentInfo.value?.length) ? (
               <div className="w-full mb-20">
                 <div className="p-2">
                   <Typography size="h6/medium">ID card info</Typography>
@@ -434,17 +414,14 @@ const UserProfile = ({ id }: Props) => {
                       <div className="flex flex-col gap-2.5">
                         <Select
                           name="idCard_type"
-                          options={[
-                            "College ID card",
-                            "Voter ID card",
-                            "Aadhar card",
-                            "Pan Card",
-                          ]}
+                          label="ID proof type"
+                          options={["School/college ID card", "Other photo ID"]}
                         />
                         <Input
                           type="text"
                           name="idCard_number"
-                          placeholder="Enter Identification Proof Number"
+                          placeholder="ID number (only the last 4 characters are kept; not Aadhaar/PAN)"
+                          aria-label="ID number (only the last 4 characters are kept)"
                           className="!p-2"
                         />
                         <div className="flex items-center justify-between border border-muted bg-card p-4 rounded-lg">
@@ -491,7 +468,7 @@ const UserProfile = ({ id }: Props) => {
                               Document Number
                             </Typography>
                             <Typography size="body1/semi-bold">
-                              {document.idNumber}
+                              {(document as any).idLast4 ?? ((document as any).idNumber ? `••••${String((document as any).idNumber).slice(-4)}` : "")}
                             </Typography>
                           </div>
                           <div className="w-10/12 sm:w-48">

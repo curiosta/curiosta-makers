@@ -1,333 +1,230 @@
-import TopNavbar from "@/components/Navbar/TopNavbar";
-import UserCreationProgress from "@/components/Progressbar/UserCreationProgress";
-import Typography from "@/components/Typography";
 import { useSignal } from "@preact/signals";
+import { useEffect } from "preact/hooks";
+import TopNavbar from "@/components/Navbar/TopNavbar";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
-import CreateUserInfo from "@/components/CreateUserInfo";
-import UserBiometricInfo from "@/components/CreateUserInfo/UserBiometricInfo";
 import Button from "@/components/Button";
-import { Customer } from "@medusajs/medusa";
-import { TCustomer } from "@/api/user";
-import { adminCreateCustomer } from "@/api/admin/customers/createCustomer";
-import PopUp from "@/components/Popup";
-import LoadingPopUp from "@/components/Popup/LoadingPopUp";
+import ShortPrivacyNotice from "@/components/PrivacyNotice/Short";
+import { Alert, Card, Field, PageShell, SelectField } from "@/components/Field";
+import { createMember, getSettings, TSettings } from "@/api/privacy";
+import { adminProtectedUploadFile } from "@/api/admin/upload/protectedUploadFile";
+import { PRIVACY_NOTICE_VERSION } from "@/config/privacy";
 
-export type TBasicInfo = {
-  dob: Date;
-  email: string;
-  first_name: string;
-  last_name: string;
-  phone: string;
-  gender: string;
-};
-export type TDocumentInfo = {
-  idType: string;
-  idNumber: string;
-  idImageKey: string;
-}[];
+/** Random temporary password from the Web Crypto API. Shown once, never stored. */
+function genPassword(length = 12) {
+  const chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%*";
+  const buf = new Uint32Array(length);
+  crypto.getRandomValues(buf);
+  return Array.from(buf, (n) => chars[n % chars.length]).join("");
+}
 
+type Result = { login_id: string; password: string; consent_status: string; guardian_link: string | null; id: string };
+
+/**
+ * Add member, DPDP Act data minimisation: name + (email or roll number) + under-18 answer.
+ * Members under 18 need a parent/guardian's consent (signed form recorded by staff, or a consent link).
+ * Photo / ID proof only if the admin setting turns them on; never ID proof for minors.
+ */
 const CreateUser = () => {
-  const basicInfo = useSignal<TBasicInfo | null>(null);
-  const documentInfo = useSignal<TDocumentInfo>([]);
-  const profileImageKey = useSignal<string | null>(null);
-  const activeStep = useSignal<number>(1);
-  const isLoading = useSignal<boolean>(false);
-  const addUser = useSignal<TCustomer | null>(null);
-  const errorMessage = useSignal<string | undefined>(undefined);
-  const isUserPopUp = useSignal<boolean>(false);
-  const selectedGender = useSignal<string | undefined>(undefined);
+  const settings = useSignal<TSettings | null>(null);
+  const loginType = useSignal<"email" | "roll">("email");
+  const minor = useSignal<"" | "yes" | "no">("");
+  const method = useSignal<"admin_attested" | "guardian_link">("admin_attested");
+  const photoKey = useSignal<string | null>(null);
+  const idDoc = useSignal<{ idType: string; idNumber: string; idImageKey: string } | null>(null);
+  const error = useSignal("");
+  const busy = useSignal(false);
+  const result = useSignal<Result | null>(null);
+  const copied = useSignal("");
 
-  const handleBasicInfo = (data: TBasicInfo) => {
-    if (errorMessage.value) {
-      errorMessage.value = null;
+  useEffect(() => {
+    getSettings().then((s) => (settings.value = s)).catch((e) => (error.value = e.message));
+  }, []);
+
+  const isMinor = minor.value === "yes";
+  const photoMode = settings.value?.photo_mode ?? "off";
+  const idMode = isMinor ? "off" : settings.value?.id_proof_mode ?? "off";
+
+  const upload = async (file: File | undefined, kind: "photo" | "id", form?: HTMLFormElement) => {
+    if (!file) return;
+    error.value = "";
+    try {
+      const res = await adminProtectedUploadFile(file);
+      const k = res?.uploads[0]?.key;
+      if (kind === "photo") photoKey.value = k;
+      else {
+        const f = new FormData(form);
+        idDoc.value = { idType: String(f.get("id_type") || "School/college ID card"), idNumber: String(f.get("id_number") || ""), idImageKey: k };
+      }
+    } catch (e: any) {
+      error.value = e.message;
     }
-    if (!selectedGender.value) {
-      return (errorMessage.value = "Select gender!");
-    }
-    basicInfo.value = data;
-    activeStep.value = activeStep.value + 1;
   };
 
-  // generate random password
-  function genPassword(passwordLength: number) {
-    const chars =
-      "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let password = "";
-    let counter = 0;
-    while (counter < passwordLength) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-      counter += 1;
+  const submit = async (e: Event) => {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    const f = new FormData(form);
+    const g = (k: string) => String(f.get(k) ?? "").trim();
+    error.value = "";
+    if (!minor.value) return void (error.value = "Say whether the member is under 18.");
+    const password = genPassword();
+    busy.value = true;
+    try {
+      const r = await createMember({
+        first_name: g("first_name"),
+        last_name: g("last_name"),
+        email: loginType.value === "email" ? g("login_email") : undefined,
+        roll_number: loginType.value === "roll" ? g("login_roll") : undefined,
+        password,
+        is_minor: isMinor,
+        notice_version: PRIVACY_NOTICE_VERSION,
+        consent: f.get("consent") === "on",
+        guardian: isMinor ? { name: g("guardian_name"), relation: g("guardian_relation"), email: g("guardian_email"), phone: g("guardian_phone") } : undefined,
+        guardian_consent_method: isMinor ? method.value : undefined,
+        profile_image_key: photoMode !== "off" ? photoKey.value : null,
+        documents: idMode !== "off" && idDoc.value ? [idDoc.value] : [],
+      });
+      result.value = {
+        id: r.customer.id,
+        login_id: r.login_id,
+        password,
+        consent_status: r.consent_status,
+        guardian_link: r.guardian_link_path ? `${window.location.origin}${r.guardian_link_path}` : null,
+      };
+    } catch (err: any) {
+      error.value = err.message;
+    } finally {
+      busy.value = false;
     }
-    return password;
+  };
+
+  const copy = async (text: string, what: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      copied.value = `${what} copied.`;
+    } catch {
+      copied.value = "Copy failed: select the text and copy it manually.";
+    }
+  };
+
+  if (result.value) {
+    const r = result.value;
+    return (
+      <div className="flex flex-col items-center p-4 w-full bg-sand min-h-screen">
+        <TopNavbar />
+        <PageShell title="Member added">
+          <Alert kind="ok">The account is ready. Give these sign-in details to the member now: the password is not stored and won't be shown again.</Alert>
+          <Card>
+            <dl className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-sm">
+              <dt className="text-muted">Sign-in</dt><dd className="font-mono break-all">{r.login_id}</dd>
+              <dt className="text-muted">Temporary password</dt><dd className="font-mono break-all">{r.password}</dd>
+              <dt className="text-muted">Consent</dt><dd>{r.consent_status === "given" ? "Recorded" : "Waiting for parent/guardian"}</dd>
+            </dl>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant="secondary" onClick={() => copy(`Sign-in: ${r.login_id}\nPassword: ${r.password}`, "Sign-in details")}>Copy sign-in details</Button>
+            </div>
+          </Card>
+          {r.guardian_link ? (
+            <Card title="Send this consent link to the parent/guardian">
+              <p className="text-sm text-ink-2">Share it by email, SMS or WhatsApp. It works once and expires in 7 days. The member can't use the app until consent is given.</p>
+              <p className="font-mono text-xs break-all bg-sand p-2 rounded-md">{r.guardian_link}</p>
+              <div><Button type="button" onClick={() => copy(r.guardian_link!, "Consent link")}>Copy consent link</Button></div>
+            </Card>
+          ) : null}
+          {copied.value ? <p role="status" className="text-sm font-semibold text-sea-900">{copied.value}</p> : null}
+          <div className="flex flex-wrap gap-3">
+            <Button link={`/user/${r.id}`} variant="secondary">Open profile</Button>
+            <Button type="button" onClick={() => { result.value = null; minor.value = ""; photoKey.value = null; idDoc.value = null; copied.value = ""; }}>Add another member</Button>
+          </div>
+        </PageShell>
+        <BottomNavbar />
+      </div>
+    );
   }
 
-  const handleCreateUser = async () => {
-    isLoading.value = true;
-    if (errorMessage.value) {
-      errorMessage.value = null;
-    }
-    try {
-      if (!basicInfo.value) return;
-      const { first_name, last_name, email, phone, dob, gender } =
-        basicInfo.value;
-      const password = genPassword(12);
-      const addUserRes = await adminCreateCustomer({
-        first_name: first_name,
-        last_name: last_name,
-        email: email,
-        phone: phone,
-        password: password,
-        metadata: {
-          dob: dob,
-          gender: gender,
-          profile_image_key: profileImageKey.value,
-          documentInfo: documentInfo.value,
-          temp_password: password,
-          new_account: true,
-        },
-      });
-      addUser.value = addUserRes?.customer;
-      isUserPopUp.value = true;
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message.includes("422")) {
-          return (errorMessage.value = "User already exists with this email");
-        }
-        errorMessage.value = error.message;
-      }
-    } finally {
-      isLoading.value = false;
-    }
-  };
-
   return (
-    <div className="flex flex-col justify-center items-center p-4 w-full ">
+    <div className="flex flex-col items-center p-4 w-full bg-sand min-h-screen">
       <TopNavbar />
-      <div className="my-2">
-        <Typography tag="h1" size="h6/normal">Create user</Typography>
-      </div>
-      <div className="w-full mb-12 max-w-2xl">
-        <UserCreationProgress activeStep={activeStep.value} />
+      <PageShell title="Add member">
+        <p className="text-sm text-ink-2">Only a name and an email or roll number are needed. Date of birth, gender and phone are not collected.</p>
+        <form onSubmit={submit} className="flex flex-col gap-4" noValidate={false}>
+          <Card title="Member">
+            <div className="grid sm:grid-cols-2 gap-3">
+              <Field id="first_name" label="First name" required maxLength={50} autocomplete="off" />
+              <Field id="last_name" label="Last name (optional)" maxLength={50} autocomplete="off" />
+            </div>
+            <fieldset className="flex flex-col gap-2">
+              <legend className="text-sm font-medium text-ink">Signs in with</legend>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <label className="flex items-center gap-2"><input type="radio" name="login_type" checked={loginType.value === "email"} onChange={() => (loginType.value = "email")} /> Email</label>
+                <label className="flex items-center gap-2"><input type="radio" name="login_type" checked={loginType.value === "roll"} onChange={() => (loginType.value = "roll")} /> School roll / admission number</label>
+              </div>
+              {loginType.value === "email"
+                ? <Field id="login_email" label="Email" type="email" required autocomplete="off" />
+                : <Field id="login_roll" label="Roll / admission number" required maxLength={40} pattern="[A-Za-z0-9][A-Za-z0-9/_.\-]*" hint="Letters, digits and / _ . -" />}
+            </fieldset>
+            <fieldset className="flex flex-col gap-2">
+              <legend className="text-sm font-medium text-ink">Is the member under 18? *</legend>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <label className="flex items-center gap-2"><input type="radio" name="is_minor" value="no" required checked={minor.value === "no"} onChange={() => (minor.value = "no")} /> No, 18 or older</label>
+                <label className="flex items-center gap-2"><input type="radio" name="is_minor" value="yes" checked={minor.value === "yes"} onChange={() => (minor.value = "yes")} /> Yes, under 18</label>
+              </div>
+            </fieldset>
+          </Card>
 
-        {activeStep.value === 1 ? (
-          <CreateUserInfo
-            handleBasicInfo={handleBasicInfo}
-            selectedGender={selectedGender}
-            errorMessage={errorMessage}
-          />
-        ) : activeStep.value === 2 ? (
-          <UserBiometricInfo
-            documentInfo={documentInfo}
-            profileImageKey={profileImageKey}
-            activeStep={activeStep}
-          />
-        ) : (
-          <div className="flex flex-col gap-4">
-            <Typography size="body1/semi-bold" className="text-center">
-              Review and Confirm
-            </Typography>
-            <div>
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 16 17"
-                  fill="none"
-                  className="h-6 w-6 text-sea-500"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M8.00037 8.29981C6.2268 8.29981 4.78524 6.86464 4.78524 5.09988C4.78524 3.33511 6.2268 1.89994 8.00037 1.89994C9.77393 1.89994 11.2155 3.33511 11.2155 5.09988C11.2155 6.86464 9.77393 8.29981 8.00037 8.29981ZM11.0211 8.83818C11.6821 8.31186 12.1918 7.6198 12.4985 6.83246C12.8051 6.04512 12.8976 5.19058 12.7667 4.35585C12.4491 2.25749 10.6955 0.578364 8.57796 0.333569C5.65642 -0.00482461 3.17807 2.25914 3.17807 5.09988C3.17807 6.61185 3.88205 7.959 4.97963 8.83818C2.28208 9.84696 0.312521 12.2157 0.00372759 15.4125C-0.00706903 15.5246 0.00565076 15.6378 0.0410682 15.7447C0.0764855 15.8516 0.133824 15.9499 0.209418 16.0334C0.285012 16.1169 0.377196 16.1837 0.480079 16.2295C0.582962 16.2754 0.694282 16.2993 0.806916 16.2997C1.00435 16.3012 1.19525 16.2291 1.3422 16.0972C1.48915 15.9654 1.58156 15.7833 1.6013 15.5869C1.92369 12.0165 4.67004 9.89978 8.00037 9.89978C11.3307 9.89978 14.077 12.0165 14.3994 15.5869C14.4192 15.7833 14.5116 15.9654 14.6585 16.0972C14.8055 16.2291 14.9964 16.3012 15.1938 16.2997C15.6706 16.2997 16.0418 15.8853 15.9962 15.4125C15.6882 12.2157 13.7186 9.84696 11.0203 8.83818"
-                    fill="currentColor"
-                  />
-                </svg>
-                <Typography>Basic information</Typography>
+          {isMinor ? (
+            <Card title="Parent or guardian">
+              <p className="text-sm text-ink-2">The DPDP Act needs verifiable consent from a parent or lawful guardian for members under 18. ID proof is never collected for them.</p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Field id="guardian_name" label="Parent/guardian name" required maxLength={80} autocomplete="off" />
+                <Field id="guardian_relation" label="Relationship (optional)" maxLength={40} />
+                <Field id="guardian_email" label="Parent/guardian email" type="email" hint="Email or phone is required" autocomplete="off" />
+                <Field id="guardian_phone" label="Parent/guardian phone" type="tel" placeholder="+91 98765 43210" autocomplete="off" />
               </div>
-              <Typography className="capitalize">
-                {basicInfo.value?.first_name} {basicInfo.value?.last_name}
-              </Typography>
-              <Typography className="capitalize">
-                {basicInfo.value?.gender}
-              </Typography>
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="w-6 h-6 fill-sea-500"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                <Typography>Contact information</Typography>
-              </div>
-              <Typography>{basicInfo.value?.email}</Typography>
-              <Typography>{basicInfo.value?.phone}</Typography>
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="w-6 h-6 fill-sea-500"
-                >
-                  <path d="M15 1.784l-.796.796a1.125 1.125 0 101.591 0L15 1.784zM12 1.784l-.796.796a1.125 1.125 0 101.591 0L12 1.784zM9 1.784l-.796.796a1.125 1.125 0 101.591 0L9 1.784zM9.75 7.547c.498-.02.998-.035 1.5-.042V6.75a.75.75 0 011.5 0v.755c.502.007 1.002.021 1.5.042V6.75a.75.75 0 011.5 0v.88l.307.022c1.55.117 2.693 1.427 2.693 2.946v1.018a62.182 62.182 0 00-13.5 0v-1.018c0-1.519 1.143-2.829 2.693-2.946l.307-.022v-.88a.75.75 0 011.5 0v.797zM12 12.75c-2.472 0-4.9.184-7.274.54-1.454.217-2.476 1.482-2.476 2.916v.384a4.104 4.104 0 012.585.364 2.605 2.605 0 002.33 0 4.104 4.104 0 013.67 0 2.605 2.605 0 002.33 0 4.104 4.104 0 013.67 0 2.605 2.605 0 002.33 0 4.104 4.104 0 012.585-.364v-.384c0-1.434-1.022-2.7-2.476-2.917A49.138 49.138 0 0012 12.75zM21.75 18.131a2.604 2.604 0 00-1.915.165 4.104 4.104 0 01-3.67 0 2.604 2.604 0 00-2.33 0 4.104 4.104 0 01-3.67 0 2.604 2.604 0 00-2.33 0 4.104 4.104 0 01-3.67 0 2.604 2.604 0 00-1.915-.165v2.494c0 1.036.84 1.875 1.875 1.875h15.75c1.035 0 1.875-.84 1.875-1.875v-2.494z" />
-                </svg>
-                <Typography>Date of birth</Typography>
-              </div>
-              <Typography>
-                {new Date(basicInfo.value?.dob).toLocaleDateString("en-GB")}
-              </Typography>
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="w-6 h-6 fill-sea-500"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.5 3.75a3 3 0 00-3 3v10.5a3 3 0 003 3h15a3 3 0 003-3V6.75a3 3 0 00-3-3h-15zm4.125 3a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5zm-3.873 8.703a4.126 4.126 0 017.746 0 .75.75 0 01-.351.92 7.47 7.47 0 01-3.522.877 7.47 7.47 0 01-3.522-.877.75.75 0 01-.351-.92zM15 8.25a.75.75 0 000 1.5h3.75a.75.75 0 000-1.5H15zM14.25 12a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H15a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3.75a.75.75 0 000-1.5H15z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                <Typography>Identification Proof</Typography>
-              </div>
-              {documentInfo.value?.length ? (
-                documentInfo.value?.map((info) => (
-                  <div>
-                    <Typography>
-                      {info.idType}
-                      {":"} {info.idNumber}
-                    </Typography>
-                    {info.idImageKey ? (
-                      <div className="flex items-center gap-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          class="w-6 h-6 fill-sea-500"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                        <Typography>Picture of proof uploaded</Typography>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          class="w-6 h-6 fill-bad"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                        <Typography>Picture of proof not uploaded</Typography>
-                      </div>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    class="w-6 h-6 fill-bad"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                  <Typography>ID card info not provided</Typography>
-                </div>
-              )}
-              {profileImageKey.value ? (
-                <div className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    class="w-6 h-6 fill-sea-500"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                  <Typography>Profile picture uploaded</Typography>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    class="w-6 h-6 fill-bad"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                  <Typography>Profile picture not uploaded</Typography>
-                </div>
-              )}
-            </div>
-            {errorMessage.value ? (
-              <Typography variant="error" className="text-center mt-2">
-                {errorMessage.value}
-              </Typography>
-            ) : null}
-            <div className="w-full flex justify-between items-center my-4">
-              <Button
-                type="button"
-                onClick={() => {
-                  (activeStep.value = activeStep.value - 1),
-                    (errorMessage.value = null);
-                }}
-              >
-                Back
-              </Button>
-              <Button type="button" onClick={handleCreateUser}>
-                Submit and Create
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
+              <fieldset className="flex flex-col gap-2">
+                <legend className="text-sm font-medium text-ink">How is consent given?</legend>
+                <label className="flex items-start gap-2 text-sm"><input type="radio" name="method" checked={method.value === "admin_attested"} onChange={() => (method.value = "admin_attested")} className="mt-1" /> The parent/guardian signed the consent form (keep the form on file)</label>
+                <label className="flex items-start gap-2 text-sm"><input type="radio" name="method" checked={method.value === "guardian_link"} onChange={() => (method.value = "guardian_link")} className="mt-1" /> Send the parent/guardian a consent link (the member can sign in only after they agree)</label>
+              </fieldset>
+            </Card>
+          ) : null}
 
-      {isLoading.value ? (
-        <LoadingPopUp loadingText="Please wait" />
-      ) : (
-        <PopUp
-          isPopup={isUserPopUp}
-          title="User is created successfully. Please save login credentials"
-          actionLink={`/user/${addUser.value?.id}`}
-          actionText="Check Profile"
-          subtitle={`Email: ${addUser.value?.email}, Password: ${addUser.value?.metadata?.temp_password}`}
-        />
-      )}
+          {(photoMode !== "off" || idMode !== "off") && minor.value ? (
+            <Card title="Photo and ID proof">
+              {photoMode !== "off" ? (
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="photo" className="text-sm font-medium text-ink">Member photo ({photoMode === "required" && !isMinor ? "required" : "optional"})</label>
+                  <input id="photo" type="file" accept="image/png,image/jpeg" className="text-sm" onChange={(e: any) => upload(e.currentTarget.files?.[0], "photo")} />
+                  {photoKey.value ? <p className="text-xs font-semibold text-sea-900" role="status">Photo uploaded (private storage).</p> : null}
+                </div>
+              ) : null}
+              {idMode !== "off" ? (
+                <div className="flex flex-col gap-2" id="id-proof">
+                  <SelectField id="id_type" label={`ID proof type (${idMode})`} options={[["School/college ID card", "School/college ID card"], ["Other photo ID", "Other photo ID"]]} />
+                  <Field id="id_number" label="ID number" hint="Only the last 4 characters are kept. Don't use Aadhaar or PAN." maxLength={30} autocomplete="off" />
+                  <label htmlFor="id_file" className="text-sm font-medium text-ink">ID image</label>
+                  <input id="id_file" type="file" accept="image/png,image/jpeg" className="text-sm" onChange={(e: any) => upload(e.currentTarget.files?.[0], "id", e.currentTarget.form)} />
+                  {idDoc.value ? <p className="text-xs font-semibold text-sea-900" role="status">ID image uploaded (private; deleted automatically after {settings.value?.id_doc_retention_days} days).</p> : null}
+                </div>
+              ) : null}
+            </Card>
+          ) : null}
+
+          <ShortPrivacyNotice forGuardian={isMinor} />
+          {!isMinor || method.value === "admin_attested" ? (
+            <div className="flex items-start gap-2 rounded-brand border border-line bg-card p-4">
+              <input id="consent" name="consent" type="checkbox" className="mt-1 rounded text-sea-700" required />
+              <label htmlFor="consent" className="text-sm text-ink">
+                {isMinor
+                  ? "I confirm the parent/guardian named above has read this notice and signed the consent form."
+                  : "The member has read this privacy notice and agrees to their data being used as described."}
+              </label>
+            </div>
+          ) : null}
+          {error.value ? <Alert>{error.value}</Alert> : null}
+          <div><Button type="submit" disabled={busy.value}>{busy.value ? "Adding…" : "Add member"}</Button></div>
+        </form>
+      </PageShell>
       <BottomNavbar />
     </div>
   );

@@ -82,6 +82,7 @@ const ProfileImageEdit = ({
             type="button"
             variant="icon"
             className="absolute top-0 right-0 gap-2 !items-center"
+            aria-label="Close"
             onClick={() => (isProfileImageEdit.value = false)}
           >
             <svg

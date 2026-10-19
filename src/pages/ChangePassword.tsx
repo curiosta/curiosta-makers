@@ -18,7 +18,7 @@ const ChangePassword = () => {
       if (password === cpassword) {
         await user.updateUser({
           password,
-          metadata: { new_account: false, temp_password: "" },
+          metadata: { new_account: false },
         });
         await user.logout();
         successMessage.value = "Your password has been changed successfully!";
