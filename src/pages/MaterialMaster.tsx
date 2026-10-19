@@ -12,6 +12,8 @@ import { Link } from "preact-router";
 import BottomNavbar from "@/components/Navbar/BottomNavbar";
 import { adminDeleteProduct } from "@/api/admin/product/deleteProduct";
 import SearchInput from "@/components/SearchInput";
+import FindOnlineLink from "@/components/FindOnlineLink";
+import { productSpec } from "@/utils/findOnline";
 
 type TLoadableOptions =
   | "product:get"
@@ -114,16 +116,16 @@ const MaterialMaster = () => {
           products.value?.length ? (
             <div className="w-full flex flex-col  my-2 gap-4">
               {products.value.map((product, index) => (
-                <div className="w-full flex justify-between items-center relative">
-                  <div className="flex items-center gap-4 w-10/12">
+                <div className="w-full flex justify-between items-center gap-2 relative">
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
                     <Link
                       href={`/product/${product?.id}/${product?.handle}`}
-                      className="flex items-center gap-2 w-full"
+                      className="flex items-center gap-2 w-full min-w-0"
                     >
                       <img
                         src={product.thumbnail ?? "/images/placeholderImg.svg"}
                         alt={product.title}
-                        className="w-12 h-12 object-cover"
+                        className="w-12 h-12 object-cover shrink-0"
                       />
                       <Typography
                         size="body1/normal"
@@ -149,6 +151,17 @@ const MaterialMaster = () => {
                       </svg>
                     ) : null}
                   </div>
+                  {(() => {
+                    const meta: any = product.metadata || {};
+                    const stock = Number(product.variants?.[0]?.inventory_quantity ?? 0);
+                    const low = meta.reorder_level !== undefined && meta.reorder_level !== "" && stock <= Number(meta.reorder_level);
+                    return (
+                      <div className="flex items-center gap-2">
+                        {low ? <span className="rounded-full bg-coral px-2 py-0.5 text-xs font-semibold text-sea-900 whitespace-nowrap">Low<span className="sr-only"> stock</span></span> : null}
+                        <FindOnlineLink title={product.title} spec={productSpec(product)} compact />
+                      </div>
+                    );
+                  })()}
                   <Button
                     type="button"
                     variant="icon"

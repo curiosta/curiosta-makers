@@ -7,6 +7,7 @@ import user from "@/api/user";
 import admin from "@/api/admin";
 import cart from "@/api/cart";
 import { Link } from "preact-router";
+import { APP_NAME } from "@/config/brand";
 
 const TopNavbar = () => {
   const isMenuOpen = useSignal<boolean>(false);
@@ -48,7 +49,7 @@ const TopNavbar = () => {
           href="/home"
           className="truncate font-serif text-lg font-semibold leading-tight text-white"
         >
-          Curiosta <span className="text-teal">Makers</span>
+          Curiosta <span className="text-teal">{APP_NAME}</span>
         </Link>
       </div>
 

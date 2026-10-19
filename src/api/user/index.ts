@@ -6,14 +6,13 @@ import { signal } from "@preact/signals";
 type TCustomerMetadata = {
   cart_id?: string | null;
   profile_image_key?: string;
-  dob?: Date;
-  gender?: string;
   documentInfo?: {
     idType: string;
-    idNumber: string;
-    idImageKey: string;
+    idLast4?: string;
+    idImageKey?: string;
   }[];
-  temp_password?: string;
+  roll_number?: string;
+  login?: "email" | "roll";
   new_account?: boolean;
 };
 

@@ -12,6 +12,7 @@ type TUpdateProduct = {
   thumbnail?: string;
   variantId: string;
   inventory_quantity?: number;
+  metadata?: Record<string, unknown>;
 };
 
 export const adminUpdateProduct = async ({
@@ -24,6 +25,7 @@ export const adminUpdateProduct = async ({
   thumbnail,
   variantId,
   inventory_quantity,
+  metadata,
 }: TUpdateProduct) => {
   return medusa.admin.products.update(productId, {
     title,
@@ -32,6 +34,7 @@ export const adminUpdateProduct = async ({
     categories,
     images,
     thumbnail,
+    metadata,
     variants: [
       {
         id: variantId,

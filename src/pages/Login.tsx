@@ -7,6 +7,9 @@ import { Link } from "preact-router/match";
 import user from "@api/user";
 import { isUser } from "@store/userState";
 import admin from "@api/admin";
+import SiteFooter from "@/components/SiteFooter";
+import { APP_DISPLAY_NAME, APP_FULL_NAME } from "@/config/brand";
+import { toLoginEmail } from "@/utils/loginId";
 
 const Login = () => {
   const errorMessage = useSignal<string>("");
@@ -20,7 +23,8 @@ const Login = () => {
     const path = location.pathname;
     try {
       if (isUser.value) {
-        await user.login(data);
+        // Members may sign in with a school roll/admission number instead of an email.
+        await user.login({ ...data, email: toLoginEmail(String(data.email || "")) });
       } else {
         await admin.login(data);
       }
@@ -41,12 +45,16 @@ const Login = () => {
   };
   localStorage.setItem("userRole", JSON.stringify({ isUser: isUser.value }));
   return (
+    <>
     <div className="flex justify-center p-4">
       <div className="flex flex-col justify-center items-center  w-full max-w-xl ">
         <div className="flex flex-col  items-center gap-2.5 ">
-          <img src="/images/curiosta_logo.svg" alt="curiosta-logo" />
+          <img src="/images/curiosta_logo.svg" alt="Curiosta" />
           <Typography tag="h1" size="h6/bold" className="text-center">
-            Makerspace Management System
+            {APP_DISPLAY_NAME}
+          </Typography>
+          <Typography variant="secondary" className="text-center -mt-2">
+            {APP_FULL_NAME}
           </Typography>
 
           <Button
@@ -85,7 +93,8 @@ const Login = () => {
           >
             <Input
               name="email"
-              type="email"
+              type={isUser.value ? "text" : "email"}
+              aria-label={isUser.value ? "Email or roll number" : "Email"}
               leftAdornment={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -102,10 +111,12 @@ const Login = () => {
                   />
                 </svg>
               }
-              autocomplete="email"
-              placeholder={"example@gmail.com"}
+              autocomplete="username"
+              placeholder={isUser.value ? "Email or roll number" : "example@gmail.com"}
               validator={(value) =>
-                !/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(value)
+                isUser.value && value && !value.includes("@")
+                  ? /^[A-Za-z0-9][A-Za-z0-9/_.\-]{0,39}$/.test(value.trim()) || "Invalid roll number!"
+                  : !/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(value)
                   ? "Invalid email!"
                   : true
               }
@@ -134,7 +145,7 @@ const Login = () => {
                 value: 6,
                 message: "Minimum 6 characters are required!",
               }}
-              placeholder="Your Curiosta password"
+              placeholder="Your password"
             />
             <div class="flex items-center justify-end">
               <div class="text-sm leading-6">
@@ -156,10 +167,16 @@ const Login = () => {
               {isLoading.value ? "Loading..." : "Login"}
             </Button>
             <Typography variant="error">{errorMessage}</Typography>
+            <p className="text-xs text-ink-2 text-center mt-2">
+              By signing in you agree to how we use your data, explained in the{" "}
+              <a href="/privacy" className="underline text-sea-900">privacy notice</a>.
+            </p>
           </FormControl>
         </div>
       </div>
     </div>
+    <SiteFooter />
+    </>
   );
 };
 

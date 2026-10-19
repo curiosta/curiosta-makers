@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import preact from "@preact/preset-vite";
 import { fileURLToPath, URL } from "node:url";
 import { VitePWA } from "vite-plugin-pwa";
+import { APP_DISPLAY_NAME, APP_NAME, APP_TAGLINE } from "./src/config/brand";
 
 const src = (dir: string) => fileURLToPath(new URL(`./src/${dir}`, import.meta.url));
 
@@ -22,11 +23,19 @@ export default defineConfig({
   },
   plugins: [
     preact(),
+    {
+      // index.html uses %APP_DISPLAY_NAME% / %APP_TAGLINE% so the name lives only in src/config/brand.ts.
+      name: "brand-html",
+      transformIndexHtml: (html: string) =>
+        html.replaceAll("%APP_DISPLAY_NAME%", APP_DISPLAY_NAME).replaceAll("%APP_TAGLINE%", APP_TAGLINE),
+    },
     VitePWA({
       registerType: "autoUpdate",
       workbox: {
         // Precache the latin brand font files so the PWA keeps its type offline.
         globPatterns: ["**/*.{js,css,html}", "**/*-latin-*.woff2"],
+        // PDF export libs are lazy-loaded on the admin PO screen only; fetch them on demand, not at install.
+        globIgnores: ["**/jspdf*.js", "**/html2canvas*.js", "**/purify.es-*.js", "**/index.es-*.js"],
       },
       includeAssets: [
         "favicon.ico",
@@ -34,10 +43,9 @@ export default defineConfig({
         "android-chrome-192x192.png",
       ],
       manifest: {
-        name: "Curiosta makers",
-        short_name: "curiosta makers",
-        description:
-          "Curiosta makers is a comprehensive platform for managing makerspaces",
+        name: APP_DISPLAY_NAME,
+        short_name: APP_NAME,
+        description: APP_TAGLINE,
         theme_color: "#041726", // --sea-900
         icons: [
           {
@@ -65,6 +73,9 @@ export default defineConfig({
         ],
         background_color: "#f7f4ee", // --sand
         display: "standalone",
+        // Stable id: same app identity on every host. (Browsers scope an installed PWA to its origin, so an app
+        // installed from makers.curiosta.com still has to be reinstalled from mint.curiosta.com.)
+        id: "/",
         scope: "/",
         start_url: "/",
         orientation: "portrait",

@@ -252,6 +252,34 @@ const ProductAddEditForm = ({
           required
         />
 
+        <div className="grid grid-cols-2 gap-3">
+          <NewInput
+            type="number"
+            name="reorder_level"
+            label="Reorder level"
+            min={0}
+            value={(product.value?.metadata?.reorder_level as any) ?? ""}
+            aria-describedby="reorder-hint"
+          />
+          <NewInput
+            type="text"
+            name="unit"
+            label="Unit"
+            maxLength={20}
+            value={(product.value?.metadata?.unit as any) ?? "pcs"}
+          />
+        </div>
+        <p id="reorder-hint" className="text-xs text-muted -mt-2">
+          When stock falls to this level the item is suggested on new purchase orders. Leave empty for 0.
+        </p>
+        <NewInput
+          type="text"
+          name="spec"
+          label="Key spec (for Find online and POs)"
+          maxLength={200}
+          value={(product.value?.metadata?.spec as any) ?? ""}
+        />
+
         <Typography size="body1/medium">Select category</Typography>
 
         {isLoading ? (

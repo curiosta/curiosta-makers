@@ -1,3 +1,4 @@
+import { displayLogin } from "@/utils/loginId";
 import { Signal, useSignal } from "@preact/signals";
 import Button from "../Button";
 import Typography from "../Typography";
@@ -9,7 +10,6 @@ import { adminGetCustomer } from "@/api/admin/customers/getCustomer";
 import { adminGetuser } from "@/api/admin/adminUsers/getAdminUser";
 import { isUser } from "@/store/userState";
 import user, { TCustomer } from "@/api/user";
-import Select from "../Select";
 
 type PopUp = {
   isPopup: Signal<boolean>;
@@ -91,54 +91,24 @@ const UserPopUp = ({
           <div className="flex flex-col gap-4 items-center justify-center w-full my-4">
             {type === "edit" ? (
               <Typography className="break-all">
-                Email: {userData.value?.email}
+                Sign-in: {displayLogin(userData.value as any)}
               </Typography>
             ) : null}
             <NewInput
               name="first_name"
               label="First Name"
               type="text"
-              minLength={3}
-              maxLength={20}
+              maxLength={50}
               defaultValue={type === "edit" ? userData.value?.first_name : ""}
               required
             />
             <NewInput
               name="last_name"
-              label="Last Name"
+              label="Last Name (optional)"
               type="text"
-              minLength={3}
-              maxLength={20}
+              maxLength={50}
               defaultValue={type === "edit" ? userData.value?.last_name : ""}
-              required
             />
-            {variant === "user" ? (
-              <div className="w-full flex flex-col gap-4">
-                <Select
-                  label="Gender"
-                  name="gender"
-                  options={["male", "female", "other"]}
-                  defaultValue={userData.value?.metadata?.gender as string}
-                />
-                <NewInput
-                  type="date"
-                  name="dob"
-                  label="Date of birth"
-                  max={new Date().toISOString().split("T")[0]}
-                  required
-                />
-                <NewInput
-                  name="phone"
-                  type="tel"
-                  label="Phone Number"
-                  autocomplete="phone"
-                  placeholder={"+1 9876543210"}
-                  defaultValue={type === "edit" ? userData.value?.phone : ""}
-                  minLength={5}
-                  required
-                />
-              </div>
-            ) : null}
             {type === "add" ? (
               <>
                 <NewInput

@@ -46,11 +46,21 @@ import ChangePassword from "@pages/ChangePassword";
 import ChangePasswordBanner from "./components/ChangePasswordBanner";
 import IssueInventory from "@pages/IssueInventory";
 import TransferItem from "@pages/TransferItem";
+import Privacy from "@pages/Privacy";
+import GuardianConsent from "@pages/GuardianConsent";
+import MyData from "@pages/MyData";
+import PrivacyRequests from "@pages/PrivacyRequests";
+import Settings from "@pages/Settings";
+import PurchaseOrderCreate from "@pages/PurchaseOrderCreate";
+import { PurchaseOrderView, PurchaseOrders } from "@pages/PurchaseOrders";
+import PrivacyGate from "./components/PrivacyGate";
+import { myPrivacy, TPrivacyStatus } from "./api/privacy";
 
 const App = () => {
   const isServerDown = useSignal<boolean>(false);
   const currentUrl = useSignal<string>(getCurrentUrl());
-  const publicRoute = ["/welcome", "/login", "/forgot-password"];
+  const publicRoute = ["/welcome", "/login", "/forgot-password", "/privacy", "/guardian-consent"];
+  const privacy = useSignal<TPrivacyStatus | null>(null);
   const getCategory = async () => {
     try {
       await categoriesList({ limit: 1, offset: 0 });
@@ -65,6 +75,13 @@ const App = () => {
 
   const userState = isUser.value ? user.state.value : admin.state.value;
 
+  // Members must accept the current privacy notice (and minors need guardian consent) first.
+  useEffect(() => {
+    if (isUser.value && userState === "authenticated") {
+      myPrivacy().then((p) => (privacy.value = p)).catch(() => null);
+    }
+  }, [userState]);
+
   if (isServerDown.value) {
     return <ErrorBanner errorMessage="We have an internal server error!" />;
   } else {
@@ -75,6 +92,16 @@ const App = () => {
         </div>
       );
     }
+  }
+
+  if (
+    isUser.value &&
+    userState === "authenticated" &&
+    privacy.value &&
+    (privacy.value.blocked || privacy.value.needs_acknowledgement) &&
+    !publicRoute.includes(currentUrl.value)
+  ) {
+    return <PrivacyGate status={privacy.value} onDone={(p) => (privacy.value = p)} />;
   }
 
   if (
@@ -142,6 +169,14 @@ const App = () => {
       <Route path="/add-user" component={CreateUser} />
       <Route path="/change-password" component={ChangePassword} />
       <Route path="/issue-inventory" component={IssueInventory} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/guardian-consent" component={GuardianConsent} />
+      <Route path="/my-data" component={MyData} />
+      <Route path="/privacy-requests" component={PrivacyRequests} />
+      <Route path="/settings" component={Settings} />
+      <Route path="/purchase-orders" component={PurchaseOrders} />
+      <Route path="/purchase-orders/new" component={PurchaseOrderCreate} />
+      <Route path="/purchase-orders/:id" component={PurchaseOrderView} />
     </Router>
     </main>
   );
